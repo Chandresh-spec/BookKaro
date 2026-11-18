@@ -30,9 +30,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const navLinks = [
     { label: 'Home', href: '#' },
@@ -143,11 +145,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Search Icon Button (Desktop) */}
+            {/* Search Icon Button */}
             <button
               type="button"
-              onClick={onSearchClick}
-              className="w-9 h-9 flex items-center justify-center text-neutral-600 hover:text-neutral-900 bg-neutral-100/80 hover:bg-neutral-200/70 rounded-full transition-colors cursor-pointer"
+              onClick={() => {
+                setIsSearchOpen((prev) => !prev);
+                setTimeout(() => searchInputRef.current?.focus(), 100);
+              }}
+              className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+                isSearchOpen || searchQuery
+                  ? 'bg-[#85142f] text-white'
+                  : 'text-neutral-600 hover:text-neutral-900 bg-neutral-100/80 hover:bg-neutral-200/70'
+              }`}
               aria-label="Search"
             >
               <Search className="w-4 h-4" />
@@ -203,19 +212,39 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Mobile Search Bar Directly Under Header (matching the phone screenshot!) */}
-        <div className="lg:hidden pb-3">
-          <div className="relative flex items-center bg-white rounded-full border border-neutral-200/80 px-3.5 py-2 shadow-xs">
-            <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search movies, events, artists..."
-              className="w-full text-xs text-neutral-900 placeholder:text-neutral-400 bg-transparent focus:outline-none"
-            />
+        {/* Slide-down Search Bar (Only appears on demand when clicking search button!) */}
+        {isSearchOpen && (
+          <div className="py-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="relative flex items-center bg-white rounded-full border border-neutral-200/90 px-3.5 py-2 shadow-md">
+              <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder="Search movies, events, artists..."
+                className="w-full text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 bg-transparent focus:outline-none"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => onSearchChange('')}
+                  className="p-1 text-neutral-400 hover:text-neutral-700 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(false)}
+                  className="text-[11px] font-semibold text-neutral-400 hover:text-neutral-700 transition-colors ml-2"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Mobile Drawer Navigation */}
