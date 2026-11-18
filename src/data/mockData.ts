@@ -51,7 +51,7 @@ export const MOVIES: Movie[] = [
     languages: ['English'],
     duration: '2h 18m',
     releaseDate: '08 Nov 2026',
-    posterImage: 'https://images.unsplash.com/photo-1511497584788-87676104235f?q=80&w=900&auto=format&fit=crop',
+    posterImage: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=900&auto=format&fit=crop',
     bannerImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
     isCinemaExclusive: true,
   },
