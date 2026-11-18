@@ -2,26 +2,33 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { MapPin, Search, Menu, X, ChevronDown, Check, Ticket } from 'lucide-react';
+import { MapPin, Search, Menu, X, ChevronDown, Check, Ticket, User as UserIcon, LogOut } from 'lucide-react';
 import { CITIES } from '@/data/mockData';
+import { User } from '@/types';
 
 interface NavbarProps {
   currentCity: string;
+  user?: User | null;
   onSelectCity: (city: string) => void;
   onSearchClick?: () => void;
   onSignInClick?: () => void;
+  onSignOut?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentCity,
+  user,
   onSelectCity,
   onSearchClick,
   onSignInClick,
+  onSignOut,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const navLinks = [
     { label: 'Home', href: '#' },
@@ -37,6 +44,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsCityDropdownOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -140,14 +150,61 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
             </button>
 
-            {/* Sign In Button (Desktop) */}
-            <button
-              type="button"
-              onClick={onSignInClick}
-              className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs sm:text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-800 rounded-full transition-all shadow-sm active:scale-95 cursor-pointer"
-            >
-              Sign In
-            </button>
+            {/* User Profile or Sign In Button (Desktop) */}
+            {user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 transition-colors text-xs font-semibold text-neutral-800 cursor-pointer"
+                >
+                  <div className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center text-[11px] font-bold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="max-w-[100px] truncate">{user.name}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-neutral-100 p-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3 py-2 border-b border-neutral-100 text-xs">
+                      <p className="font-bold text-neutral-900 truncate">{user.name}</p>
+                      <p className="text-[11px] text-neutral-500 truncate">{user.email || user.mobile}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        alert('Your Bookings list (FastAPI /api/v1/user/bookings)');
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
+                      <Ticket className="w-3.5 h-3.5 text-neutral-400" />
+                      <span>My Bookings</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        onSignOut?.();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={onSignInClick}
+                className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs sm:text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-800 rounded-full transition-all shadow-sm active:scale-95 cursor-pointer"
+              >
+                Sign In
+              </button>
+            )}
 
             {/* Mobile Hamburger Menu Toggle */}
             <button
@@ -193,16 +250,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           <div className="pt-3 border-t border-neutral-100 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                onSignInClick?.();
-              }}
-              className="w-full py-2.5 text-center text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-800 rounded-xl transition-all"
-            >
-              Sign In
-            </button>
+            {user ? (
+              <div className="space-y-2">
+                <div className="px-3 py-2 bg-neutral-50 rounded-xl flex items-center justify-between text-xs">
+                  <span className="font-semibold text-neutral-900">{user.name}</span>
+                  <span className="text-neutral-500">{user.email || user.mobile}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onSignOut?.();
+                  }}
+                  className="w-full py-2.5 text-center text-xs font-semibold text-rose-600 bg-rose-50 rounded-xl transition-all"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onSignInClick?.();
+                }}
+                className="w-full py-2.5 text-center text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-800 rounded-xl transition-all"
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       )}

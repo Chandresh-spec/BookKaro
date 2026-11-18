@@ -59,3 +59,11 @@ export interface FilterState {
   category: string;
   searchQuery: string;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email?: string;
+  mobile?: string;
+  avatar?: string;
+}

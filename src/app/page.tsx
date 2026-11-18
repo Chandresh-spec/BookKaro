@@ -11,8 +11,9 @@ import { ValueProps } from '@/components/home/ValueProps';
 import { Newsletter } from '@/components/home/Newsletter';
 import { Footer } from '@/components/layout/Footer';
 import { BookingModal } from '@/components/booking/BookingModal';
+import { AuthModal } from '@/components/auth/AuthModal';
 import { MOVIES, LIVE_EVENTS } from '@/data/mockData';
-import { Movie, LiveEvent, CategoryType } from '@/types';
+import { Movie, LiveEvent, CategoryType, User } from '@/types';
 
 export default function Home() {
   const [currentCity, setCurrentCity] = useState('Mumbai');
@@ -20,6 +21,8 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
   const [selectedItemForBooking, setSelectedItemForBooking] = useState<Movie | LiveEvent | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   // Filtered movies based on global search if any
   const displayedMovies = searchQuery.trim()
@@ -90,14 +93,14 @@ export default function Home() {
       {/* Top Navigation */}
       <Navbar
         currentCity={currentCity}
+        user={currentUser}
         onSelectCity={(city) => setCurrentCity(city)}
         onSearchClick={() => {
           const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
           if (searchInput) searchInput.focus();
         }}
-        onSignInClick={() => {
-          alert('Sign In modal / FastAPI OAuth authentication ready');
-        }}
+        onSignInClick={() => setIsAuthModalOpen(true)}
+        onSignOut={() => setCurrentUser(null)}
       />
 
       {/* Main Page Body */}
@@ -150,6 +153,15 @@ export default function Home() {
         onClose={() => {
           setIsBookingModalOpen(false);
           setSelectedItemForBooking(null);
+        }}
+      />
+
+      {/* Authentication Modal ("Get Started") */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(user) => {
+          setCurrentUser(user);
         }}
       />
     </div>

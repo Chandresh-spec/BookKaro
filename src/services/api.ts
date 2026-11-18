@@ -126,4 +126,112 @@ export const api = {
       message: 'You are on the list! Watch your inbox for VIP drops and event perks.',
     };
   },
+
+  /**
+   * Request OTP for mobile login (Ready for FastAPI POST /api/v1/auth/otp/send)
+   */
+  async sendOtp(mobile: string): Promise<{ success: boolean; message: string }> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/auth/otp/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mobile }),
+        });
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('Backend unavailable, simulating OTP send:', err);
+      }
+    }
+
+    await new Promise((r) => setTimeout(r, 500));
+    return { success: true, message: `OTP sent to ${mobile}` };
+  },
+
+  /**
+   * Verify mobile OTP (Ready for FastAPI POST /api/v1/auth/otp/verify)
+   */
+  async verifyOtp(mobile: string, otp: string): Promise<{ success: boolean; user: any; token?: string }> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/auth/otp/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mobile, otp }),
+        });
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('Backend unavailable, simulating OTP verify:', err);
+      }
+    }
+
+    await new Promise((r) => setTimeout(r, 600));
+    return {
+      success: true,
+      user: {
+        id: 'usr_' + Date.now(),
+        name: 'Guest User',
+        mobile,
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop',
+      },
+      token: 'jwt_mock_token_' + Date.now(),
+    };
+  },
+
+  /**
+   * Email Sign In / Sign Up (Ready for FastAPI POST /api/v1/auth/email)
+   */
+  async loginWithEmail(email: string, password?: string): Promise<{ success: boolean; user: any; token?: string }> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/auth/email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('Backend unavailable, simulating Email login:', err);
+      }
+    }
+
+    await new Promise((r) => setTimeout(r, 600));
+    const name = email.split('@')[0];
+    return {
+      success: true,
+      user: {
+        id: 'usr_' + Date.now(),
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        email,
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop',
+      },
+      token: 'jwt_mock_token_' + Date.now(),
+    };
+  },
+
+  /**
+   * OAuth Social Login (Google / Apple)
+   */
+  async loginWithOAuth(provider: 'google' | 'apple'): Promise<{ success: boolean; user: any; token?: string }> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/auth/${provider}`);
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('Backend unavailable, simulating OAuth:', err);
+      }
+    }
+
+    await new Promise((r) => setTimeout(r, 500));
+    return {
+      success: true,
+      user: {
+        id: 'usr_' + provider + '_' + Date.now(),
+        name: provider === 'google' ? 'Google User' : 'Apple User',
+        email: `user@${provider}.com`,
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop',
+      },
+      token: 'jwt_mock_token_' + Date.now(),
+    };
+  },
 };

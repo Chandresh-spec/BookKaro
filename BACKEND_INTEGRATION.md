@@ -109,6 +109,22 @@ Here are the FastAPI endpoints expected by `src/services/api.ts`:
   }
   ```
 
+### E. Authentication Endpoints ("Get Started" Modal)
+
+1. **Send Mobile OTP**: `POST /api/v1/auth/otp/send`
+   ```json
+   { "mobile": "+91 9876543210" }
+   ```
+2. **Verify Mobile OTP**: `POST /api/v1/auth/otp/verify`
+   ```json
+   { "mobile": "+91 9876543210", "otp": "1234" }
+   ```
+3. **Email Sign In**: `POST /api/v1/auth/email`
+   ```json
+   { "email": "user@example.com", "password": "optional_password" }
+   ```
+4. **OAuth Callback**: `POST /api/v1/auth/{provider}` (e.g. `google`, `apple`)
+
 ---
 
 ## 3. Sample FastAPI Python Implementation
