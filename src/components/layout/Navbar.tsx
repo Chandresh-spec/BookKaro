@@ -247,31 +247,98 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
       </div>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Mobile Drawer Slide-over with Backdrop */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-neutral-100 bg-[#fbf9f8] px-4 pt-3 pb-6 space-y-4 shadow-xl animate-in slide-in-from-top-3 duration-200">
-          <nav className="flex flex-col space-y-1">
-            {navLinks.map((link) => {
-              const isActive = activeTab === link.label;
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => {
-                    setActiveTab(link.label);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                    isActive
-                      ? 'bg-[#85142f] text-white'
-                      : 'text-neutral-700 hover:bg-neutral-100'
-                  }`}
+        <div className="lg:hidden fixed inset-0 z-50 animate-in fade-in duration-200">
+          {/* Dark Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+
+          {/* Drawer Content */}
+          <div className="fixed top-0 right-0 bottom-0 w-[280px] bg-white shadow-2xl z-10 p-6 flex flex-col justify-between animate-in slide-in-from-right duration-250">
+            <div>
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-5 border-b border-neutral-100 mb-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-[#85142f] text-white flex items-center justify-center font-bold text-xs">
+                    <Ticket className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <span className="font-extrabold text-neutral-900 tracking-tight">BookKaro</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-1 rounded-lg text-neutral-400 hover:text-neutral-900 transition-colors"
                 >
-                  {link.label}
-                </a>
-              );
-            })}
-          </nav>
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="space-y-1.5">
+                {navLinks.map((link) => {
+                  const isActive = activeTab === link.label;
+                  return (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => {
+                        setActiveTab(link.label);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`block px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                        isActive
+                          ? 'bg-[#85142f] text-white shadow-xs'
+                          : 'text-neutral-700 hover:bg-neutral-100'
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Bottom Section in Drawer */}
+            <div className="pt-4 border-t border-neutral-100">
+              {user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2.5 p-2 bg-neutral-50 rounded-xl">
+                    <div className="w-8 h-8 rounded-full bg-[#85142f] text-white flex items-center justify-center font-bold text-xs">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-xs text-neutral-900 truncate">{user.name}</p>
+                      <p className="text-[10px] text-neutral-500 truncate">{user.email || user.mobile}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onSignOut?.();
+                    }}
+                    className="w-full py-2 text-center text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onSignInClick?.();
+                  }}
+                  className="w-full py-2.5 bg-[#85142f] text-white font-bold text-xs rounded-xl shadow-sm"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </header>

@@ -30,6 +30,26 @@ export default function Home() {
     email: 'chandresh@example.com',
   });
 
+  // Track scroll position to update active mobile tab
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 250;
+      const moviesSection = document.getElementById('movies');
+      const trendingSection = document.getElementById('trending');
+
+      if (trendingSection && scrollPos >= trendingSection.offsetTop) {
+        setMobileTab('live-events');
+      } else if (moviesSection && scrollPos >= moviesSection.offsetTop) {
+        setMobileTab('movies');
+      } else {
+        setMobileTab('home');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Filter movies by search query if user searches
   const filteredMovies = searchQuery.trim()
     ? MOVIES.filter(

@@ -44,9 +44,30 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     },
   ];
 
+  const handleNavClick = (tabId: string, href?: string) => {
+    onTabChange(tabId);
+    if (href) {
+      if (href === '#') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  };
+
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200/80 px-2 py-1.5 shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
-      <div className="flex items-center justify-around max-w-md mx-auto">
+    <nav
+      className="lg:hidden fixed bottom-0 inset-x-0 w-full z-50 bg-white border-t border-neutral-200/90 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] transform-gpu will-change-transform pb-[env(safe-area-inset-bottom,0px)]"
+      style={{
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+      }}
+      aria-label="Mobile Navigation"
+    >
+      <div className="grid grid-cols-4 items-center h-14 max-w-lg mx-auto px-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -57,17 +78,22 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 key={tab.id}
                 type="button"
                 onClick={tab.onClick}
-                className={`flex flex-col items-center justify-center py-1 px-3 min-w-[64px] transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center justify-center h-full w-full py-1 transition-all active:scale-95 cursor-pointer select-none ${
                   isActive ? 'text-[#85142f]' : 'text-neutral-500 hover:text-neutral-800'
                 }`}
               >
+                {/* Active Top Bar Indicator */}
+                {isActive && (
+                  <span className="absolute top-0 inset-x-4 h-[2px] bg-[#85142f] rounded-full" />
+                )}
+
                 <div className="relative mb-0.5">
-                  <Icon className="w-5 h-5" />
+                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.2px]' : 'stroke-[1.8px]'}`} />
                   {user && (
                     <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#85142f] ring-1 ring-white" />
                   )}
                 </div>
-                <span className={`text-[10px] font-semibold tracking-tight ${isActive ? 'text-[#85142f]' : 'text-neutral-600'}`}>
+                <span className={`text-[10px] tracking-tight leading-tight ${isActive ? 'text-[#85142f] font-bold' : 'text-neutral-600 font-medium'}`}>
                   {tab.label}
                 </span>
               </button>
@@ -75,21 +101,26 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }
 
           return (
-            <a
+            <button
               key={tab.id}
-              href={tab.href}
-              onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center justify-center py-1 px-3 min-w-[64px] transition-all cursor-pointer ${
+              type="button"
+              onClick={() => handleNavClick(tab.id, tab.href)}
+              className={`relative flex flex-col items-center justify-center h-full w-full py-1 transition-all active:scale-95 cursor-pointer select-none ${
                 isActive ? 'text-[#85142f]' : 'text-neutral-500 hover:text-neutral-800'
               }`}
             >
+              {/* Active Top Bar Indicator */}
+              {isActive && (
+                <span className="absolute top-0 inset-x-4 h-[2px] bg-[#85142f] rounded-full" />
+              )}
+
               <div className="relative mb-0.5">
-                <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.4px]' : 'stroke-[1.8px]'}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.2px]' : 'stroke-[1.8px]'}`} />
               </div>
-              <span className={`text-[10px] font-semibold tracking-tight ${isActive ? 'text-[#85142f] font-bold' : 'text-neutral-600'}`}>
+              <span className={`text-[10px] tracking-tight leading-tight ${isActive ? 'text-[#85142f] font-bold' : 'text-neutral-600 font-medium'}`}>
                 {tab.label}
               </span>
-            </a>
+            </button>
           );
         })}
       </div>
