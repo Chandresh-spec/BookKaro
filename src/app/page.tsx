@@ -7,6 +7,7 @@ import { CategoryBar } from '@/components/home/CategoryBar';
 import { NowShowing } from '@/components/home/NowShowing';
 import { TrendingExperiences } from '@/components/home/TrendingExperiences';
 import { Footer } from '@/components/layout/Footer';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { TrailerModal } from '@/components/common/TrailerModal';
@@ -17,6 +18,7 @@ export default function Home() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('movies');
+  const [mobileTab, setMobileTab] = useState('home');
   const [selectedItemForBooking, setSelectedItemForBooking] = useState<Movie | LiveEvent | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -89,7 +91,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white pb-16 lg:pb-0">
       {/* Top Navigation */}
       <Navbar
         currentCity={currentCity}
@@ -162,6 +164,14 @@ export default function Home() {
         isOpen={isTrailerModalOpen}
         title={trailerTitle}
         onClose={() => setIsTrailerModalOpen(false)}
+      />
+
+      {/* Mobile Bottom Navigation Bar (Fixed at bottom for mobile viewports) */}
+      <MobileBottomNav
+        activeTab={mobileTab}
+        onTabChange={(tab) => setMobileTab(tab)}
+        user={currentUser}
+        onProfileClick={() => setIsAuthModalOpen(true)}
       />
     </div>
   );
