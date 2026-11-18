@@ -44,7 +44,8 @@ export const api = {
       results = results.filter(
         (m) =>
           m.title.toLowerCase().includes(q) ||
-          m.genres.some((g) => g.toLowerCase().includes(q))
+          m.genre.toLowerCase().includes(q) ||
+          (m.genres && m.genres.some((g) => g.toLowerCase().includes(q)))
       );
     }
     return results;

@@ -5,43 +5,48 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/home/Hero';
 import { CategoryBar } from '@/components/home/CategoryBar';
 import { NowShowing } from '@/components/home/NowShowing';
-import { StepOutTuneIn } from '@/components/home/StepOutTuneIn';
-import { PromoBanner } from '@/components/home/PromoBanner';
-import { ValueProps } from '@/components/home/ValueProps';
-import { Newsletter } from '@/components/home/Newsletter';
+import { TrendingExperiences } from '@/components/home/TrendingExperiences';
 import { Footer } from '@/components/layout/Footer';
 import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { MOVIES, LIVE_EVENTS } from '@/data/mockData';
+import { TrailerModal } from '@/components/common/TrailerModal';
+import { MOVIES, TRENDING_EXPERIENCES, FEATURED_HERO } from '@/data/mockData';
 import { Movie, LiveEvent, CategoryType, User } from '@/types';
 
 export default function Home() {
-  const [currentCity, setCurrentCity] = useState('Mumbai');
+  const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('movies');
   const [selectedItemForBooking, setSelectedItemForBooking] = useState<Movie | LiveEvent | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
+  const [trailerTitle, setTrailerTitle] = useState('After Hours Live Showcase');
+  const [currentUser, setCurrentUser] = useState<User | null>({
+    id: 'usr_c1',
+    name: 'Chandresh',
+    email: 'chandresh@example.com',
+  });
 
-  // Filtered movies based on global search if any
-  const displayedMovies = searchQuery.trim()
+  // Filter movies by search query if user searches
+  const filteredMovies = searchQuery.trim()
     ? MOVIES.filter(
         (m) =>
           m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.genres.some((g) => g.toLowerCase().includes(searchQuery.toLowerCase()))
+          m.genre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          m.languages.some((l) => l.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : MOVIES;
 
-  // Filtered live events based on global search if any
-  const displayedEvents = searchQuery.trim()
-    ? LIVE_EVENTS.filter(
+  // Filter trending events by search query if user searches
+  const filteredEvents = searchQuery.trim()
+    ? TRENDING_EXPERIENCES.filter(
         (e) =>
           e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           e.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
           e.category.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : LIVE_EVENTS;
+    : TRENDING_EXPERIENCES;
 
   const handleOpenMovieBooking = (movie: Movie) => {
     setSelectedItemForBooking(movie);
@@ -53,99 +58,85 @@ export default function Home() {
     setIsBookingModalOpen(true);
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    if (query.trim()) {
-      // Smooth scroll to results
-      const section = document.getElementById('movies');
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+  const handleHeroBooking = () => {
+    setSelectedItemForBooking({
+      id: 'after-hours-hero',
+      title: FEATURED_HERO.badgeName + ' — ' + FEATURED_HERO.title.replace('\n', ' '),
+      category: 'CONCERT',
+      date: FEATURED_HERO.date,
+      time: FEATURED_HERO.time,
+      venue: FEATURED_HERO.venue,
+      city: currentCity,
+      startingPrice: 1499,
+      currency: '₹',
+      image: FEATURED_HERO.bgImage,
+    });
+    setIsBookingModalOpen(true);
   };
 
-  const handleTagClick = (tag: string) => {
-    setSearchQuery(tag);
-    const section = document.getElementById('movies');
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleWatchTrailer = (title?: string) => {
+    setTrailerTitle(title || FEATURED_HERO.badgeName);
+    setIsTrailerModalOpen(true);
   };
 
   const handleCategorySelect = (categoryId: CategoryType) => {
     setSelectedCategory(categoryId);
-    const targetId = categoryId === 'movies' ? 'movies' : 'live-events';
+    const targetId = categoryId === 'movies' ? 'movies' : 'trending';
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const handleDiscoverWeekend = () => {
-    const section = document.getElementById('live-events');
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafc]">
+    <div className="min-h-screen flex flex-col bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* Top Navigation */}
       <Navbar
         currentCity={currentCity}
         user={currentUser}
         onSelectCity={(city) => setCurrentCity(city)}
         onSearchClick={() => {
-          const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
-          if (searchInput) searchInput.focus();
+          const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+          if (input) input.focus();
         }}
         onSignInClick={() => setIsAuthModalOpen(true)}
         onSignOut={() => setCurrentUser(null)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
-      {/* Main Page Body */}
+      {/* Main Content Area */}
       <main className="flex-1">
-        {/* Hero Section */}
+        {/* Featured Hero Banner */}
         <Hero
           currentCity={currentCity}
-          onSelectCity={(city) => setCurrentCity(city)}
-          onSearch={handleSearch}
-          onTagClick={handleTagClick}
+          onBookTickets={handleHeroBooking}
+          onWatchTrailer={() => handleWatchTrailer('After Hours Live Showcase')}
         />
 
-        {/* Categories Bar ("What are you in the mood for?") */}
+        {/* Category Capsule Pills */}
         <CategoryBar
           selectedCategory={selectedCategory}
           onSelectCategory={handleCategorySelect}
         />
 
-        {/* Now Showing (Movies grid with language filter pills) */}
+        {/* Now Showing Section */}
         <NowShowing
-          movies={displayedMovies}
-          onSelectMovie={handleOpenMovieBooking}
+          movies={filteredMovies}
+          onBookMovie={handleOpenMovieBooking}
         />
 
-        {/* Step out. Tune in. (Live events grid) */}
-        <StepOutTuneIn
-          events={displayedEvents}
-          currentCity={currentCity}
+        {/* Trending Experiences Section */}
+        <TrendingExperiences
+          events={filteredEvents}
           onSelectEvent={handleOpenEventBooking}
         />
-
-        {/* Promotional Dark Feature Banner ("Less scrolling. More living.") */}
-        <PromoBanner onDiscoverClick={handleDiscoverWeekend} />
-
-        {/* Value Proposition Highlights ("More experience. Less effort.") */}
-        <ValueProps />
-
-        {/* Newsletter Subscription ("Be first in line.") */}
-        <Newsletter />
       </main>
 
       {/* Footer */}
       <Footer currentCity={currentCity} />
 
-      {/* Interactive Booking & Details Modal */}
+      {/* Interactive Booking Modal */}
       <BookingModal
         isOpen={isBookingModalOpen}
         item={selectedItemForBooking}
@@ -162,7 +153,15 @@ export default function Home() {
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={(user) => {
           setCurrentUser(user);
+          setIsAuthModalOpen(false);
         }}
+      />
+
+      {/* Video Trailer Modal */}
+      <TrailerModal
+        isOpen={isTrailerModalOpen}
+        title={trailerTitle}
+        onClose={() => setIsTrailerModalOpen(false)}
       />
     </div>
   );

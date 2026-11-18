@@ -3,51 +3,46 @@
 @tailwind utilities;
 
 :root {
-  --background: #fdfdfd;
-  --foreground: #09090b;
+  --background: #fbf9f8;
+  --foreground: #18181b;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f4efe9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c7c7cf;
+  background: #d8cec4;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9d9da8;
+  background: #9c1d3a;
 }
 
-/* Smooth Transitions */
-* {
-  box-sizing: border-box;
-}
-
-.subtle-shadow {
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+.wine-gradient {
+  background: linear-gradient(135deg, #881337 0%, #4c0519 100%);
 }
 
 .card-hover {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -6px rgba(130, 24, 50, 0.12), 0 6px 12px -3px rgba(0, 0, 0, 0.04);
 }

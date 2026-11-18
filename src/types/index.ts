@@ -1,34 +1,30 @@
-export type CategoryType = 'all' | 'movies' | 'concerts' | 'sports' | 'theatre' | 'comedy' | 'live-events';
+export type CategoryType = 'movies' | 'concerts' | 'sports' | 'theatre' | 'comedy';
 
 export interface CategoryItem {
   id: CategoryType;
   label: string;
-  iconName: 'layout-grid' | 'film' | 'music' | 'trophy' | 'theater' | 'mic' | 'sparkles';
-  badge?: string;
+  iconName: 'clapperboard' | 'music' | 'trophy' | 'theater' | 'mic';
   href: string;
 }
 
 export interface Movie {
   id: string;
   title: string;
-  originalTitle?: string;
-  tagline?: string;
   rating: number;
-  votesCount?: string;
-  genres: string[];
+  genre: string;
+  genres?: string[];
   languages: string[];
   duration?: string;
-  releaseDate?: string;
-  bannerImage: string;
   posterImage: string;
-  isCinemaExclusive: boolean;
-  featured?: boolean;
+  bannerImage?: string;
+  isCinemaExclusive?: boolean;
+  trailerUrl?: string;
 }
 
 export interface LiveEvent {
   id: string;
   title: string;
-  category: 'MUSIC' | 'SPORTS' | 'COMEDY' | 'THEATRE' | 'LIFESTYLE';
+  category: string;
   date: string;
   time: string;
   venue: string;
@@ -36,28 +32,28 @@ export interface LiveEvent {
   startingPrice: number;
   currency: string;
   image: string;
-  isTrending?: boolean;
   badgeText?: string;
+  isTrending?: boolean;
 }
 
-export interface ValueProp {
-  id: string;
-  icon: 'ticket' | 'shield' | 'headset';
+export interface FeaturedHero {
+  tag: string;
   title: string;
-  description: string;
+  subtitle: string;
+  date: string;
+  time: string;
+  venue: string;
+  city: string;
+  badgeName: string;
+  badgeSub: string;
+  bgImage: string;
+  trailerUrl: string;
 }
 
 export interface CityOption {
   id: string;
   name: string;
   isPopular?: boolean;
-}
-
-export interface FilterState {
-  city: string;
-  language: string;
-  category: string;
-  searchQuery: string;
 }
 
 export interface User {

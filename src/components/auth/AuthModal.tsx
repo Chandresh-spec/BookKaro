@@ -290,7 +290,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="p-1.5 bg-neutral-950 text-white rounded-lg hover:bg-neutral-800 transition-colors shrink-0"
+                    className="p-1.5 bg-[#85142f] text-white rounded-lg hover:bg-[#701027] transition-colors shrink-0 cursor-pointer"
                   >
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -321,14 +321,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 placeholder="name@example.com"
                 required
                 autoFocus
-                className="w-full px-4 py-3 rounded-xl border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-950 transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-neutral-300 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#85142f] transition-colors"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-neutral-950 hover:bg-neutral-800 disabled:bg-neutral-400 text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 bg-[#85142f] hover:bg-[#701027] disabled:bg-neutral-400 text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               {isLoading ? (
                 <>
@@ -358,7 +358,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  className="w-12 h-14 text-xl font-bold text-center rounded-xl border border-neutral-300 focus:border-neutral-950 focus:outline-none transition-colors"
+                  className="w-12 h-14 text-xl font-bold text-center rounded-xl border border-neutral-300 focus:border-[#85142f] focus:outline-none transition-colors"
                   autoFocus={idx === 0}
                 />
               ))}
@@ -367,7 +367,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-neutral-950 hover:bg-neutral-800 disabled:bg-neutral-400 text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 bg-[#85142f] hover:bg-[#701027] disabled:bg-neutral-400 text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               {isLoading ? (
                 <>
