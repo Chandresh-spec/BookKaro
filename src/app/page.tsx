@@ -15,9 +15,9 @@ import { MOVIES, LIVE_EVENTS } from '@/data/mockData';
 import { Movie, LiveEvent, CategoryType } from '@/types';
 
 export default function Home() {
-  const [currentCity, setCurrentCity] = useState('Bengaluru');
+  const [currentCity, setCurrentCity] = useState('Mumbai');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType | undefined>();
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
   const [selectedItemForBooking, setSelectedItemForBooking] = useState<Movie | LiveEvent | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 

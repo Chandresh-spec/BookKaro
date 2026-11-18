@@ -1,9 +1,9 @@
-export type CategoryType = 'movies' | 'concerts' | 'sports' | 'theatre' | 'comedy' | 'live-events';
+export type CategoryType = 'all' | 'movies' | 'concerts' | 'sports' | 'theatre' | 'comedy' | 'live-events';
 
 export interface CategoryItem {
   id: CategoryType;
   label: string;
-  iconName: 'film' | 'music' | 'trophy' | 'theater' | 'mic' | 'sparkles';
+  iconName: 'layout-grid' | 'film' | 'music' | 'trophy' | 'theater' | 'mic' | 'sparkles';
   badge?: string;
   href: string;
 }

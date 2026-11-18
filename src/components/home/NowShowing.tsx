@@ -44,7 +44,7 @@ export const NowShowing: React.FC<NowShowingProps> = ({
           </span>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-neutral-950">
-              Now showing
+              Now Showing
             </h2>
             <a
               href="#movies"
@@ -64,7 +64,7 @@ export const NowShowing: React.FC<NowShowingProps> = ({
               <button
                 key={lang}
                 onClick={() => handleLanguageClick(lang)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
                   isActive
                     ? 'bg-neutral-950 text-white shadow-sm'
                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200/80 hover:text-neutral-900'
@@ -96,8 +96,8 @@ export const NowShowing: React.FC<NowShowingProps> = ({
 
                 {/* Rating Badge */}
                 <div className="absolute top-3 left-3 z-10">
-                  <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-white text-xs font-bold shadow-sm">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>{movie.rating.toFixed(1)}</span>
                   </div>
                 </div>

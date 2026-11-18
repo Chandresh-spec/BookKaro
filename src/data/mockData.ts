@@ -1,8 +1,8 @@
 import { CategoryItem, Movie, LiveEvent, ValueProp, CityOption } from '@/types';
 
 export const CITIES: CityOption[] = [
-  { id: 'bengaluru', name: 'Bengaluru', isPopular: true },
   { id: 'mumbai', name: 'Mumbai', isPopular: true },
+  { id: 'bengaluru', name: 'Bengaluru', isPopular: true },
   { id: 'delhi-ncr', name: 'Delhi-NCR', isPopular: true },
   { id: 'hyderabad', name: 'Hyderabad', isPopular: true },
   { id: 'chennai', name: 'Chennai', isPopular: true },
@@ -14,12 +14,13 @@ export const CITIES: CityOption[] = [
 ];
 
 export const CATEGORIES: CategoryItem[] = [
+  { id: 'all', label: 'All', iconName: 'layout-grid', href: '#all' },
   { id: 'movies', label: 'Movies', iconName: 'film', href: '#movies' },
   { id: 'concerts', label: 'Concerts', iconName: 'music', href: '#concerts' },
   { id: 'sports', label: 'Sports', iconName: 'trophy', href: '#sports' },
   { id: 'theatre', label: 'Theatre', iconName: 'theater', href: '#theatre' },
   { id: 'comedy', label: 'Comedy', iconName: 'mic', href: '#comedy' },
-  { id: 'live-events', label: 'Live events', iconName: 'sparkles', href: '#live-events' },
+  { id: 'live-events', label: 'Live Events', iconName: 'sparkles', href: '#live-events' },
 ];
 
 export const MOVIES: Movie[] = [
@@ -34,7 +35,7 @@ export const MOVIES: Movie[] = [
     languages: ['English', 'Hindi'],
     duration: '2h 45m',
     releaseDate: '15 Nov 2026',
-    posterImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=900&auto=format&fit=crop',
+    posterImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=900&auto=format&fit=crop',
     bannerImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop',
     isCinemaExclusive: true,
     featured: true,
@@ -50,7 +51,7 @@ export const MOVIES: Movie[] = [
     languages: ['English'],
     duration: '2h 18m',
     releaseDate: '08 Nov 2026',
-    posterImage: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=900&auto=format&fit=crop',
+    posterImage: 'https://images.unsplash.com/photo-1511497584788-87676104235f?q=80&w=900&auto=format&fit=crop',
     bannerImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
     isCinemaExclusive: true,
   },
@@ -65,7 +66,7 @@ export const MOVIES: Movie[] = [
     languages: ['Hindi', 'Kannada'],
     duration: '2h 30m',
     releaseDate: '10 Nov 2026',
-    posterImage: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?q=80&w=900&auto=format&fit=crop',
+    posterImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=900&auto=format&fit=crop',
     bannerImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop',
     isCinemaExclusive: true,
   },
@@ -88,46 +89,46 @@ export const MOVIES: Movie[] = [
 
 export const LIVE_EVENTS: LiveEvent[] = [
   {
-    id: 'after-hours-live',
-    title: 'After Hours: Live in Bengaluru',
+    id: 'coldplay-live-mumbai',
+    title: 'Music of the Spheres World Tour: Coldplay Live in Mumbai',
     category: 'MUSIC',
-    date: 'SAT, 24 NOV',
-    time: '7:00 PM',
-    venue: 'Phoenix Marketcity',
-    city: 'Bengaluru',
-    startingPrice: 1499,
+    date: 'SAT, 18 JAN',
+    time: '6:30 PM',
+    venue: 'DY Patil Sports Stadium, Mumbai',
+    city: 'Mumbai',
+    startingPrice: 2500,
     currency: '₹',
     image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1200&auto=format&fit=crop',
     isTrending: true,
     badgeText: 'MUSIC',
   },
   {
-    id: 'bengaluru-fc-kerala-blasters',
-    title: 'Bengaluru FC vs Kerala Blasters',
+    id: 'ipl-mumbai-indians-chennai',
+    title: 'IPL 2026: Mumbai Indians vs Chennai Super Kings',
     category: 'SPORTS',
-    date: 'SUN, 25 NOV',
+    date: 'SUN, 28 MAR',
     time: '7:30 PM',
-    venue: 'Sree Kanteerava Stadium',
-    city: 'Bengaluru',
-    startingPrice: 499,
+    venue: 'Wankhede Stadium, Mumbai',
+    city: 'Mumbai',
+    startingPrice: 999,
     currency: '₹',
-    image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=1200&auto=format&fit=crop',
     isTrending: true,
     badgeText: 'SPORTS',
   },
   {
-    id: 'the-saturday-stand-up-club',
-    title: 'The Saturday Stand-up Club',
-    category: 'COMEDY',
-    date: 'SAT, 1 DEC',
-    time: '6:00 PM',
-    venue: 'The Comedy Theatre, Indiranagar',
-    city: 'Bengaluru',
-    startingPrice: 399,
+    id: 'after-hours-live',
+    title: 'After Hours: Live Showcase',
+    category: 'MUSIC',
+    date: 'SAT, 24 NOV',
+    time: '7:00 PM',
+    venue: 'Phoenix Marketcity',
+    city: 'Mumbai',
+    startingPrice: 1499,
     currency: '₹',
-    image: 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?q=80&w=1200&auto=format&fit=crop',
-    isTrending: false,
-    badgeText: 'COMEDY',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop',
+    isTrending: true,
+    badgeText: 'MUSIC',
   },
 ];
 
@@ -152,5 +153,5 @@ export const VALUE_PROPOSITIONS: ValueProp[] = [
   },
 ];
 
-export const TRENDING_TAGS = ['Live music', 'New releases', 'This weekend'];
+export const TRENDING_TAGS = ['Coldplay', 'Live music', 'IPL', 'New releases'];
 export const MOVIE_LANGUAGES = ['All', 'Hindi', 'English', 'Kannada'];

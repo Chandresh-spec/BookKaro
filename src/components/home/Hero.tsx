@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Search, MapPin, ChevronDown, ArrowRight, Sparkles, Ticket } from 'lucide-react';
+import { Search, MapPin, ChevronDown, ArrowRight, Zap, Ticket } from 'lucide-react';
 import { TRENDING_TAGS, CITIES } from '@/data/mockData';
 
 interface HeroProps {
@@ -29,14 +29,14 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <section className="relative overflow-hidden pt-8 pb-12 sm:pt-14 sm:pb-20 lg:pt-16 lg:pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
           {/* Left Column: Headlines & Search Form */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left">
-            {/* Pill Tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 border border-neutral-200/80 mb-5 sm:mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-neutral-800 animate-pulse" />
-              <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-neutral-700 uppercase">
+          <div className="lg:col-span-6 flex flex-col items-start text-left">
+            {/* Pill Tag with yellow lightning */}
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50/80 border border-amber-200/60 mb-5 sm:mb-6 shadow-xs">
+              <Zap className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+              <span className="text-xs font-semibold tracking-tight text-neutral-800">
                 Good times, great seats
               </span>
             </div>
@@ -49,14 +49,14 @@ export const Hero: React.FC<HeroProps> = ({
             </h1>
 
             {/* Subhead */}
-            <p className="text-base sm:text-lg text-neutral-600 max-w-xl mb-7 sm:mb-9 font-normal leading-relaxed">
+            <p className="text-sm sm:text-base text-neutral-600 max-w-lg mb-7 sm:mb-8 font-normal leading-relaxed">
               Discover movies, concerts, sports and unforgettable events. Find your seat and book in seconds.
             </p>
 
             {/* Search Box Card */}
             <form
               onSubmit={handleSearchSubmit}
-              className="w-full max-w-2xl bg-white rounded-2xl p-2 sm:p-2.5 border border-neutral-200 shadow-lg shadow-neutral-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4"
+              className="w-full max-w-xl bg-white rounded-2xl p-2 sm:p-2.5 border border-neutral-200/90 shadow-lg shadow-neutral-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4"
             >
               {/* Search input */}
               <div className="relative flex-1 flex items-center min-w-0 px-3 py-1.5">
@@ -65,8 +65,8 @@ export const Hero: React.FC<HeroProps> = ({
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search movies, events & more"
-                  className="w-full text-sm text-neutral-900 placeholder:text-neutral-400 bg-transparent focus:outline-none"
+                  placeholder="Search movies, concerts, artists or events..."
+                  className="w-full text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 bg-transparent focus:outline-none"
                 />
               </div>
 
@@ -77,7 +77,7 @@ export const Hero: React.FC<HeroProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-                  className="w-full sm:w-auto flex items-center justify-between gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-neutral-700 hover:bg-neutral-50 rounded-xl transition-colors"
+                  className="w-full sm:w-auto flex items-center justify-between gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-neutral-700 hover:bg-neutral-50 rounded-xl transition-colors cursor-pointer"
                 >
                   <MapPin className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
                   <span className="truncate">{currentCity}</span>
@@ -106,109 +106,94 @@ export const Hero: React.FC<HeroProps> = ({
               {/* Search Action Button */}
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-neutral-950 hover:bg-neutral-800 text-white text-sm font-medium rounded-xl transition-all shadow-sm active:scale-98 flex items-center justify-center gap-1.5"
+                className="px-6 py-2.5 bg-neutral-950 hover:bg-neutral-800 text-white text-xs sm:text-sm font-semibold rounded-xl transition-all shadow-sm active:scale-98 flex items-center justify-center cursor-pointer shrink-0"
               >
-                <span>Search</span>
+                Search
               </button>
             </form>
 
-            {/* Trending tags */}
-            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-neutral-500 mb-6">
-              <span className="text-neutral-400 font-medium">Trending:</span>
-              {TRENDING_TAGS.map((tag, idx) => (
-                <React.Fragment key={tag}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchInput(tag);
-                      onTagClick(tag);
-                    }}
-                    className="hover:text-neutral-950 transition-colors font-medium cursor-pointer"
-                  >
-                    {tag}
-                  </button>
-                  {idx < TRENDING_TAGS.length - 1 && (
-                    <span className="text-neutral-300">•</span>
-                  )}
-                </React.Fragment>
+            {/* Trending tags as rounded pills */}
+            <div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500 mb-6">
+              <span className="text-neutral-500 font-medium mr-1">Trending:</span>
+              {TRENDING_TAGS.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => {
+                    setSearchInput(tag);
+                    onTagClick(tag);
+                  }}
+                  className="px-3 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 border border-neutral-200/60 text-neutral-800 text-xs font-medium transition-all cursor-pointer"
+                >
+                  {tag}
+                </button>
               ))}
             </div>
 
             {/* Explore Events Button */}
             <a
               href="#live-events"
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-800 hover:text-neutral-950 rounded-full border border-neutral-200 bg-white hover:bg-neutral-50 transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-semibold text-white bg-neutral-950 hover:bg-neutral-800 rounded-full transition-all shadow-md active:scale-95"
             >
               <span>Explore Events</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
 
-          {/* Right Column: Composite Visuals (Overlapping Modern Floating Cards) */}
-          <div className="lg:col-span-5 relative flex justify-center lg:justify-end mt-4 lg:mt-0">
-            <div className="relative w-full max-w-[420px] sm:max-w-[460px] lg:max-w-none">
+          {/* Right Column: 3 Fanned / Angled Overlapping Cards with Floating Badge */}
+          <div className="lg:col-span-6 relative flex justify-center items-center mt-6 lg:mt-0">
+            <div className="relative w-full max-w-[500px] h-[340px] sm:h-[400px] flex items-center justify-center">
               
-              {/* Back Overlapping Card: Orbit Movie Poster */}
-              <div className="relative -top-3 left-4 sm:left-6 w-40 sm:w-48 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-10 border border-white/20 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+              {/* Card 1: Cinema Popcorn & Clapperboard (Left rotated) */}
+              <div className="absolute left-2 sm:left-4 top-6 w-44 sm:w-56 aspect-[3/4] rounded-3xl overflow-hidden shadow-xl border-2 border-white transform -rotate-12 hover:-rotate-6 transition-transform duration-300 z-10 bg-neutral-900">
                 <Image
-                  src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop"
-                  alt="Orbit - Only in Cinemas"
+                  src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=700&auto=format&fit=crop"
+                  alt="Cinema Popcorn and Movies"
                   fill
-                  sizes="(max-width: 640px) 160px, 200px"
+                  sizes="(max-width: 640px) 180px, 240px"
                   className="object-cover"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-3 sm:p-4 flex flex-col justify-end">
-                  <span className="text-white font-extrabold text-sm sm:text-base tracking-widest uppercase">
-                    ORBIT
-                  </span>
-                  <span className="text-[10px] text-white/70 tracking-wider font-semibold uppercase">
-                    Only in Cinemas
-                  </span>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
               </div>
 
-              {/* Main Overlapping Card: Live Concert */}
-              <div className="relative -mt-24 sm:-mt-28 ml-10 sm:ml-16 rounded-3xl overflow-hidden shadow-2xl z-20 border border-neutral-100 group">
-                <div className="relative aspect-[16/11] w-full">
-                  <Image
-                    src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=900&auto=format&fit=crop"
-                    alt="Live Music Concert"
-                    fill
-                    sizes="(max-width: 640px) 100vw, 450px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    priority
-                  />
-                  {/* Top Badge */}
-                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-                    <span className="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[10px] sm:text-xs font-bold text-neutral-900 tracking-wider uppercase">
-                      Live Music
-                    </span>
-                  </div>
-
-                  {/* Bottom Text Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent p-5 sm:p-6 flex flex-col justify-end">
-                    <h3 className="text-white font-bold text-base sm:text-lg leading-tight mb-1">
-                      A little less routine. A lot more live.
-                    </h3>
-                    <p className="text-xs sm:text-sm text-neutral-300">
-                      Book your front-row seat today.
-                    </p>
-                  </div>
-                </div>
+              {/* Card 2: Live Concert Crowd (Center elevated) */}
+              <div className="absolute z-20 w-52 sm:w-64 aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform -rotate-2 hover:rotate-0 transition-transform duration-300 bg-neutral-900">
+                <Image
+                  src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=900&auto=format&fit=crop"
+                  alt="Concert Stage and Lights"
+                  fill
+                  sizes="(max-width: 640px) 220px, 280px"
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               </div>
 
-              {/* Floating Pill Card (Bottom) */}
-              <div className="relative -mt-4 sm:-mt-6 mx-auto sm:ml-24 max-w-[340px] bg-white rounded-2xl p-3 sm:p-4 shadow-xl border border-neutral-100 flex items-center gap-3 z-30 card-hover">
-                <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-900 shrink-0">
+              {/* Card 3: Cricket / Sports Stadium (Right rotated) */}
+              <div className="absolute right-2 sm:right-4 top-8 w-44 sm:w-56 aspect-[3/4] rounded-3xl overflow-hidden shadow-xl border-2 border-white transform rotate-12 hover:rotate-6 transition-transform duration-300 z-10 bg-neutral-900">
+                <Image
+                  src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=700&auto=format&fit=crop"
+                  alt="Sports Stadium Floodlights"
+                  fill
+                  sizes="(max-width: 640px) 180px, 240px"
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+
+              {/* Floating Pill Card Overlapping Bottom */}
+              <div className="absolute -bottom-2 sm:bottom-0 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-[340px] sm:max-w-[370px] bg-white rounded-2xl p-3.5 sm:p-4 shadow-2xl border border-neutral-100 flex items-center gap-3.5 card-hover">
+                <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-900 shrink-0 border border-neutral-200/50">
                   <Ticket className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-bold text-neutral-900 leading-tight">
+                  <h4 className="text-xs sm:text-sm font-bold text-neutral-950 leading-tight">
                     One city. Endless possibilities.
                   </h4>
-                  <p className="text-[11px] sm:text-xs text-neutral-500 truncate">
-                    Your next story is waiting outdoors.
+                  <p className="text-[11px] sm:text-xs text-neutral-500 truncate mt-0.5">
+                    Movies, concerts, sports and more.
                   </p>
                 </div>
               </div>

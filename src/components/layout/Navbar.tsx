@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { MapPin, Search, Menu, X, ChevronDown, Check } from 'lucide-react';
+import { MapPin, Search, Menu, X, ChevronDown, Check, Ticket } from 'lucide-react';
 import { CITIES } from '@/data/mockData';
 
 interface NavbarProps {
@@ -47,26 +47,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-100 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
+          
           {/* Left: Brand Logo */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm group-hover:scale-105 transition-transform">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-4 h-4"
-                >
-                  <rect width="18" height="18" x="3" y="3" rx="4" />
-                  <path d="M7 3v18" />
-                  <path d="M3 7.5h4" />
-                  <path d="M3 12h4" />
-                  <path d="M3 16.5h4" />
-                  <circle cx="15.5" cy="12" r="2.5" />
-                </svg>
+          <div className="flex items-center gap-8 lg:gap-10">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="w-8 h-8 rounded-lg bg-neutral-950 text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:scale-105 transition-transform">
+                <Ticket className="w-4 h-4 text-white" />
               </div>
               <span className="text-xl font-bold tracking-tight text-neutral-950">
                 BookKaro
@@ -85,12 +71,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className={`relative py-2 font-medium transition-colors ${
                       isActive
                         ? 'text-neutral-950 font-semibold'
-                        : 'text-neutral-500 hover:text-neutral-900'
+                        : 'text-neutral-600 hover:text-neutral-950'
                     }`}
                   >
                     {link.label}
                     {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-900 rounded-full" />
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-950 rounded-full" />
                     )}
                   </a>
                 );
@@ -99,13 +85,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-5">
             {/* City Selector Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
                 onClick={() => setIsCityDropdownOpen((prev) => !prev)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-neutral-700 hover:bg-neutral-100/80 transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium text-neutral-800 hover:bg-neutral-100/80 transition-colors cursor-pointer"
                 aria-label="Select City"
               >
                 <MapPin className="w-3.5 h-3.5 text-neutral-500" />
@@ -148,7 +134,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onSearchClick}
-              className="p-2 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100 rounded-full transition-colors"
+              className="p-2 text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100 rounded-full transition-colors cursor-pointer"
               aria-label="Search"
             >
               <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
@@ -158,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onSignInClick}
-              className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs sm:text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-800 rounded-full transition-all shadow-sm active:scale-95"
+              className="hidden sm:inline-flex items-center justify-center px-5 py-2 text-xs sm:text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-800 rounded-full transition-all shadow-sm active:scale-95 cursor-pointer"
             >
               Sign In
             </button>
