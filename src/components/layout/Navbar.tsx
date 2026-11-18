@@ -59,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       {/* ============================================================ */}
-      {/* 1. DESKTOP NAVBAR (hidden on mobile, visible on lg and up)   */}
+      {/* 1. DESKTOP NAVBAR (visible on lg and up)                     */}
       {/* ============================================================ */}
       <header className="hidden lg:block sticky top-0 z-50 bg-[#fbf9f8]/95 backdrop-blur-md border-b border-neutral-200/60 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -241,30 +241,42 @@ export const Navbar: React.FC<NavbarProps> = ({
       </header>
 
       {/* ============================================================ */}
-      {/* 2. MOBILE: TOP NAVBAR REMOVED — ONLY SEARCH BUTTON KEPT      */}
+      {/* 2. MOBILE HEADER: BRAND NAME ON LEFT + ONLY SEARCH ON RIGHT  */}
+      {/* (No hamburger menu, no floating drawer overlapping the hero) */}
       {/* ============================================================ */}
-      <div className="lg:hidden fixed top-3 right-4 z-40">
+      <header className="lg:hidden sticky top-0 z-40 bg-[#fbf9f8]/95 backdrop-blur-md border-b border-neutral-200/60 px-4 h-14 flex items-center justify-between">
+        {/* Brand Logo & Name */}
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-7 h-7 rounded-lg bg-[#85142f] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+            <Ticket className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-lg font-extrabold tracking-tight text-neutral-900">
+            BookKaro
+          </span>
+        </Link>
+
+        {/* Right: Only the Search Button */}
         <button
           type="button"
           onClick={() => {
             setIsSearchOpen((prev) => !prev);
             setTimeout(() => searchInputRef.current?.focus(), 150);
           }}
-          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
+          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-95 cursor-pointer ${
             isSearchOpen || searchQuery
-              ? 'bg-[#85142f] text-white shadow-[#85142f]/30'
-              : 'bg-white/95 backdrop-blur-md text-neutral-800 border border-neutral-200/80 shadow-black/5 hover:bg-neutral-50'
+              ? 'bg-[#85142f] text-white shadow-xs'
+              : 'bg-white text-neutral-800 border border-neutral-200/80 hover:bg-neutral-50 shadow-xs'
           }`}
           aria-label="Search"
         >
           <Search className="w-4 h-4" />
         </button>
-      </div>
+      </header>
 
-      {/* Mobile Search Overlay Modal (appears only when search button is tapped) */}
+      {/* Mobile Search Overlay Modal (appears smoothly when search button is tapped) */}
       {isSearchOpen && (
-        <div className="lg:hidden fixed top-3 inset-x-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-          <div className="flex items-center bg-white rounded-full border border-neutral-200/90 px-3.5 py-2.5 shadow-2xl">
+        <div className="lg:hidden fixed top-2.5 inset-x-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="flex items-center bg-white rounded-full border border-neutral-200/90 px-3.5 py-2 shadow-xl">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
               ref={searchInputRef}
