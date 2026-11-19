@@ -2,31 +2,19 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import {
-  Ticket,
-  Headphones,
-  Mail,
-  Store,
-  X,
-  Check,
-  Send,
-  HelpCircle,
-  Sparkles,
-} from 'lucide-react';
+import { X, Check } from 'lucide-react';
 
 interface FooterProps {
   currentCity?: string;
 }
 
 export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => {
-  // Modals state for interactive footer buttons
   const [isListShowModalOpen, setIsListShowModalOpen] = useState(false);
   const [isResendModalOpen, setIsResendModalOpen] = useState(false);
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [isCustomerCareModalOpen, setIsCustomerCareModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Form states
   const [resendInput, setResendInput] = useState('');
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [organizerForm, setOrganizerForm] = useState({
@@ -34,7 +22,6 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
     email: '',
     phone: '',
     eventType: 'Live Concert',
-    city: currentCity,
   });
 
   const showToast = (msg: string) => {
@@ -62,210 +49,231 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
     setNewsletterEmail('');
   };
 
-  // SEO directory categories matching BookMyShow screenshots 1 & 2
+  // Exact 13 Directory Sections from Screenshot 1 & 2
   const directorySections = [
     {
-      title: `MOVIES NOW SHOWING IN ${currentCity.toUpperCase()}`,
+      title: 'MOVIES NOW SHOWING IN BENGALURU',
       links: [
-        { label: 'Ramayana', href: '/movies' },
-        { label: 'O.M Operation Mole', href: '/movies' },
-        { label: 'Brindavihari', href: '/movies' },
-        { label: 'Aakasamlo Oka Tara', href: '/movies' },
-        { label: 'ENE Repeat', href: '/movies' },
-        { label: 'Avengers: Doomsday', href: '/movies' },
-        { label: 'Shankarabharanna', href: '/movies' },
-        { label: 'Scene', href: '/movies' },
-        { label: "Bachelor Party D'eux", href: '/movies' },
-        { label: 'Godzilla Minus Zero', href: '/movies' },
+        'Ramayana',
+        'O.M Operation Mole',
+        'Brindavihari',
+        'Aakasamlo Oka Tara',
+        'ENE Repeat',
+        'Avengers: Doomsday',
+        'Shankarabharanna',
+        'Scene',
+        "Bachelor Party D'eux",
+        'Godzilla Minus Zero',
       ],
+      href: '/movies',
     },
     {
       title: 'UPCOMING MOVIES PER WEEK',
       links: [
-        { label: 'Upcoming Movies Today', href: '/movies' },
-        { label: 'Upcoming Movies Tomorrow', href: '/movies' },
-        { label: 'Upcoming Movies This Weekend', href: '/movies' },
+        'Upcoming Movies Today',
+        'Upcoming Movies Tomorrow',
+        'Upcoming Movies This Weekend',
       ],
+      href: '/movies',
     },
     {
       title: 'MOVIES BY GENRE',
       links: [
-        { label: 'Drama Movies', href: '/movies' },
-        { label: 'Thriller Movies', href: '/movies' },
-        { label: 'Action Movies', href: '/movies' },
-        { label: 'Comedy Movies', href: '/movies' },
-        { label: 'Adventure Movies', href: '/movies' },
-        { label: 'Romantic Movies', href: '/movies' },
-        { label: 'Fantasy Movies', href: '/movies' },
-        { label: 'Crime Movies', href: '/movies' },
-        { label: 'Horror Movies', href: '/movies' },
-        { label: 'Family Movies', href: '/movies' },
+        'Drama Movies',
+        'Thriller Movies',
+        'Action Movies',
+        'Comedy Movies',
+        'Adventure Movies',
+        'Romantic Movies',
+        'Fantasy Movies',
+        'Crime Movies',
+        'Horror Movies',
+        'Family Movies',
       ],
+      href: '/movies',
     },
     {
       title: 'MOVIES BY LANGUAGE',
       links: [
-        { label: 'Movies in English', href: '/movies' },
-        { label: 'Movies in Hindi', href: '/movies' },
-        { label: 'Movies in Tamil', href: '/movies' },
-        { label: 'Movies in Telugu', href: '/movies' },
-        { label: 'Movies in Kannada', href: '/movies' },
-        { label: 'Movies in Japanese', href: '/movies' },
-        { label: 'Movies in Malayalam', href: '/movies' },
-        { label: 'Movies in Sindhi', href: '/movies' },
-        { label: 'Movies in Bengali', href: '/movies' },
-        { label: 'Movies in Flemish', href: '/movies' },
+        'Movies in English',
+        'Movies in Hindi',
+        'Movies in Tamil',
+        'Movies in Telugu',
+        'Movies in Kannada',
+        'Movies in Japanese',
+        'Movies in Malayalam',
+        'Movies in Sindhi',
+        'Movies in Bengali',
+        'Movies in Flemish',
       ],
+      href: '/movies',
     },
     {
-      title: `SPORTS EVENTS IN ${currentCity.toUpperCase()}`,
+      title: 'SPORTS EVENTS IN BENGALURU',
       links: [
-        { label: 'Running', href: '/sports' },
-        { label: 'Chess', href: '/sports' },
-        { label: 'Mixed Martial Arts', href: '/sports' },
-        { label: 'Shooting', href: '/sports' },
-        { label: 'Bowling', href: '/sports' },
-        { label: 'Basketball', href: '/sports' },
-        { label: 'Cricket', href: '/sports' },
-        { label: 'Horse Race', href: '/sports' },
-        { label: 'Sailing', href: '/sports' },
-        { label: 'Cycling', href: '/sports' },
+        'Running',
+        'Chess',
+        'Mixed Martial Arts',
+        'Shooting',
+        'Bowling',
+        'Basketball',
+        'Cricket',
+        'Horse Race',
+        'Sailing',
+        'Cycling',
       ],
+      href: '/sports',
     },
     {
       title: 'EVENTS IN TOP CITIES',
       links: [
-        { label: 'Events in Mumbai', href: '/events' },
-        { label: 'Events in Delhi-NCR', href: '/events' },
-        { label: 'Events in Chennai', href: '/events' },
-        { label: 'Events in Bengaluru', href: '/events' },
-        { label: 'Events in Hyderabad', href: '/events' },
-        { label: 'Events in Pune', href: '/events' },
-        { label: 'Events in Ahmedabad', href: '/events' },
-        { label: 'Events in Kolkata', href: '/events' },
-        { label: 'Events in Kochi', href: '/events' },
+        'Events in Mumbai',
+        'Events in Delhi-NCR',
+        'Events in Chennai',
+        'Events in Bengaluru',
+        'Events in Hyderabad',
+        'Events in Pune',
+        'Events in Ahmedabad',
+        'Events in Kolkata',
+        'Events in Kochi',
       ],
+      href: '/events',
     },
     {
       title: 'CINEMAS IN TOP CITIES',
       links: [
-        { label: 'Cinemas in Mumbai', href: '/movies' },
-        { label: 'Cinemas in Delhi-NCR', href: '/movies' },
-        { label: 'Cinemas in Chennai', href: '/movies' },
-        { label: 'Cinemas in Bengaluru', href: '/movies' },
-        { label: 'Cinemas in Hyderabad', href: '/movies' },
-        { label: 'Cinemas in Pune', href: '/movies' },
-        { label: 'Cinemas in Ahmedabad', href: '/movies' },
-        { label: 'Cinemas in Kolkata', href: '/movies' },
-        { label: 'Cinemas in Kochi', href: '/movies' },
+        'Cinemas in Mumbai',
+        'Cinemas in Delhi-NCR',
+        'Cinemas in Chennai',
+        'Cinemas in Bengaluru',
+        'Cinemas in Hyderabad',
+        'Cinemas in Pune',
+        'Cinemas in Ahmedabad',
+        'Cinemas in Kolkata',
+        'Cinemas in Kochi',
       ],
+      href: '/movies',
     },
     {
       title: 'PLAYS IN TOP CITIES',
       links: [
-        { label: 'Plays in Mumbai', href: '/events' },
-        { label: 'Plays in Delhi-NCR', href: '/events' },
-        { label: 'Plays in Chennai', href: '/events' },
-        { label: 'Plays in Bengaluru', href: '/events' },
-        { label: 'Plays in Hyderabad', href: '/events' },
-        { label: 'Plays in Pune', href: '/events' },
-        { label: 'Plays in Ahmedabad', href: '/events' },
-        { label: 'Plays in Kolkata', href: '/events' },
-        { label: 'Plays in Kochi', href: '/events' },
+        'Plays in Mumbai',
+        'Plays in Delhi-NCR',
+        'Plays in Chennai',
+        'Plays in Bengaluru',
+        'Plays in Hyderabad',
+        'Plays in Pune',
+        'Plays in Ahmedabad',
+        'Plays in Kolkata',
+        'Plays in Kochi',
       ],
+      href: '/events',
     },
     {
       title: 'ACTIVITIES IN TOP CITIES',
       links: [
-        { label: 'Activities in Mumbai', href: '/events' },
-        { label: 'Activities in Delhi-NCR', href: '/events' },
-        { label: 'Activities in Chennai', href: '/events' },
-        { label: 'Activities in Bengaluru', href: '/events' },
-        { label: 'Activities in Hyderabad', href: '/events' },
-        { label: 'Activities in Pune', href: '/events' },
-        { label: 'Activities in Ahmedabad', href: '/events' },
-        { label: 'Activities in Kolkata', href: '/events' },
-        { label: 'Activities in Kochi', href: '/events' },
+        'Activities in Mumbai',
+        'Activities in Delhi-NCR',
+        'Activities in Chennai',
+        'Activities in Bengaluru',
+        'Activities in Hyderabad',
+        'Activities in Pune',
+        'Activities in Ahmedabad',
+        'Activities in Kolkata',
+        'Activities in Kochi',
       ],
+      href: '/events',
     },
     {
       title: 'MOVIES NOW SHOWING',
       links: [
-        { label: 'Ramayana', href: '/movies' },
-        { label: 'ENE Repeat', href: '/movies' },
-        { label: 'O.M Operation Mole', href: '/movies' },
-        { label: 'Aakasamlo Oka Tara', href: '/movies' },
-        { label: 'Avengers: Doomsday', href: '/movies' },
-        { label: 'Brindavihari', href: '/movies' },
-        { label: 'Scene', href: '/movies' },
-        { label: 'Godzilla Minus Zero', href: '/movies' },
-        { label: 'Adventure of Jetcat 7D - Combo', href: '/movies' },
-        { label: 'Ruff and Tuff Kanya', href: '/movies' },
+        'Ramayana',
+        'ENE Repeat',
+        'O.M Operation Mole',
+        'Aakasamlo Oka Tara',
+        'Avengers: Doomsday',
+        'Brindavihari',
+        'Scene',
+        'Godzilla Minus Zero',
+        'Adventure of Jetcat 7D - Combo',
+        'Ruff and Tuff Kanya',
       ],
+      href: '/movies',
     },
     {
       title: 'COUNTRIES',
-      links: [
-        { label: 'Indonesia', href: '/' },
-        { label: 'Singapore', href: '/' },
-        { label: 'Sri Lanka', href: '/' },
-        { label: 'West Indies', href: '/' },
-        { label: 'UAE', href: '/' },
-      ],
+      links: ['Indonesia', 'Singapore', 'Sri Lanka', 'West Indies'],
+      href: '/',
     },
     {
       title: 'HELP',
       links: [
-        { label: 'About Us', href: '/profile?tab=about' },
-        { label: 'Contact Us', href: '/profile?tab=contact' },
-        { label: 'Current Opening', href: '/profile?tab=careers' },
-        { label: 'Press Release', href: '/profile?tab=press' },
-        { label: 'Press Coverage', href: '/profile?tab=coverage' },
-        { label: 'FAQs', href: '/profile?tab=faqs' },
-        { label: 'Terms and Conditions', href: '/profile?tab=terms' },
-        { label: 'Privacy Policy', href: '/profile?tab=privacy' },
+        'About Us',
+        'Contact Us',
+        'Current Opening',
+        'Press Release',
+        'Press Coverage',
+        'FAQs',
+        'Terms and Conditions',
+        'Privacy Policy',
       ],
+      href: '/profile',
     },
     {
-      title: 'BOOKKARO EXCLUSIVES',
+      title: 'BOOKMYSHOW EXCLUSIVES',
       links: [
-        { label: 'Lollapalooza India', href: '/events' },
-        { label: 'BookAChange', href: '/profile?tab=bookachange' },
-        { label: 'Corporate Vouchers', href: '/profile?tab=vouchers' },
-        { label: 'Gift Cards', href: '/profile?tab=giftcards' },
-        { label: 'List My Show', href: '/profile?tab=listshow' },
-        { label: 'Offers', href: '/profile?tab=offers' },
-        { label: 'Stream', href: '/movies' },
-        { label: 'Trailers', href: '/movies' },
+        'Lollapalooza India',
+        'BookAChange',
+        'Corporate Vouchers',
+        'Gift Cards',
+        'List My Show',
+        'Offers',
+        'Stream',
+        'Trailers',
       ],
+      href: '/events',
     },
   ];
 
   return (
-    <footer className="w-full bg-[#313131] text-[#777777] font-sans pb-24 lg:pb-8 selection:bg-[#ec5e7b] selection:text-white mt-auto">
-      {/* Toast feedback */}
+    <footer className="w-full font-sans text-[#777777] selection:bg-[#ec5e7b] selection:text-white mt-auto pb-20 lg:pb-0">
+      {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-20 right-4 z-50 bg-[#85142f] text-white text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 animate-in slide-in-from-bottom-2">
+        <div className="fixed bottom-20 right-4 z-50 bg-[#85142f] text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 animate-in slide-in-from-bottom-2">
           <Check className="w-4 h-4 stroke-[2.5px]" />
           <span className="font-bold">{toastMessage}</span>
         </div>
       )}
 
       {/* ============================================================ */}
-      {/* 1. "LIST YOUR SHOW" TOP PROMO BAR (Matching Screenshot 1)    */}
+      {/* ROW 1: "LIST YOUR SHOW" (Exact Match to Screenshot 1)        */}
       {/* ============================================================ */}
-      <div className="bg-[#333338] border-b border-[#3d3d42]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-center md:text-left">
-            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0 text-white">
-              <Store className="w-5 h-5 stroke-[1.8px]" />
-            </div>
-            <div>
-              <span className="text-white text-sm sm:text-base font-bold mr-2">
-                List your Show
-              </span>
-              <span className="text-[#a5a5a5] text-xs sm:text-sm">
-                Got a show, event, activity or a great experience? Partner with us & get listed on BookKaro
+      <div className="bg-[#333338] text-white border-b border-[#3b3b40]">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 text-center md:text-left">
+            {/* Outline Tent Icon with top flag */}
+            <svg
+              className="w-8 h-8 text-white shrink-0"
+              viewBox="0 0 48 48"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="24" y1="4" x2="24" y2="13" />
+              <path d="M24 5 L32 8.5 L24 12 Z" fill="currentColor" stroke="none" />
+              <path d="M6 38 L24 13 L42 38 Z" />
+              <path d="M6 38 Q10 41 15 38 Q19 41 24 38 Q29 41 34 38 Q38 41 42 38" />
+              <path d="M20 38 L24 24 L28 38" />
+              <line x1="24" y1="13" x2="15" y2="38" />
+              <line x1="24" y1="13" x2="33" y2="38" />
+            </svg>
+
+            <div className="text-xs sm:text-[14px] leading-snug">
+              <span className="font-bold text-white mr-2">List your Show</span>
+              <span className="text-[#cccccc] font-normal">
+                Got a show, event, activity or a great experience? Partner with us &amp; get listed on BookMyShow
               </span>
             </div>
           </div>
@@ -273,7 +281,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
           <button
             type="button"
             onClick={() => setIsListShowModalOpen(true)}
-            className="px-6 py-2.5 rounded-md bg-[#ec5e7b] hover:bg-[#d94b68] text-white text-xs sm:text-sm font-bold tracking-tight shadow-md transition-all active:scale-95 cursor-pointer shrink-0"
+            className="px-5 py-2 rounded bg-[#ec5e7b] hover:bg-[#d64b67] text-white text-xs sm:text-sm font-semibold tracking-tight shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
           >
             Contact today!
           </button>
@@ -281,22 +289,36 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       </div>
 
       {/* ============================================================ */}
-      {/* 2. 3-COLUMN QUICK CUSTOMER CARE STRIP (Matching Screenshot 1)*/}
+      {/* ROW 2: 3 CUSTOMER CARE ITEMS (Exact Match to Screenshot 1)   */}
       {/* ============================================================ */}
-      <div className="bg-[#404040] border-b border-[#4a4a4a]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+      <div className="bg-[#404040]">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             
             {/* 1. 24/7 CUSTOMER CARE */}
             <button
               type="button"
               onClick={() => setIsCustomerCareModalOpen(true)}
-              className="flex flex-col items-center justify-center group cursor-pointer"
+              className="flex flex-col items-center justify-center gap-2.5 group cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-neutral-300 group-hover:text-white transition-colors mb-2">
-                <Headphones className="w-8 h-8 stroke-[1.5px]" />
-              </div>
-              <span className="text-[11px] font-bold text-neutral-300 group-hover:text-white tracking-widest uppercase transition-colors">
+              <svg
+                className="w-12 h-12 text-[#999999] group-hover:text-white transition-colors"
+                viewBox="0 0 64 64"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M16 28 C16 16, 48 16, 48 28" />
+                <rect x="12" y="24" width="6" height="12" rx="3" />
+                <rect x="46" y="24" width="6" height="12" rx="3" />
+                <path d="M22 28 C22 21, 42 21, 42 28 C42 35, 38 41, 32 41 C26 41, 22 35, 22 28 Z" />
+                <path d="M48 33 L48 40 C48 44, 42 45, 38 45" />
+                <circle cx="36" cy="45" r="2" fill="currentColor" />
+                <path d="M14 54 C14 47, 22 45, 32 45 C42 45, 50 47, 50 54" />
+              </svg>
+              <span className="text-[11px] font-semibold text-[#8f8f94] group-hover:text-white tracking-widest uppercase transition-colors">
                 24/7 CUSTOMER CARE
               </span>
             </button>
@@ -305,12 +327,23 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
             <button
               type="button"
               onClick={() => setIsResendModalOpen(true)}
-              className="flex flex-col items-center justify-center group cursor-pointer"
+              className="flex flex-col items-center justify-center gap-2.5 group cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-neutral-300 group-hover:text-white transition-colors mb-2">
-                <Ticket className="w-8 h-8 stroke-[1.5px]" />
-              </div>
-              <span className="text-[11px] font-bold text-neutral-300 group-hover:text-white tracking-widest uppercase transition-colors">
+              <svg
+                className="w-12 h-12 text-[#999999] group-hover:text-white transition-colors"
+                viewBox="0 0 64 64"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M26 12 L48 18 C48 20 49 22 51 22 C53 23 54 22 55 20 L58 32 C56 33 55 35 55 37 C56 39 58 40 59 40 L37 48 C37 46 36 44 34 44 C32 43 31 44 30 46 L24 24" opacity="0.45" />
+                <path d="M12 28 L42 20 C42 23 44 25 47 24 C49 24 51 22 51 19 L56 36 C53 37 52 39 52 42 C53 45 55 46 58 46 L28 54 C28 51 26 49 23 50 C21 50 19 52 19 55 L14 38 C17 37 18 35 18 32 C17 29 15 28 12 28 Z" />
+                <line x1="39" y1="21" x2="43" y2="37" strokeDasharray="2 2" strokeWidth="1.5" />
+                <circle cx="28" cy="38" r="3" />
+              </svg>
+              <span className="text-[11px] font-semibold text-[#8f8f94] group-hover:text-white tracking-widest uppercase transition-colors">
                 RESEND BOOKING CONFIRMATION
               </span>
             </button>
@@ -319,12 +352,26 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
             <button
               type="button"
               onClick={() => setIsNewsletterModalOpen(true)}
-              className="flex flex-col items-center justify-center group cursor-pointer"
+              className="flex flex-col items-center justify-center gap-2.5 group cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-neutral-300 group-hover:text-white transition-colors mb-2">
-                <Mail className="w-8 h-8 stroke-[1.5px]" />
-              </div>
-              <span className="text-[11px] font-bold text-neutral-300 group-hover:text-white tracking-widest uppercase transition-colors">
+              <svg
+                className="w-12 h-12 text-[#999999] group-hover:text-white transition-colors"
+                viewBox="0 0 64 64"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 14 L44 14 L44 34 L20 34 Z" />
+                <line x1="24" y1="19" x2="36" y2="19" strokeWidth="1.5" />
+                <line x1="24" y1="23" x2="40" y2="23" strokeWidth="1.5" />
+                <line x1="24" y1="27" x2="34" y2="27" strokeWidth="1.5" />
+                <path d="M12 28 L32 40 L52 28 L52 50 L12 50 Z" />
+                <line x1="12" y1="50" x2="28" y2="37" />
+                <line x1="52" y1="50" x2="36" y2="37" />
+              </svg>
+              <span className="text-[11px] font-semibold text-[#8f8f94] group-hover:text-white tracking-widest uppercase transition-colors">
                 SUBSCRIBE TO THE NEWSLETTER
               </span>
             </button>
@@ -334,153 +381,151 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       </div>
 
       {/* ============================================================ */}
-      {/* 3. DEEP SEO DIRECTORY LINKS GRID (Matching Screenshots 1 & 2)*/}
+      {/* ROW 3: DEEP SEO DIRECTORY LINKS (Exact Match to Screenshot 1 & 2) */}
       {/* ============================================================ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="space-y-6">
+      <div className="bg-[#313131] py-8 sm:py-10">
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
           {directorySections.map((section, idx) => (
-            <div key={idx} className="space-y-1.5">
-              <h3 className="text-[11px] font-bold text-[#999999] tracking-wider uppercase">
+            <div key={idx} className="space-y-1">
+              <h4 className="text-[11px] font-semibold text-[#8c8c92] tracking-wider uppercase">
                 {section.title}
-              </h3>
-              <p className="text-[11px] leading-relaxed text-[#777777]">
+              </h4>
+              <p className="text-[11px] leading-[22px] text-[#636368]">
                 {section.links.map((link, lIdx) => (
                   <React.Fragment key={lIdx}>
                     <Link
-                      href={link.href}
-                      className="hover:text-white transition-colors inline-block"
+                      href={section.href}
+                      className="hover:text-white transition-colors"
                     >
-                      {link.label}
+                      {link}
                     </Link>
                     {lIdx < section.links.length - 1 && (
-                      <span className="text-[#555555] mx-1.5 select-none">|</span>
+                      <span className="text-[#44444a] mx-1.5 select-none">|</span>
                     )}
                   </React.Fragment>
                 ))}
               </p>
             </div>
           ))}
-        </div>
 
-        {/* ============================================================ */}
-        {/* 4. BRAND LOGO DIVIDER & SOCIAL ICONS (Matching Screenshot 2) */}
-        {/* ============================================================ */}
-        <div className="pt-12 pb-4">
-          {/* Centered Brand Line */}
-          <div className="relative flex items-center justify-center mb-6">
-            <div className="h-[1px] bg-[#444444] w-full" />
-            <div className="absolute bg-[#313131] px-5 flex items-center gap-2 text-white">
-              <span className="font-sans text-xl sm:text-2xl font-black tracking-tight text-white select-none">
-                book<span className="text-[#ec5e7b]">karo</span>
-              </span>
+          {/* ============================================================ */}
+          {/* ROW 4: LOGO DIVIDER & SOCIAL ICONS (Exact Match to Screenshot 2) */}
+          {/* ============================================================ */}
+          <div className="pt-10 pb-4">
+            
+            {/* Centered Brand Line with BookMyShow / BookKaro Logo */}
+            <div className="relative flex items-center justify-center mb-7">
+              <div className="h-[1px] bg-[#424248] w-full" />
+              <div className="absolute bg-[#313131] px-6 flex items-center gap-1 select-none">
+                <span className="text-white text-xl sm:text-2xl font-bold tracking-tight">book</span>
+                <span className="bg-[#ec5e7b] text-white px-1.5 py-0.5 rounded text-sm sm:text-base font-extrabold mx-0.5">
+                  my
+                </span>
+                <span className="text-white text-xl sm:text-2xl font-bold tracking-tight">show</span>
+              </div>
+            </div>
+
+            {/* Social Icons Row */}
+            <div className="flex items-center justify-center gap-3.5 my-6">
+              {/* Facebook */}
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                className="w-10 h-10 rounded-full bg-[#3b3b42] hover:bg-[#ec5e7b] text-[#999999] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+
+              {/* X / Twitter */}
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="X Twitter"
+                className="w-10 h-10 rounded-full bg-[#3b3b42] hover:bg-[#ec5e7b] text-[#999999] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="w-10 h-10 rounded-full bg-[#3b3b42] hover:bg-[#ec5e7b] text-[#999999] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+
+              {/* YouTube */}
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                className="w-10 h-10 rounded-full bg-[#3b3b42] hover:bg-[#ec5e7b] text-[#999999] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </a>
+
+              {/* Pinterest */}
+              <a
+                href="https://pinterest.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Pinterest"
+                className="w-10 h-10 rounded-full bg-[#3b3b42] hover:bg-[#ec5e7b] text-[#999999] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.375-.291 1.199-.332 1.357-.053.224-.174.271-.4.165-1.499-.699-2.436-2.894-2.436-4.659 0-3.791 2.756-7.275 7.946-7.275 4.172 0 7.417 2.973 7.417 6.948 0 4.148-2.613 7.485-6.241 7.485-1.219 0-2.365-.635-2.758-1.385l-.75 2.859c-.271 1.044-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z" />
+                </svg>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="w-10 h-10 rounded-full bg-[#3b3b42] hover:bg-[#ec5e7b] text-[#999999] hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+              </a>
+            </div>
+
+            {/* Legal Copyright Disclaimer (Exact from Screenshot 2) */}
+            <div className="text-center text-[10px] text-[#55555c] leading-relaxed max-w-4xl mx-auto space-y-2 mt-4 px-4">
+              <p>
+                Copyright 2026 © Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
+              </p>
+              <p>
+                The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
+              </p>
             </div>
           </div>
 
-          {/* Social Icons Row */}
-          <div className="flex items-center justify-center gap-3 sm:gap-4 my-6">
-            {/* Facebook */}
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Facebook"
-              className="w-10 h-10 rounded-full bg-[#404040] hover:bg-[#ec5e7b] text-neutral-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-            </a>
-
-            {/* X / Twitter */}
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="X Twitter"
-              className="w-10 h-10 rounded-full bg-[#404040] hover:bg-[#ec5e7b] text-neutral-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-            >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-
-            {/* Instagram */}
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Instagram"
-              className="w-10 h-10 rounded-full bg-[#404040] hover:bg-[#ec5e7b] text-neutral-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
-            </a>
-
-            {/* YouTube */}
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="YouTube"
-              className="w-10 h-10 rounded-full bg-[#404040] hover:bg-[#ec5e7b] text-neutral-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-              </svg>
-            </a>
-
-            {/* Pinterest */}
-            <a
-              href="https://pinterest.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Pinterest"
-              className="w-10 h-10 rounded-full bg-[#404040] hover:bg-[#ec5e7b] text-neutral-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.375-.291 1.199-.332 1.357-.053.224-.174.271-.4.165-1.499-.699-2.436-2.894-2.436-4.659 0-3.791 2.756-7.275 7.946-7.275 4.172 0 7.417 2.973 7.417 6.948 0 4.148-2.613 7.485-6.241 7.485-1.219 0-2.365-.635-2.758-1.385l-.75 2.859c-.271 1.044-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z" />
-              </svg>
-            </a>
-
-            {/* LinkedIn */}
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="w-10 h-10 rounded-full bg-[#404040] hover:bg-[#ec5e7b] text-neutral-300 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg>
-            </a>
-          </div>
-
-          {/* Legal Copyright Disclaimer (Exact from Screenshot 2) */}
-          <div className="text-center text-[10px] text-[#666666] leading-relaxed max-w-4xl mx-auto space-y-2 mt-4 px-4">
-            <p>
-              Copyright 2026 © BookKaro Entertainment Pvt. Ltd. All Rights Reserved.
-            </p>
-            <p>
-              The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
-            </p>
-          </div>
         </div>
-
       </div>
 
-      {/* ============================================================ */}
-      {/* MODAL 1: LIST YOUR SHOW                                      */}
-      {/* ============================================================ */}
+      {/* Modals */}
       {isListShowModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
           <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl text-neutral-900 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
-              <div className="flex items-center gap-2">
-                <Store className="w-5 h-5 text-[#85142f]" />
-                <h3 className="text-base font-bold text-neutral-900">List Your Show</h3>
-              </div>
+              <h3 className="text-base font-bold text-neutral-900">List Your Show</h3>
               <button
                 type="button"
                 onClick={() => setIsListShowModalOpen(false)}
@@ -489,7 +534,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleListShowSubmit} className="space-y-3.5 pt-4 text-xs">
+            <form onSubmit={handleListShowSubmit} className="space-y-3 pt-3 text-xs">
               <div>
                 <label className="font-bold text-neutral-700 block mb-1">Your Name / Organization</label>
                 <input
@@ -513,7 +558,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
                 />
               </div>
               <div>
-                <label className="font-bold text-neutral-700 block mb-1">Contact Phone</label>
+                <label className="font-bold text-neutral-700 block mb-1">Phone</label>
                 <input
                   type="tel"
                   required
@@ -523,31 +568,17 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
                   className="w-full px-3 py-2 rounded-xl border border-neutral-200 focus:outline-none focus:ring-1 focus:ring-[#85142f]"
                 />
               </div>
-              <div>
-                <label className="font-bold text-neutral-700 block mb-1">Event Category</label>
-                <select
-                  value={organizerForm.eventType}
-                  onChange={(e) => setOrganizerForm({ ...organizerForm, eventType: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-neutral-200 focus:outline-none focus:ring-1 focus:ring-[#85142f]"
-                >
-                  <option>Live Concert / Music Show</option>
-                  <option>Comedy Standup</option>
-                  <option>Sports Tournament / Marathon</option>
-                  <option>Theatre / Stage Play</option>
-                  <option>Workshop / Conference</option>
-                </select>
-              </div>
               <div className="pt-2 flex gap-2">
                 <button
                   type="button"
                   onClick={() => setIsListShowModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-neutral-200 font-bold text-neutral-700"
+                  className="flex-1 py-2 rounded-xl border border-neutral-200 font-bold text-neutral-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#85142f] text-white font-bold hover:bg-[#6e1026]"
+                  className="flex-1 py-2 rounded-xl bg-[#85142f] text-white font-bold hover:bg-[#6e1026]"
                 >
                   Submit Details
                 </button>
@@ -557,17 +588,11 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* MODAL 2: RESEND BOOKING CONFIRMATION                         */}
-      {/* ============================================================ */}
       {isResendModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
           <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl text-neutral-900 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
-              <div className="flex items-center gap-2">
-                <Ticket className="w-5 h-5 text-[#85142f]" />
-                <h3 className="text-sm font-bold text-neutral-900">Resend Confirmation</h3>
-              </div>
+              <h3 className="text-sm font-bold text-neutral-900">Resend Confirmation</h3>
               <button
                 type="button"
                 onClick={() => setIsResendModalOpen(false)}
@@ -609,17 +634,11 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* MODAL 3: NEWSLETTER SUBSCRIPTION                             */}
-      {/* ============================================================ */}
       {isNewsletterModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
           <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl text-neutral-900 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
-              <div className="flex items-center gap-2">
-                <Mail className="w-5 h-5 text-[#85142f]" />
-                <h3 className="text-sm font-bold text-neutral-900">Subscribe Newsletter</h3>
-              </div>
+              <h3 className="text-sm font-bold text-neutral-900">Subscribe Newsletter</h3>
               <button
                 type="button"
                 onClick={() => setIsNewsletterModalOpen(false)}
@@ -661,17 +680,11 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* MODAL 4: 24/7 CUSTOMER CARE INFO                             */}
-      {/* ============================================================ */}
       {isCustomerCareModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
           <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl text-neutral-900 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
-              <div className="flex items-center gap-2">
-                <Headphones className="w-5 h-5 text-[#85142f]" />
-                <h3 className="text-sm font-bold text-neutral-900">24/7 Customer Care</h3>
-              </div>
+              <h3 className="text-sm font-bold text-neutral-900">24/7 Customer Care</h3>
               <button
                 type="button"
                 onClick={() => setIsCustomerCareModalOpen(false)}
