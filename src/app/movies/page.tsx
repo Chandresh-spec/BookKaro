@@ -792,9 +792,9 @@ export default function MoviesPage() {
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
                   {filteredMovies.map((movie) => (
-                    <div
+                    <Link
                       key={movie.id}
-                      onClick={() => handleOpenBooking(movie)}
+                      href={`/movies/${movie.id}`}
                       className="group flex flex-col justify-between cursor-pointer rounded-2xl bg-white border border-neutral-200/60 p-2 sm:p-2.5 shadow-2xs hover:shadow-md hover:border-[#85142f]/30 transition-all duration-200"
                     >
                       <div>
@@ -867,18 +867,13 @@ export default function MoviesPage() {
 
                       {/* Quick Book Button */}
                       <div className="mt-2.5 px-1 pb-1">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenBooking(movie);
-                          }}
-                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center cursor-pointer"
+                        <span
+                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center block"
                         >
                           Book Tickets
-                        </button>
+                        </span>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

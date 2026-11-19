@@ -1,4 +1,4 @@
-import { CategoryItem, Movie, LiveEvent, SportEvent, FeaturedHero, CityOption } from '@/types';
+import { CategoryItem, Movie, LiveEvent, SportEvent, FeaturedHero, CityOption, CinemaShowtime } from '@/types';
 
 export const CITIES: CityOption[] = [
   { id: 'bengaluru', name: 'Bengaluru', isPopular: true },
@@ -104,6 +104,356 @@ export const CINEMAS_LIST = [
   { id: 'urvashi-cinema', name: 'Urvashi Cinema 4K Laser', location: 'Lalbagh Road, Bengaluru', distance: '2.5 km' },
 ];
 
+export const DEFAULT_CINEMA_SHOWTIMES: CinemaShowtime[] = [
+  {
+    cinemaId: 'pvr-bhartiya-mall',
+    cinemaName: 'PVR: Bhartiya Mall of Bengaluru',
+    brand: 'PVR',
+    location: 'Thanisandra Main Road, Kannuru, Bengaluru',
+    distance: '3.4 km',
+    cancellationAvailable: true,
+    facilities: ['F&B', 'M-Ticket', 'Parking', 'Wheelchair', 'Recliner'],
+    times: [
+      {
+        time: '10:15 AM',
+        format: 'PXL',
+        status: 'available',
+        price: 410,
+        categories: [
+          { name: 'Classic Plus', price: 410, status: 'available' },
+          { name: 'Extra Legroom', price: 420, status: 'available' },
+          { name: 'Prime', price: 480, status: 'available' },
+          { name: 'Picture Perfect', price: 530, status: 'available' },
+          { name: 'Recliner', price: 870, status: 'available' },
+        ],
+      },
+      {
+        time: '02:10 PM',
+        format: 'PXL',
+        status: 'available',
+        price: 480,
+        categories: [
+          { name: 'Classic Plus', price: 410, status: 'available' },
+          { name: 'Extra Legroom', price: 420, status: 'available' },
+          { name: 'Prime', price: 480, status: 'available' },
+          { name: 'Picture Perfect', price: 530, status: 'available' },
+          { name: 'Recliner', price: 870, status: 'available' },
+        ],
+      },
+      {
+        time: '06:05 PM',
+        format: 'PXL',
+        status: 'fast-filling',
+        price: 530,
+        categories: [
+          { name: 'Classic Plus', price: 410, status: 'available' },
+          { name: 'Extra Legroom', price: 420, status: 'available' },
+          { name: 'Prime', price: 480, status: 'available' },
+          { name: 'Picture Perfect', price: 530, status: 'filling-fast' },
+          { name: 'Recliner', price: 870, status: 'filling-fast' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'inox-mall-of-asia',
+    cinemaName: 'INOX: Megaplex Mall of Asia Bangalore',
+    brand: 'INOX',
+    location: 'Bellary Road, Byatarayanapura, Yelahanka',
+    distance: '4.5 km',
+    cancellationAvailable: true,
+    facilities: ['F&B', 'M-Ticket', 'Parking', 'Wheelchair'],
+    times: [
+      {
+        time: '05:00 PM',
+        format: '2D',
+        status: 'available',
+        price: 280,
+        categories: [
+          { name: 'Classic', price: 220, status: 'available' },
+          { name: 'Prime', price: 280, status: 'available' },
+          { name: 'Recliner', price: 420, status: 'available' },
+        ],
+      },
+      {
+        time: '08:30 PM',
+        format: '2D',
+        status: 'fast-filling',
+        price: 320,
+        categories: [
+          { name: 'Classic', price: 240, status: 'filling-fast' },
+          { name: 'Prime', price: 320, status: 'filling-fast' },
+          { name: 'Recliner', price: 450, status: 'sold-out' },
+        ],
+      },
+      {
+        time: '10:45 PM',
+        format: '2D',
+        status: 'available',
+        price: 250,
+        categories: [
+          { name: 'Classic', price: 200, status: 'available' },
+          { name: 'Prime', price: 250, status: 'available' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'pvr-nexus-koramangala',
+    cinemaName: 'PVR: Nexus (Formerly Forum), Koramangala',
+    brand: 'PVR',
+    location: 'Hosur Road, Chikku Lakshmaiah Layout, Koramangala',
+    distance: '3.1 km',
+    cancellationAvailable: true,
+    facilities: ['F&B', 'M-Ticket', 'Parking'],
+    times: [
+      {
+        time: '01:55 PM',
+        format: 'ATMOS REAL D',
+        status: 'available',
+        price: 300,
+        categories: [
+          { name: 'Standard', price: 250, status: 'available' },
+          { name: 'Atmos Prime', price: 300, status: 'available' },
+          { name: 'Club Recliner', price: 480, status: 'available' },
+        ],
+      },
+      {
+        time: '06:15 PM',
+        format: 'ATMOS REAL D',
+        status: 'fast-filling',
+        price: 350,
+        categories: [
+          { name: 'Standard', price: 280, status: 'sold-out' },
+          { name: 'Atmos Prime', price: 350, status: 'filling-fast' },
+          { name: 'Club Recliner', price: 500, status: 'filling-fast' },
+        ],
+      },
+      {
+        time: '09:40 PM',
+        format: '2D',
+        status: 'available',
+        price: 280,
+        categories: [
+          { name: 'Standard', price: 220, status: 'available' },
+          { name: 'Prime', price: 280, status: 'available' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'cinepolis-sjr-central',
+    cinemaName: 'Cinepolis: SJR (Central Mall) Arekere, Bannergatta',
+    brand: 'Cinepolis',
+    location: 'Bannerghatta Main Road, Arekere',
+    distance: '5.8 km',
+    cancellationAvailable: false,
+    facilities: ['M-Ticket', 'Parking'],
+    times: [
+      {
+        time: '04:20 PM',
+        format: '2D',
+        status: 'available',
+        price: 240,
+        categories: [
+          { name: 'Normal', price: 190, status: 'available' },
+          { name: 'Executive', price: 240, status: 'available' },
+          { name: 'VIP', price: 380, status: 'available' },
+        ],
+      },
+      {
+        time: '07:15 PM',
+        format: '2D',
+        status: 'fast-filling',
+        price: 290,
+        categories: [
+          { name: 'Normal', price: 220, status: 'filling-fast' },
+          { name: 'Executive', price: 290, status: 'filling-fast' },
+          { name: 'VIP', price: 420, status: 'sold-out' },
+        ],
+      },
+      {
+        time: '10:10 PM',
+        format: '2D',
+        status: 'available',
+        price: 220,
+        categories: [
+          { name: 'Normal', price: 180, status: 'available' },
+          { name: 'Executive', price: 220, status: 'available' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'pvr-vega-city',
+    cinemaName: 'PVR: Vega City, Bannerghatta Road',
+    brand: 'PVR',
+    location: 'Srinivasa Nagar, Bannerghatta Road',
+    distance: '3.8 km',
+    cancellationAvailable: true,
+    facilities: ['F&B', 'M-Ticket', 'Recliner', 'Parking'],
+    times: [
+      {
+        time: '02:30 PM',
+        format: '2D',
+        status: 'available',
+        price: 260,
+        categories: [
+          { name: 'Silver', price: 200, status: 'available' },
+          { name: 'Gold', price: 260, status: 'available' },
+          { name: 'Recliner', price: 400, status: 'available' },
+        ],
+      },
+      {
+        time: '06:45 PM',
+        format: '2D',
+        status: 'fast-filling',
+        price: 310,
+        categories: [
+          { name: 'Silver', price: 240, status: 'sold-out' },
+          { name: 'Gold', price: 310, status: 'filling-fast' },
+          { name: 'Recliner', price: 460, status: 'filling-fast' },
+        ],
+      },
+      {
+        time: '09:50 PM',
+        format: '2D',
+        status: 'available',
+        price: 260,
+        categories: [
+          { name: 'Silver', price: 200, status: 'available' },
+          { name: 'Gold', price: 260, status: 'available' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'pvr-phoenix-marketcity',
+    cinemaName: 'PVR Superplex: Phoenix Marketcity, Whitefield',
+    brand: 'PVR',
+    location: 'Mahadevapura, Whitefield Main Road',
+    distance: '8.4 km',
+    cancellationAvailable: true,
+    facilities: ['F&B', 'M-Ticket', '4DX', 'Wheelchair', 'Parking'],
+    times: [
+      {
+        time: '03:15 PM',
+        format: '4DX 3D',
+        status: 'available',
+        price: 450,
+        categories: [
+          { name: 'Standard 4DX', price: 450, status: 'available' },
+          { name: 'Premium 4DX', price: 550, status: 'available' },
+        ],
+      },
+      {
+        time: '07:30 PM',
+        format: '2D',
+        status: 'fast-filling',
+        price: 340,
+        categories: [
+          { name: 'Classic', price: 260, status: 'sold-out' },
+          { name: 'Prime', price: 340, status: 'filling-fast' },
+          { name: 'Recliner', price: 490, status: 'filling-fast' },
+        ],
+      },
+      {
+        time: '10:30 PM',
+        format: '2D',
+        status: 'available',
+        price: 270,
+        categories: [
+          { name: 'Classic', price: 210, status: 'available' },
+          { name: 'Prime', price: 270, status: 'available' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'inox-garuda-mall',
+    cinemaName: 'INOX: Garuda Mall, Magrath Road',
+    brand: 'INOX',
+    location: 'Ashok Nagar, Central Bengaluru',
+    distance: '2.8 km',
+    cancellationAvailable: true,
+    facilities: ['F&B', 'M-Ticket', 'Parking'],
+    times: [
+      {
+        time: '01:30 PM',
+        format: '2D',
+        status: 'available',
+        price: 250,
+        categories: [
+          { name: 'Executive', price: 210, status: 'available' },
+          { name: 'Club', price: 250, status: 'available' },
+        ],
+      },
+      {
+        time: '05:45 PM',
+        format: '2D',
+        status: 'fast-filling',
+        price: 300,
+        categories: [
+          { name: 'Executive', price: 240, status: 'filling-fast' },
+          { name: 'Club', price: 300, status: 'filling-fast' },
+          { name: 'Royal', price: 440, status: 'sold-out' },
+        ],
+      },
+      {
+        time: '09:15 PM',
+        format: '2D',
+        status: 'available',
+        price: 270,
+        categories: [
+          { name: 'Executive', price: 220, status: 'available' },
+          { name: 'Club', price: 270, status: 'available' },
+        ],
+      },
+    ],
+  },
+  {
+    cinemaId: 'urvashi-cinema',
+    cinemaName: 'Urvashi Digital 4K Laser Cinema: Lalbagh Road',
+    brand: 'Other',
+    location: 'Lalbagh Fort Road, Doddamavalli',
+    distance: '2.1 km',
+    cancellationAvailable: false,
+    facilities: ['M-Ticket', 'Parking'],
+    times: [
+      {
+        time: '02:00 PM',
+        format: '4K LASER DOLBY',
+        status: 'available',
+        price: 200,
+        categories: [
+          { name: 'Balcony', price: 200, status: 'available' },
+          { name: 'Rear Stall', price: 150, status: 'available' },
+        ],
+      },
+      {
+        time: '06:30 PM',
+        format: '4K LASER DOLBY',
+        status: 'fast-filling',
+        price: 240,
+        categories: [
+          { name: 'Balcony', price: 240, status: 'filling-fast' },
+          { name: 'Rear Stall', price: 180, status: 'sold-out' },
+        ],
+      },
+      {
+        time: '09:45 PM',
+        format: '4K LASER DOLBY',
+        status: 'available',
+        price: 200,
+        categories: [
+          { name: 'Balcony', price: 200, status: 'available' },
+          { name: 'Rear Stall', price: 150, status: 'available' },
+        ],
+      },
+    ],
+  },
+];
+
 export const FEATURED_MOVIE_BANNER = {
   id: 'lambodhara-2',
   title: 'Lambodhara 2.0',
@@ -118,6 +468,137 @@ export const FEATURED_MOVIE_BANNER = {
 };
 
 export const MOVIES: Movie[] = [
+  {
+    id: 'party-animals',
+    title: 'Party Animals',
+    certificate: 'A',
+    rating: 8.2,
+    likes: '650+',
+    votesCount: '5.2K+',
+    genre: 'Comedy',
+    genres: ['Comedy', 'Drama'],
+    languages: ['Hindi'],
+    formats: ['2D'],
+    duration: '2h 13m',
+    releaseDate: '20 Nov, 2026',
+    isPromoted: true,
+    posterImage: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop',
+    bannerImage: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1600&auto=format&fit=crop',
+    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    synopsis:
+      "Set on New Year's Eve in Bombay, *Party Animals* follows childhood best friends Mann Patel and Armaan Khanna as their night of parties and romance spirals out of control. Their plans take them from a nightclub to a mansion house party, an open double-decker party bus and eventually, a jail cell. With romantic complications, cops, goons and a runaway horse in the mix, every attempt to fix the night only makes things worse. The film explores friendship, ambition and the urge to stay relevant over one night that refuses to go as planned.",
+    cast: [
+      {
+        name: 'Viraj Ghelani',
+        role: 'Actor',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Arjun Tanwar',
+        role: 'Actor',
+        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Alam Taqveem Khan',
+        role: 'Actor',
+        image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Soundous Moufakir',
+        role: 'Actor',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Pragati Nagpal',
+        role: 'Actor',
+        image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Jaanya Joshi',
+        role: 'Actor',
+        image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&auto=format&fit=crop',
+      },
+    ],
+    crew: [
+      {
+        name: 'Ravi Chhabriya',
+        role: 'Director',
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Vikram Mehra',
+        role: 'Producer',
+        image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Siddharth Anand Kumar',
+        role: 'Producer',
+        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Ali Haji',
+        role: 'Writer',
+        image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=300&auto=format&fit=crop',
+      },
+    ],
+    showtimes: [
+      {
+        cinemaId: 'inox-mall-of-asia',
+        cinemaName: 'INOX: Megaplex Mall of Asia Bangalore',
+        cancellationAvailable: true,
+        facilities: ['F&B', 'M-Ticket'],
+        times: [
+          { time: '05:00 PM', format: '2D', status: 'available', price: 280 },
+          { time: '08:30 PM', format: '2D', status: 'fast-filling', price: 320 },
+          { time: '10:45 PM', format: '2D', status: 'available', price: 250 },
+        ],
+      },
+      {
+        cinemaId: 'pvr-nexus-koramangala',
+        cinemaName: 'PVR: Nexus (Formerly Forum), Koramangala',
+        cancellationAvailable: true,
+        facilities: ['F&B', 'M-Ticket'],
+        times: [
+          { time: '01:55 PM', format: 'ATMOS REAL D', status: 'available', price: 300 },
+          { time: '06:15 PM', format: 'ATMOS REAL D', status: 'fast-filling', price: 350 },
+          { time: '09:40 PM', format: '2D', status: 'available', price: 280 },
+        ],
+      },
+      {
+        cinemaId: 'cinepolis-sjr-central',
+        cinemaName: 'Cinepolis: SJR (Central Mall) Arekere, Bannergatta',
+        cancellationAvailable: false,
+        facilities: ['M-Ticket'],
+        times: [
+          { time: '04:20 PM', format: '2D', status: 'available', price: 240 },
+          { time: '07:15 PM', format: '2D', status: 'fast-filling', price: 290 },
+          { time: '10:10 PM', format: '2D', status: 'available', price: 220 },
+        ],
+      },
+      {
+        cinemaId: 'pvr-vega-city',
+        cinemaName: 'PVR: Vega City, Bannerghatta Road',
+        cancellationAvailable: true,
+        facilities: ['F&B', 'M-Ticket', 'Recliner'],
+        times: [
+          { time: '02:30 PM', format: '2D', status: 'available', price: 260 },
+          { time: '06:45 PM', format: '2D', status: 'fast-filling', price: 310 },
+          { time: '09:50 PM', format: '2D', status: 'available', price: 260 },
+        ],
+      },
+      {
+        cinemaId: 'pvr-phoenix-marketcity',
+        cinemaName: 'PVR Superplex: Phoenix Marketcity, Whitefield',
+        cancellationAvailable: true,
+        facilities: ['F&B', 'M-Ticket', '4DX'],
+        times: [
+          { time: '03:15 PM', format: '2D', status: 'available', price: 290 },
+          { time: '07:30 PM', format: '2D', status: 'fast-filling', price: 340 },
+          { time: '10:30 PM', format: '2D', status: 'available', price: 270 },
+        ],
+      },
+    ],
+  },
   {
     id: 'brindavihari',
     title: 'Brindavihari',
@@ -135,32 +616,79 @@ export const MOVIES: Movie[] = [
     trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   },
   {
-    id: 'party-animals',
-    title: 'Party Animals',
-    certificate: 'A',
-    rating: 8.2,
-    likes: '480+',
-    votesCount: '5.2K+',
-    genre: 'Comedy, Mystery',
-    languages: ['Hindi', 'English'],
-    formats: ['2D'],
-    duration: '1h 55m',
-    isPromoted: true,
-    posterImage: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop',
-    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-  },
-  {
     id: 'ramayana',
     title: 'Ramayana',
+    nativeTitle: 'रामायण',
     certificate: 'U',
     rating: 9.2,
-    votesCount: '430K+',
-    genre: 'Action, Fantasy, Devotional',
-    languages: ['Hindi', 'Kannada', 'Telugu', 'Tamil'],
-    formats: ['2D', '3D', 'IMAX 3D'],
+    votesCount: '440K+',
+    likes: '850K+',
+    genre: 'Action, Adventure, Drama',
+    genres: ['Action', 'Adventure', 'Drama', 'Mythological'],
+    languages: ['Hindi', 'Telugu', '+3'],
+    formats: ['2D', 'EPIQ', 'IMAX 3D', 'DOLBY CINEMA 2D', 'EPIQ 3D', '+10'],
     duration: '3h 15m',
+    releaseDate: '5 Nov, 2026',
+    isPromoted: true,
     posterImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop',
+    bannerImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop',
     trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    synopsis:
+      'The immortal story of Rama and Ravana defined a culture and moved generations. It now arrives as a cinematic landmark of our time. Ramayana is a timeless saga reborn through the lens of modern Indian cinema.',
+    cast: [
+      {
+        name: 'Ranbir Kapoor',
+        role: 'Lord Rama',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Sai Pallavi',
+        role: 'Sita',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Yash',
+        role: 'Ravana',
+        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Sunny Deol',
+        role: 'Lord Hanuman',
+        image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Lara Dutta',
+        role: 'Kaikeyi',
+        image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Arun Govil',
+        role: 'King Dasharatha',
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop',
+      },
+    ],
+    crew: [
+      {
+        name: 'Nitesh Tiwari',
+        role: 'Director',
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Namit Malhotra',
+        role: 'Producer',
+        image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'Hans Zimmer',
+        role: 'Music Composer',
+        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop',
+      },
+      {
+        name: 'A.R. Rahman',
+        role: 'Music Composer',
+        image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=300&auto=format&fit=crop',
+      },
+    ],
   },
   {
     id: 'om-operation-mole',

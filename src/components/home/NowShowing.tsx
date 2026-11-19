@@ -53,10 +53,10 @@ export const NowShowing: React.FC<NowShowingProps> = ({
             className="flex items-stretch gap-4 sm:gap-5 overflow-x-auto pb-4 scrollbar-none scroll-smooth"
           >
             {movies.map((movie) => (
-              <div
+              <Link
                 key={movie.id}
+                href={`/movies/${movie.id}`}
                 className="w-[200px] sm:w-[220px] lg:w-[230px] shrink-0 flex flex-col justify-between group/card cursor-pointer"
-                onClick={() => onBookMovie(movie)}
               >
                 {/* Poster Card */}
                 <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-neutral-900 mb-3 shadow-sm card-hover">
@@ -79,7 +79,7 @@ export const NowShowing: React.FC<NowShowingProps> = ({
 
                 {/* Details */}
                 <div className="mb-3">
-                  <h3 className="font-bold text-sm sm:text-base text-neutral-900 truncate leading-snug">
+                  <h3 className="font-bold text-sm sm:text-base text-neutral-900 truncate leading-snug group-hover/card:text-[#85142f] transition-colors">
                     {movie.title}
                   </h3>
                   <p className="text-xs text-neutral-500 font-medium mt-0.5 truncate">
@@ -88,17 +88,12 @@ export const NowShowing: React.FC<NowShowingProps> = ({
                 </div>
 
                 {/* Book Now Button */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onBookMovie(movie);
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-[#85142f] hover:bg-[#701027] text-white text-xs sm:text-sm font-bold tracking-tight transition-all active:scale-98 shadow-xs cursor-pointer text-center"
+                <span
+                  className="w-full py-2.5 rounded-xl bg-[#85142f] hover:bg-[#701027] text-white text-xs sm:text-sm font-bold tracking-tight transition-all active:scale-98 shadow-xs cursor-pointer text-center block"
                 >
                   Book Now
-                </button>
-              </div>
+                </span>
+              </Link>
             ))}
           </div>
 

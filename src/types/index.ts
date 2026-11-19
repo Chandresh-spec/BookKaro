@@ -7,6 +7,36 @@ export interface CategoryItem {
   href: string;
 }
 
+export interface CastMember {
+  name: string;
+  role: string;
+  image: string;
+}
+
+export interface CrewMember {
+  name: string;
+  role: string;
+  image: string;
+}
+
+export interface CinemaShowtime {
+  cinemaId: string;
+  cinemaName: string;
+  brand?: 'INOX' | 'PVR' | 'Cinepolis' | 'Miraj' | 'Other';
+  location?: string;
+  distance?: string;
+  cancellationAvailable?: boolean;
+  facilities?: string[];
+  times: {
+    time: string;
+    format?: string;
+    status: 'available' | 'fast-filling' | 'almost-full';
+    price?: number;
+    seatsLeft?: number;
+    categories?: { name: string; price: number; status: 'available' | 'filling-fast' | 'sold-out' }[];
+  }[];
+}
+
 export interface Movie {
   id: string;
   title: string;
@@ -26,6 +56,11 @@ export interface Movie {
   isUpcoming?: boolean;
   isPromoted?: boolean;
   trailerUrl?: string;
+  synopsis?: string;
+  releaseDate?: string;
+  cast?: CastMember[];
+  crew?: CrewMember[];
+  showtimes?: CinemaShowtime[];
 }
 
 export interface LiveEvent {
