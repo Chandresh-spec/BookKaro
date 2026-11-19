@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { Star, ChevronRight, ArrowRight } from 'lucide-react';
 import { Movie } from '@/types';
@@ -28,16 +29,21 @@ export const NowShowing: React.FC<NowShowingProps> = ({
         
         {/* Section Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-neutral-950">
-            Now Showing
-          </h2>
-          <a
-            href="#movies"
+          <div>
+            <span className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-neutral-400 uppercase block mb-1">
+              THE BIG SCREEN
+            </span>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-neutral-950">
+              Now Showing
+            </h2>
+          </div>
+          <Link
+            href="/movies"
             className="group inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#85142f] hover:text-[#5f0d22] transition-colors"
           >
             <span>View all movies</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </a>
+          </Link>
         </div>
 
         {/* Carousel Container */}

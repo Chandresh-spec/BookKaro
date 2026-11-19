@@ -31,8 +31,11 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
   };
 
   return (
-    <section className="py-2 sm:py-4">
+    <section className="pt-2 pb-2 sm:pt-4 sm:pb-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-base sm:text-lg lg:text-xl font-extrabold tracking-tight text-neutral-900 mb-3 sm:mb-4">
+          What are you in the mood for?
+        </h2>
         <div className="flex items-center gap-2.5 sm:gap-4 overflow-x-auto pb-2 scrollbar-none">
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;

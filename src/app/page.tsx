@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/home/Hero';
 import { CategoryBar } from '@/components/home/CategoryBar';
@@ -30,25 +31,7 @@ export default function Home() {
     email: 'chandresh@example.com',
   });
 
-  // Track scroll position to update active mobile tab
-  React.useEffect(() => {
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 250;
-      const moviesSection = document.getElementById('movies');
-      const trendingSection = document.getElementById('trending');
-
-      if (trendingSection && scrollPos >= trendingSection.offsetTop) {
-        setMobileTab('live-events');
-      } else if (moviesSection && scrollPos >= moviesSection.offsetTop) {
-        setMobileTab('movies');
-      } else {
-        setMobileTab('home');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Keep mobile bottom tab as home on the index page
 
   // Filter movies by search query if user searches
   const filteredMovies = searchQuery.trim()
@@ -101,10 +84,23 @@ export default function Home() {
     setIsTrailerModalOpen(true);
   };
 
+  const router = useRouter();
+
   const handleCategorySelect = (categoryId: CategoryType) => {
     setSelectedCategory(categoryId);
-    const targetId = categoryId === 'movies' ? 'movies' : 'trending';
-    const targetElement = document.getElementById(targetId);
+    if (categoryId === 'movies') {
+      router.push('/movies');
+      return;
+    }
+    if (categoryId === 'sports') {
+      router.push('/sports');
+      return;
+    }
+    if (categoryId === 'concerts' || categoryId === 'theatre' || categoryId === 'comedy') {
+      router.push('/events');
+      return;
+    }
+    const targetElement = document.getElementById('trending');
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: 'smooth' });
     }

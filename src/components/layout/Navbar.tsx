@@ -35,12 +35,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const navLinks = [
-    { label: 'Home', href: '#' },
-    { label: 'Movies', href: '#movies' },
-    { label: 'Concerts', href: '#concerts' },
-    { label: 'Sports', href: '#sports' },
-    { label: 'Theatre', href: '#theatre' },
-    { label: 'Events', href: '#trending' },
+    { label: 'Home', href: '/' },
+    { label: 'Movies', href: '/movies' },
+    { label: 'Concerts', href: '/events' },
+    { label: 'Sports', href: '/sports' },
+    { label: 'Theatre', href: '/events' },
+    { label: 'Events', href: '/events' },
   ];
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {navLinks.map((link) => {
                   const isActive = activeTab === link.label;
                   return (
-                    <a
+                    <Link
                       key={link.label}
                       href={link.href}
                       onClick={() => setActiveTab(link.label)}
@@ -95,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {isActive && (
                         <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#85142f] rounded-full" />
                       )}
-                    </a>
+                    </Link>
                   );
                 })}
               </nav>

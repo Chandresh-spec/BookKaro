@@ -1,40 +1,61 @@
 'use client';
 
 import React from 'react';
-import { Home, Film, Ticket, User as UserIcon } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Home, Film, Trophy, Ticket, User as UserIcon } from 'lucide-react';
 import { User } from '@/types';
 
 interface MobileBottomNavProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
   user?: User | null;
   onProfileClick: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
-  activeTab,
+  activeTab: propActiveTab,
   onTabChange,
   user,
   onProfileClick,
 }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Determine active tab based on route if not explicitly provided
+  const currentTab =
+    propActiveTab ||
+    (pathname?.startsWith('/movies')
+      ? 'movies'
+      : pathname?.startsWith('/sports')
+      ? 'sports'
+      : pathname?.startsWith('/events')
+      ? 'live-events'
+      : 'home');
+
   const tabs = [
     {
       id: 'home',
       label: 'Home',
       icon: Home,
-      href: '#',
+      href: '/',
     },
     {
       id: 'movies',
       label: 'Movies',
       icon: Film,
-      href: '#movies',
+      href: '/movies',
+    },
+    {
+      id: 'sports',
+      label: 'Sports',
+      icon: Trophy,
+      href: '/sports',
     },
     {
       id: 'live-events',
       label: 'Live Events',
       icon: Ticket,
-      href: '#trending',
+      href: '/events',
     },
     {
       id: 'profile',
@@ -45,16 +66,27 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   ];
 
   const handleNavClick = (tabId: string, href?: string) => {
-    onTabChange(tabId);
-    if (href) {
-      if (href === '#') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    onTabChange?.(tabId);
+    if (!href) return;
+
+    if (href === '/' && pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (href === '/movies' && pathname === '/movies') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (href === '/sports' && pathname === '/sports') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (href === '/events' && pathname === '/events') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (href.startsWith('/#')) {
+      if (pathname === '/') {
+        const hash = href.replace('/', '');
+        const target = document.querySelector(hash);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
       } else {
-        const target = document.querySelector(href);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
+        router.push(href);
       }
+    } else {
+      router.push(href);
     }
   };
 
@@ -67,10 +99,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       }}
       aria-label="Mobile Navigation"
     >
-      <div className="grid grid-cols-4 items-center h-14 max-w-lg mx-auto px-1">
+      <div className="grid grid-cols-5 items-center h-14 max-w-lg mx-auto px-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
+          const isActive = currentTab === tab.id;
 
           if (tab.onClick) {
             return (
