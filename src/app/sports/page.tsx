@@ -17,6 +17,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
@@ -926,6 +927,9 @@ export default function SportsPage() {
           )}
         </button>
       </div>
+
+      {/* Master BMS Footer */}
+      <Footer currentCity={currentCity} />
 
       {/* Mobile Bottom Dock */}
       <MobileBottomNav

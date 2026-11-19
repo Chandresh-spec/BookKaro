@@ -25,6 +25,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { User } from '@/types';
@@ -518,6 +519,9 @@ export default function ProfilePage() {
           showToast(`Welcome back, ${u.name}!`);
         }}
       />
+
+      {/* Master BMS Footer */}
+      <Footer currentCity={currentCity} />
 
       {/* Mobile Bottom Dock (Profile Active) */}
       <MobileBottomNav
