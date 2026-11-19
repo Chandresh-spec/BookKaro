@@ -220,7 +220,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       href: '/profile',
     },
     {
-      title: 'BOOKMYSHOW EXCLUSIVES',
+      title: 'BOOKKARO EXCLUSIVES',
       links: [
         'Lollapalooza India',
         'BookAChange',
@@ -273,7 +273,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
             <div className="text-xs sm:text-[14px] leading-snug">
               <span className="font-bold text-white mr-2">List your Show</span>
               <span className="text-[#cccccc] font-normal">
-                Got a show, event, activity or a great experience? Partner with us &amp; get listed on BookMyShow
+                Got a show, event, activity or a great experience? Partner with us &amp; get listed on BookKaro
               </span>
             </div>
           </div>
@@ -413,15 +413,14 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
           {/* ============================================================ */}
           <div className="pt-10 pb-4">
             
-            {/* Centered Brand Line with BookMyShow / BookKaro Logo */}
+            {/* Centered Brand Line with BookKaro Logo */}
             <div className="relative flex items-center justify-center mb-7">
               <div className="h-[1px] bg-[#424248] w-full" />
-              <div className="absolute bg-[#313131] px-6 flex items-center gap-1 select-none">
+              <div className="absolute bg-[#313131] px-6 flex items-center select-none">
                 <span className="text-white text-xl sm:text-2xl font-bold tracking-tight">book</span>
-                <span className="bg-[#ec5e7b] text-white px-1.5 py-0.5 rounded text-sm sm:text-base font-extrabold mx-0.5">
-                  my
+                <span className="bg-[#ec5e7b] text-white px-2 py-0.5 rounded text-sm sm:text-base font-extrabold mx-1">
+                  Karo
                 </span>
-                <span className="text-white text-xl sm:text-2xl font-bold tracking-tight">show</span>
               </div>
             </div>
 
@@ -506,10 +505,10 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
               </a>
             </div>
 
-            {/* Legal Copyright Disclaimer (Exact from Screenshot 2) */}
+            {/* Legal Copyright Disclaimer */}
             <div className="text-center text-[10px] text-[#55555c] leading-relaxed max-w-4xl mx-auto space-y-2 mt-4 px-4">
               <p>
-                Copyright 2026 © Bigtree Entertainment Pvt. Ltd. All Rights Reserved.
+                Copyright 2026 © BookKaro Entertainment Pvt. Ltd. All Rights Reserved.
               </p>
               <p>
                 The content and images used on this site are copyright protected and copyrights vests with the respective owners. The usage of the content and images on this website is intended to promote the works and no endorsement of the artist shall be implied. Unauthorized use is prohibited and punishable by law.
