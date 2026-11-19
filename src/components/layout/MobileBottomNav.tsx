@@ -30,9 +30,19 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       ? 'sports'
       : pathname?.startsWith('/events')
       ? 'live-events'
+      : pathname?.startsWith('/profile')
+      ? 'profile'
       : 'home');
 
-  const tabs = [
+  interface NavTab {
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    href?: string;
+    onClick?: () => void;
+  }
+
+  const tabs: NavTab[] = [
     {
       id: 'home',
       label: 'Home',
@@ -59,9 +69,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     },
     {
       id: 'profile',
-      label: user ? user.name.split(' ')[0] : 'Profile',
+      label: 'Profile',
       icon: UserIcon,
-      onClick: onProfileClick,
+      href: '/profile',
     },
   ];
 
@@ -76,6 +86,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     } else if (href === '/sports' && pathname === '/sports') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (href === '/events' && pathname === '/events') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (href === '/profile' && pathname === '/profile') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (href.startsWith('/#')) {
       if (pathname === '/') {

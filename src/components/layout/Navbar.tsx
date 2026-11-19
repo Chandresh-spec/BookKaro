@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { MapPin, Search, X, ChevronDown, Check, Ticket, LogOut } from 'lucide-react';
+import { ProfileDrawer } from '@/components/profile/ProfileDrawer';
 import { CITIES } from '@/data/mockData';
 import { User } from '@/types';
 
@@ -27,7 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSearchChange,
 }) => {
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -47,9 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsCityDropdownOpen(false);
-      }
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setIsUserMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -163,42 +161,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Search className="w-4 h-4" />
               </button>
 
-              {/* Profile Avatar 'C' */}
-              <div className="relative" ref={userMenuRef}>
+              {/* Profile Avatar Button (Opens BMS Profile Slide-over Drawer) */}
+              <div className="relative">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (user) {
-                      setIsUserMenuOpen(!isUserMenuOpen);
-                    } else {
-                      onSignInClick?.();
-                    }
-                  }}
-                  className="w-9 h-9 rounded-full bg-[#85142f] text-white flex items-center justify-center font-bold text-xs shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
+                  onClick={() => setIsProfileDrawerOpen(true)}
+                  className="w-9 h-9 rounded-full bg-[#85142f] text-white flex items-center justify-center font-bold text-xs shadow-sm hover:opacity-90 transition-all hover:scale-105 active:scale-95 cursor-pointer ring-2 ring-rose-100"
                   aria-label="User Profile"
                 >
                   {user ? user.name.charAt(0).toUpperCase() : 'C'}
                 </button>
-
-                {user && isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-neutral-100 p-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-3 py-2 border-b border-neutral-100 text-xs">
-                      <p className="font-bold text-neutral-900 truncate">{user.name}</p>
-                      <p className="text-[11px] text-neutral-500 truncate">{user.email || user.mobile}</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsUserMenuOpen(false);
-                        onSignOut?.();
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                )}
               </div>
 
             </div>
@@ -301,6 +273,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       )}
+
+      {/* Slide-over Profile Drawer (Matches Mockup media_1795070874134_453fa4f0.jpg) */}
+      <ProfileDrawer
+        isOpen={isProfileDrawerOpen}
+        onClose={() => setIsProfileDrawerOpen(false)}
+        user={user || null}
+        onSignOut={() => {
+          onSignOut?.();
+          setIsProfileDrawerOpen(false);
+        }}
+        onSignInClick={onSignInClick}
+      />
     </>
   );
 };
