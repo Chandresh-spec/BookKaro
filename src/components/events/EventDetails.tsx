@@ -86,36 +86,51 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafc] pb-28 lg:pb-20">
-      {/* 1. TOP BREADCRUMB & BACK NAVIGATION */}
-      <div className="bg-white border-b border-neutral-200/80 sticky top-16 lg:top-20 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-neutral-500 font-medium truncate">
+    <div className="min-h-screen bg-[#fafafc] pb-28 md:pb-32 lg:pb-20">
+      
+      {/* 1. TOP NAVIGATION / BREADCRUMB (Mobile & Tablet Optimized) */}
+      <div className="bg-white border-b border-neutral-200/80 sticky top-0 lg:top-20 z-30 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
+          
+          {/* Mobile view: Clean back button without squished long breadcrumbs */}
+          <div className="flex sm:hidden items-center gap-1">
             <Link
               href="/events"
-              className="inline-flex items-center gap-1 text-neutral-800 hover:text-[#85142f] font-bold transition-colors"
+              className="inline-flex items-center gap-1 text-neutral-800 hover:text-[#85142f] font-bold text-xs py-1 px-1.5 -ml-1 rounded-lg transition-colors active:scale-95"
+            >
+              <ChevronLeft className="w-5 h-5 stroke-[2.5px] text-[#85142f]" />
+              <span>Live Events</span>
+            </Link>
+          </div>
+
+          {/* Tablet & Desktop: Complete breadcrumbs */}
+          <div className="hidden sm:flex items-center gap-2 text-xs text-neutral-500 font-medium truncate">
+            <Link
+              href="/events"
+              className="inline-flex items-center gap-1 text-neutral-800 hover:text-[#85142f] font-bold transition-colors shrink-0"
             >
               <ChevronLeft className="w-4 h-4 stroke-[2.5px]" />
               <span>Back to Live Events</span>
             </Link>
             <span className="text-neutral-300">/</span>
-            <span className="text-neutral-400 truncate">{event.category}</span>
+            <span className="text-neutral-400 shrink-0">{event.category}</span>
             <span className="text-neutral-300">/</span>
-            <span className="text-neutral-900 font-bold truncate max-w-[200px] sm:max-w-xs">
+            <span className="text-neutral-900 font-bold truncate max-w-xs md:max-w-md">
               {event.title}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Right Action Icons: Share & Wishlist */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={handleShare}
-              className="p-2 rounded-full hover:bg-neutral-100 text-neutral-600 transition-colors relative"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition-colors relative active:scale-90"
               aria-label="Share Event"
             >
               <Share2 className="w-4 h-4" />
               {copiedToast && (
-                <span className="absolute -bottom-8 right-0 bg-neutral-900 text-white text-[10px] font-bold px-2 py-1 rounded shadow whitespace-nowrap">
+                <span className="absolute -bottom-8 right-0 bg-neutral-900 text-white text-[10px] font-bold px-2 py-1 rounded shadow whitespace-nowrap z-50">
                   Link copied!
                 </span>
               )}
@@ -123,20 +138,20 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             <button
               type="button"
               onClick={() => setIsLiked(!isLiked)}
-              className={`p-2 rounded-full hover:bg-neutral-100 transition-colors ${
-                isLiked ? 'text-[#85142f]' : 'text-neutral-600'
+              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors flex items-center justify-center active:scale-90 ${
+                isLiked ? 'text-[#85142f] bg-rose-50' : 'text-neutral-700'
               }`}
               aria-label="Add to Wishlist"
             >
-              <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#85142f]' : ''}`} />
+              <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#85142f] text-[#85142f]' : ''}`} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* 2. EVENT HERO SECTION WITH VIBRANT BACKDROP */}
+      {/* 2. EVENT HERO SECTION (Responsive for Mobile, Tablet, and Desktop) */}
       <section className="relative bg-neutral-950 text-white overflow-hidden">
-        {/* Blurred ambient background image */}
+        {/* Ambient background blur */}
         <div className="absolute inset-0 z-0">
           <Image
             src={event.bannerImage || event.image}
@@ -144,49 +159,57 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center opacity-30 blur-xl scale-110"
+            className="object-cover object-center opacity-30 blur-2xl scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/70 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-            {/* Event Poster Card */}
-            <div className="w-full sm:w-[320px] lg:w-[340px] shrink-0 mx-auto lg:mx-0">
-              <div className="relative aspect-[3/4] w-full rounded-3xl overflow-hidden shadow-2xl border border-white/15 bg-neutral-900 group">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-10 lg:py-16">
+          <div className="flex flex-col md:flex-row gap-5 sm:gap-8 lg:gap-12 items-start">
+            
+            {/* Event Poster Card:
+                - Mobile: Wide 16:9 or 4:3 rounded card
+                - Tablet (md): 280px 3:4 card
+                - Desktop (lg): 340px 3:4 card
+            */}
+            <div className="w-full md:w-[280px] lg:w-[340px] shrink-0">
+              <div className="relative aspect-[16/10] md:aspect-[3/4] w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/15 bg-neutral-900 group">
                 <Image
                   src={event.image}
                   alt={event.title}
                   fill
                   priority
-                  sizes="(max-width: 640px) 100vw, 340px"
-                  className={`object-cover ${event.isSoldOut ? 'grayscale contrast-125' : ''}`}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 300px, 340px"
+                  className={`object-cover object-center ${
+                    event.isSoldOut ? 'grayscale contrast-125' : 'group-hover:scale-102 transition-transform duration-500'
+                  }`}
                 />
 
-                {/* Overlays */}
-                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${bookingInfo.badgeColor} shadow-md`}>
+                {/* Top Badges */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
+                  <span className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${bookingInfo.badgeColor} shadow-md backdrop-blur-md`}>
                     {bookingInfo.title}
                   </span>
 
                   {event.isSoldOut ? (
-                    <span className="px-3 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                    <span className="px-2.5 sm:px-3 py-1 rounded-full bg-red-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
                       SOLD OUT
                     </span>
                   ) : event.isPromoted ? (
-                    <span className="px-3 py-1 rounded-full bg-[#e11d48] text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                    <span className="px-2.5 sm:px-3 py-1 rounded-full bg-[#e11d48] text-white text-[10px] font-black uppercase tracking-wider shadow-md">
                       PROMOTED
                     </span>
                   ) : event.isFastFilling ? (
-                    <span className="px-3 py-1 rounded-full bg-amber-500 text-neutral-950 text-[10px] font-black uppercase tracking-wider shadow-md">
+                    <span className="px-2.5 sm:px-3 py-1 rounded-full bg-amber-500 text-neutral-950 text-[10px] font-black uppercase tracking-wider shadow-md">
                       FAST FILLING
                     </span>
                   ) : null}
                 </div>
 
+                {/* Bottom Highlight Pill */}
                 {event.badgeText && (
-                  <div className="absolute bottom-3 left-3">
+                  <div className="absolute bottom-3 left-3 z-10">
                     <span className="px-3 py-1 rounded-full bg-[#85142f]/90 backdrop-blur-md text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
                       <span>{event.badgeText}</span>
@@ -196,40 +219,41 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
               </div>
             </div>
 
-            {/* Event Header Information */}
-            <div className="flex-1 min-w-0">
-              {/* Category & Tags */}
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-rose-300 border border-white/10">
+            {/* Event Information Header */}
+            <div className="flex-1 min-w-0 w-full">
+              
+              {/* Category & Attributes Pills (Horizontal swipe on mobile) */}
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 mb-2.5 sm:mb-3 scrollbar-none">
+                <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-rose-300 border border-white/10 whitespace-nowrap">
                   {event.category}
                 </span>
                 {event.language && (
-                  <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-neutral-300 border border-white/10">
+                  <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-neutral-300 border border-white/10 whitespace-nowrap">
                     {event.language}
                   </span>
                 )}
                 {event.ageRestriction && (
-                  <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-neutral-300 border border-white/10">
+                  <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-neutral-300 border border-white/10 whitespace-nowrap">
                     {event.ageRestriction}
                   </span>
                 )}
                 {event.isOutdoor && (
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30 whitespace-nowrap">
                     Outdoor Venue
                   </span>
                 )}
               </div>
 
               {/* Title */}
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight mb-4">
+              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight mb-3 sm:mb-4">
                 {event.title}
               </h1>
 
-              {/* Artist Spotlight (if available) */}
+              {/* Artist Card (Responsive touch-friendly) */}
               {event.artist && (
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-md mb-6">
+                <div className="flex items-center gap-3 p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-md mb-4 sm:mb-6">
                   {event.artist.image ? (
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-white/20">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden shrink-0 border border-white/20">
                       <Image
                         src={event.artist.image}
                         alt={event.artist.name}
@@ -238,76 +262,85 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                       />
                     </div>
                   ) : (
-                    <div className="w-12 h-12 rounded-xl bg-[#85142f] text-white flex items-center justify-center font-black text-sm shrink-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#85142f] text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0">
                       {event.artist.name.slice(0, 2).toUpperCase()}
                     </div>
                   )}
-                  <div>
-                    <h4 className="text-sm font-extrabold text-white">
+                  <div className="min-w-0">
+                    <h4 className="text-xs sm:text-sm font-extrabold text-white truncate">
                       {event.artist.name}
                     </h4>
-                    <p className="text-xs text-rose-200/90 font-medium">
+                    <p className="text-[11px] sm:text-xs text-rose-200/90 font-medium truncate">
                       {event.artist.role}
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Quick Info Grid: Date, Time, Venue, Duration */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-neutral-200 font-medium mb-6">
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
-                    <Calendar className="w-5 h-5" />
+              {/* 2-Column Key Metadata Grid (Date, Venue, Duration, Seating Format) */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 text-xs text-neutral-200 font-medium">
+                
+                <div className="flex items-center gap-2.5 sm:gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
+                    <Calendar className="w-4 h-4" />
                   </div>
-                  <div>
-                    <span className="block text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
+                  <div className="min-w-0">
+                    <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
                       Date & Time
                     </span>
-                    <span className="font-extrabold text-white">
-                      {event.date} {event.time ? `• ${event.time}` : ''}
+                    <span className="font-extrabold text-white text-xs truncate block">
+                      {event.date}
                     </span>
+                    {event.time && (
+                      <span className="text-[11px] text-neutral-300 block">
+                        {event.time}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5" />
+                <div className="flex items-center gap-2.5 sm:gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
+                    <MapPin className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <span className="block text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
+                    <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
                       Venue
                     </span>
-                    <span className="font-extrabold text-white truncate block">
+                    <span className="font-extrabold text-white text-xs truncate block">
                       {event.venue}
+                    </span>
+                    <span className="text-[11px] text-neutral-300 block">
+                      {event.city}
                     </span>
                   </div>
                 </div>
 
                 {event.duration && (
-                  <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="w-10 h-10 rounded-xl bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
-                      <Clock className="w-5 h-5" />
+                  <div className="flex items-center gap-2.5 sm:gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
+                      <Clock className="w-4 h-4" />
                     </div>
-                    <div>
-                      <span className="block text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
+                    <div className="min-w-0">
+                      <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
                         Duration
                       </span>
-                      <span className="font-extrabold text-white">
+                      <span className="font-extrabold text-white text-xs truncate block">
                         {event.duration}
                       </span>
                     </div>
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
-                    <BookingIcon className="w-5 h-5" />
+                <div className="flex items-center gap-2.5 sm:gap-3 p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
+                    <BookingIcon className="w-4 h-4" />
                   </div>
-                  <div>
-                    <span className="block text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
-                      Format
+                  <div className="min-w-0">
+                    <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+                      Layout
                     </span>
-                    <span className="font-extrabold text-white">
+                    <span className="font-extrabold text-white text-xs truncate block">
                       {bookingInfo.title}
                     </span>
                   </div>
@@ -319,19 +352,19 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
       </section>
 
       {/* 3. MAIN CONTENT: LEFT DETAILS + RIGHT STICKY BOOKING PANEL */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
-        <div className="lg:flex lg:gap-12 items-start">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
+        <div className="lg:flex lg:gap-10 items-start">
           
           {/* LEFT COLUMN: ABOUT, TERMS & ARTIST BIO */}
-          <div className="flex-1 min-w-0 space-y-8">
+          <div className="flex-1 min-w-0 space-y-6 sm:space-y-8">
             
             {/* Booking Mode Informational Callout */}
-            <div className="p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-xs flex items-start gap-4">
-              <div className="w-11 h-11 rounded-2xl bg-[#85142f]/10 text-[#85142f] flex items-center justify-center shrink-0">
-                <BookingIcon className="w-6 h-6" />
+            <div className="p-4 sm:p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-2xs flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-[#85142f]/10 text-[#85142f] flex items-center justify-center shrink-0">
+                <BookingIcon className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-extrabold text-neutral-900 mb-1 flex items-center gap-2">
+                <h3 className="text-xs sm:text-sm font-extrabold text-neutral-900 mb-0.5 flex items-center gap-2">
                   <span>Booking Mode: {bookingInfo.title}</span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-neutral-100 text-neutral-600 uppercase">
                     Interactive
@@ -344,13 +377,13 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             </div>
 
             {/* About the Event */}
-            <section className="bg-white rounded-3xl border border-neutral-200/80 p-6 sm:p-8 shadow-xs">
-              <h2 className="text-lg sm:text-xl font-black tracking-tight text-neutral-950 mb-4 pb-2 border-b border-neutral-100 flex items-center gap-2">
+            <section className="bg-white rounded-3xl border border-neutral-200/80 p-5 sm:p-8 shadow-xs">
+              <h2 className="text-base sm:text-xl font-black tracking-tight text-neutral-950 mb-3 sm:mb-4 pb-2 border-b border-neutral-100 flex items-center gap-2">
                 <span>About The Event</span>
                 <Sparkles className="w-4 h-4 text-[#85142f]" />
               </h2>
 
-              <div className="space-y-4 text-xs sm:text-sm text-neutral-700 leading-relaxed">
+              <div className="space-y-3.5 text-xs sm:text-sm text-neutral-700 leading-relaxed">
                 {event.about && event.about.length > 0 ? (
                   event.about.map((p, idx) => (
                     <p key={idx}>{p}</p>
@@ -364,25 +397,25 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
 
               {/* Supported Delivery Methods */}
               {event.deliveryOptions && event.deliveryOptions.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-neutral-100">
-                  <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
+                <div className="mt-5 pt-5 border-t border-neutral-100">
+                  <h4 className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2.5">
                     Available Delivery Modes
                   </h4>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-2">
                     {event.deliveryOptions.includes('digital') && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                         <span>M-Ticket (Digital QR)</span>
                       </span>
                     )}
                     {event.deliveryOptions.includes('home_delivery') && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
                         <span>Home Delivery (Physical Band/Pass)</span>
                       </span>
                     )}
                     {event.deliveryOptions.includes('venue_pickup') && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
                         <span>Box Office Venue Pickup</span>
                       </span>
@@ -393,13 +426,13 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             </section>
 
             {/* Terms and Conditions */}
-            <section className="bg-white rounded-3xl border border-neutral-200/80 p-6 sm:p-8 shadow-xs">
-              <h2 className="text-lg sm:text-xl font-black tracking-tight text-neutral-950 mb-4 pb-2 border-b border-neutral-100 flex items-center gap-2">
+            <section className="bg-white rounded-3xl border border-neutral-200/80 p-5 sm:p-8 shadow-xs">
+              <h2 className="text-base sm:text-xl font-black tracking-tight text-neutral-950 mb-3 sm:mb-4 pb-2 border-b border-neutral-100 flex items-center gap-2">
                 <span>Terms & Conditions</span>
                 <ShieldCheck className="w-4 h-4 text-neutral-400" />
               </h2>
 
-              <ul className="space-y-2.5 text-xs text-neutral-600 list-disc list-inside leading-relaxed">
+              <ul className="space-y-2 text-xs text-neutral-600 list-disc list-inside leading-relaxed">
                 {event.terms && event.terms.length > 0 ? (
                   event.terms.map((term, idx) => (
                     <li key={idx} className="marker:text-[#85142f]">
@@ -415,7 +448,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                       Valid government photo ID is mandatory at the security gates.
                     </li>
                     <li className="marker:text-[#85142f]">
-                      Outside eatables, beverages, professional cameras, and inflammable items are prohibited.
+                      Outside eatables, beverages, and recording cameras are strictly prohibited.
                     </li>
                   </>
                 )}
@@ -423,7 +456,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             </section>
           </div>
 
-          {/* RIGHT COLUMN: STICKY BOOKING PANEL (DESKTOP) */}
+          {/* RIGHT COLUMN: STICKY BOOKING PANEL (Visible on Desktop lg and up) */}
           <aside className="hidden lg:block w-96 shrink-0 sticky top-28">
             <div className="bg-white rounded-3xl border border-neutral-200/80 p-6 shadow-md space-y-6">
               
@@ -513,35 +546,40 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
         </div>
       </main>
 
-      {/* 4. MOBILE STICKY BOTTOM BOOKING BAR */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-neutral-200/80 p-3.5 z-40 shadow-xl">
-        <div className="flex items-center justify-between gap-4">
+      {/* 4. MOBILE & TABLET STICKY BOTTOM BOOKING BAR (Visible on screens < lg) */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 px-4 py-3 z-50 shadow-2xl">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div>
             <span className="block text-[10px] uppercase font-bold text-neutral-400 tracking-wider">
               {event.isSoldOut ? 'Status' : 'Starting From'}
             </span>
-            <span
-              className={`text-lg font-black ${
-                event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
-              }`}
-            >
-              {event.isSoldOut ? 'Sold Out' : `${event.currency} ${event.startingPrice.toLocaleString('en-IN')}`}
-            </span>
+            <div className="flex items-baseline gap-1">
+              <span
+                className={`text-lg sm:text-xl font-black ${
+                  event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
+                }`}
+              >
+                {event.isSoldOut ? 'Sold Out' : `${event.currency} ${event.startingPrice.toLocaleString('en-IN')}`}
+              </span>
+              {!event.isSoldOut && (
+                <span className="text-[11px] text-neutral-400 font-semibold">onwards</span>
+              )}
+            </div>
           </div>
 
           <button
             type="button"
             disabled={event.isSoldOut}
             onClick={handleProceedBooking}
-            className={`py-3 px-6 rounded-full font-extrabold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all ${
+            className={`py-3.5 px-6 sm:px-8 rounded-full font-extrabold text-xs sm:text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer ${
               event.isSoldOut
-                ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
-                : 'bg-[#85142f] text-white shadow-[#85142f]/30'
+                ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none'
+                : 'bg-[#85142f] text-white shadow-[#85142f]/35 hover:bg-[#6c0f25]'
             }`}
           >
             <Ticket className="w-4 h-4" />
-            <span>{event.isSoldOut ? 'Sold Out' : 'Book Now'}</span>
-            {!event.isSoldOut && <ArrowRight className="w-3.5 h-3.5 ml-0.5" />}
+            <span>{event.isSoldOut ? 'Sold Out' : 'Book Tickets'}</span>
+            {!event.isSoldOut && <ArrowRight className="w-4 h-4 ml-0.5" />}
           </button>
         </div>
       </div>

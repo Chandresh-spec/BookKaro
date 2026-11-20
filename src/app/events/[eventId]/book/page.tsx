@@ -3,10 +3,18 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft, Sparkles, ArrowRight, ShieldCheck, Ticket } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronUp,
+  ChevronDown,
+  X,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  Ticket,
+} from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { LIVE_EVENTS_MOCK } from '@/data/mockEvents';
 import { STADIUM_VENUE_CONFIG, ZONE_VENUE_CONFIG } from '@/data/mockVenues';
@@ -63,6 +71,7 @@ export default function EventBookingPage() {
 
   // Selected ticket items
   const [selectedItems, setSelectedItems] = useState<SelectedTicketItem[]>([]);
+  const [isMobileSummaryOpen, setIsMobileSummaryOpen] = useState(false);
 
   // Delivery options state
   const [deliveryType, setDeliveryType] = useState<TicketDeliveryType>('digital');
@@ -161,11 +170,13 @@ export default function EventBookingPage() {
   // Step transitions
   const handleProceedFromTickets = () => {
     if (selectedItems.length === 0) return;
+    setIsMobileSummaryOpen(false);
     setCurrentStep('delivery');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleProceedFromDelivery = () => {
+    setIsMobileSummaryOpen(false);
     setCurrentStep('payment');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -202,7 +213,29 @@ export default function EventBookingPage() {
 
     setConfirmationData(confirmation);
     setIsConfirmed(true);
+    setIsMobileSummaryOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Calculations for mobile bar
+  const totalTickets = selectedItems.reduce((acc, item) => acc + item.quantity, 0);
+  const itemsSubtotal = selectedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalConvenienceFee = totalTickets * 40;
+  const gstOnFee = Math.round(totalConvenienceFee * 0.18);
+  const deliveryFee = deliveryType === 'home_delivery' ? 99 : 0;
+  const totalPayable = itemsSubtotal + totalConvenienceFee + gstOnFee + deliveryFee;
+
+  const currentButtonLabel =
+    currentStep === 'tickets'
+      ? 'Continue to Delivery'
+      : currentStep === 'delivery'
+      ? 'Continue to Payment'
+      : 'Confirm Payment';
+
+  const handleProceedCurrentStep = () => {
+    if (currentStep === 'tickets') handleProceedFromTickets();
+    else if (currentStep === 'delivery') handleProceedFromDelivery();
+    else handlePaymentSuccess();
   };
 
   // If event not found
@@ -235,12 +268,10 @@ export default function EventBookingPage() {
     );
   }
 
-  // Delivery fee calculation
-  const deliveryFee = deliveryType === 'home_delivery' ? 99 : 0;
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafc] text-neutral-900 selection:bg-[#85142f] selection:text-white pb-24 lg:pb-16">
-      {/* 1. TOP NAVBAR */}
+    <div className="min-h-screen flex flex-col bg-[#fafafc] text-neutral-900 selection:bg-[#85142f] selection:text-white pb-32 sm:pb-36 lg:pb-16">
+      
+      {/* 1. TOP NAVBAR (Hidden on small mobile to maximize screen area for maps) */}
       <div className="hidden lg:block">
         <Navbar
           currentCity={event.city || currentCity}
@@ -254,14 +285,14 @@ export default function EventBookingPage() {
       </div>
 
       {/* 2. SUB-HEADER WITH TIMER & BREADCRUMB */}
-      <header className="bg-white border-b border-neutral-200/80 sticky top-0 lg:top-20 z-40 px-4 py-2.5">
+      <header className="bg-white border-b border-neutral-200/80 sticky top-0 lg:top-20 z-40 px-3 sm:px-6 py-2.5 shadow-2xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           <Link
             href={`/events/${event.id}`}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-700 hover:text-[#85142f] transition-colors"
           >
-            <ChevronLeft className="w-4 h-4 stroke-[2.5px]" />
-            <span className="truncate max-w-[150px] sm:max-w-md">
+            <ChevronLeft className="w-5 h-5 stroke-[2.5px] text-[#85142f]" />
+            <span className="truncate max-w-[170px] sm:max-w-md font-extrabold text-neutral-950">
               {event.title}
             </span>
           </Link>
@@ -288,7 +319,7 @@ export default function EventBookingPage() {
       )}
 
       {/* 4. MAIN BOOKING WORKFLOW CONTAINER */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 flex-1 w-full">
         {isConfirmed && confirmationData ? (
           /* STEP 4: SUCCESS CONFIRMATION */
           <BookingConfirmation
@@ -299,7 +330,7 @@ export default function EventBookingPage() {
           <div className="lg:flex lg:gap-8 items-start">
             
             {/* LEFT COLUMN: ACTIVE STEP INTERFACE */}
-            <div className="flex-1 min-w-0 mb-8 lg:mb-0">
+            <div className="flex-1 min-w-0 mb-6 lg:mb-0">
               
               {/* STEP 1: SELECT TICKETS ACCORDING TO BOOKING MODE */}
               {currentStep === 'tickets' && (
@@ -366,7 +397,7 @@ export default function EventBookingPage() {
                     onAddressChange={setDeliveryAddress}
                   />
 
-                  <div className="flex items-center justify-between pt-4 border-t border-neutral-200">
+                  <div className="hidden lg:flex items-center justify-between pt-4 border-t border-neutral-200">
                     <button
                       type="button"
                       onClick={() => setCurrentStep('tickets')}
@@ -391,7 +422,7 @@ export default function EventBookingPage() {
               {/* STEP 3: MOCK PAYMENT GATEWAY */}
               {currentStep === 'payment' && (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+                  <div className="hidden lg:flex items-center justify-between pb-2 border-b border-neutral-200">
                     <button
                       type="button"
                       onClick={() => setCurrentStep('delivery')}
@@ -403,40 +434,23 @@ export default function EventBookingPage() {
                   </div>
 
                   <MockPayment
-                    totalAmount={
-                      selectedItems.reduce((acc, item) => acc + item.price * item.quantity, 0) +
-                      selectedItems.reduce((acc, item) => acc + item.quantity, 0) * 40 +
-                      Math.round(selectedItems.reduce((acc, item) => acc + item.quantity, 0) * 40 * 0.18) +
-                      deliveryFee
-                    }
+                    totalAmount={totalPayable}
                     onPaymentSuccess={handlePaymentSuccess}
                   />
                 </div>
               )}
             </div>
 
-            {/* RIGHT COLUMN: STICKY BOOKING SUMMARY */}
-            <aside className="w-full lg:w-96 shrink-0 lg:sticky lg:top-36">
+            {/* RIGHT COLUMN: STICKY BOOKING SUMMARY (Desktop lg and up) */}
+            <aside className="hidden lg:block w-96 shrink-0 lg:sticky lg:top-36">
               <BookingSummary
                 event={event}
                 selectedItems={selectedItems}
                 deliveryType={deliveryType}
                 deliveryFee={deliveryFee}
                 onRemoveItem={handleRemoveItem}
-                onProceed={
-                  currentStep === 'tickets'
-                    ? handleProceedFromTickets
-                    : currentStep === 'delivery'
-                    ? handleProceedFromDelivery
-                    : handlePaymentSuccess
-                }
-                buttonLabel={
-                  currentStep === 'tickets'
-                    ? 'Continue to Delivery'
-                    : currentStep === 'delivery'
-                    ? 'Continue to Payment'
-                    : 'Confirm Payment'
-                }
+                onProceed={handleProceedCurrentStep}
+                buttonLabel={currentButtonLabel}
                 isProceedDisabled={selectedItems.length === 0}
               />
             </aside>
@@ -444,14 +458,97 @@ export default function EventBookingPage() {
         )}
       </main>
 
-      {/* 5. FOOTER */}
-      <Footer />
+      {/* 5. MOBILE & TABLET STICKY BOTTOM ACTION BAR (Screens < lg) */}
+      {!isConfirmed && (
+        <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 p-3 sm:p-4 z-50 shadow-2xl">
+          <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
+            
+            {/* Left: Summary summary info & trigger */}
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-black text-neutral-950">
+                  ₹{totalPayable.toLocaleString('en-IN')}
+                </span>
+                {totalTickets > 0 && (
+                  <span className="text-[11px] font-bold text-neutral-500 truncate">
+                    ({totalTickets} {totalTickets === 1 ? 'pass' : 'passes'})
+                  </span>
+                )}
+              </div>
 
-      {/* 6. MOBILE BOTTOM NAV */}
-      <MobileBottomNav
-        user={currentUser}
-        onProfileClick={() => setIsAuthModalOpen(true)}
-      />
+              {selectedItems.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsMobileSummaryOpen(true)}
+                  className="text-[11px] font-bold text-[#85142f] hover:underline flex items-center gap-0.5 cursor-pointer mt-0.5"
+                >
+                  <span>View Breakdown</span>
+                  <ChevronUp className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Right: Primary Continue / Book button */}
+            <button
+              type="button"
+              disabled={selectedItems.length === 0}
+              onClick={handleProceedCurrentStep}
+              className={`py-3 px-5 sm:px-7 rounded-full font-extrabold text-xs sm:text-sm flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap ${
+                selectedItems.length === 0
+                  ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed shadow-none'
+                  : 'bg-[#85142f] text-white shadow-[#85142f]/35 hover:bg-[#6c0f25]'
+              }`}
+            >
+              <span>{currentButtonLabel}</span>
+              <ArrowRight className="w-4 h-4 ml-0.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 6. MOBILE SLIDE-UP SUMMARY DRAWER / BOTTOM SHEET */}
+      {isMobileSummaryOpen && (
+        <div className="fixed inset-0 z-55 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300">
+            {/* Drawer Header */}
+            <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Ticket className="w-4 h-4 text-[#85142f]" />
+                <h3 className="font-extrabold text-sm text-neutral-900">
+                  Order Breakdown & Selected Seats
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileSummaryOpen(false)}
+                className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 hover:bg-neutral-200"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Drawer Content */}
+            <div className="p-5 overflow-y-auto">
+              <BookingSummary
+                event={event}
+                selectedItems={selectedItems}
+                deliveryType={deliveryType}
+                deliveryFee={deliveryFee}
+                onRemoveItem={handleRemoveItem}
+                onProceed={() => {
+                  setIsMobileSummaryOpen(false);
+                  handleProceedCurrentStep();
+                }}
+                buttonLabel={currentButtonLabel}
+                isProceedDisabled={selectedItems.length === 0}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 7. FOOTER */}
+      <Footer />
 
       {/* AUTH MODAL */}
       <AuthModal

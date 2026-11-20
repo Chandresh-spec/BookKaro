@@ -112,12 +112,6 @@ export default function EventDetailPage() {
       {/* 3. FOOTER */}
       <Footer />
 
-      {/* 4. MOBILE BOTTOM NAV */}
-      <MobileBottomNav
-        user={currentUser}
-        onProfileClick={() => setIsAuthModalOpen(true)}
-      />
-
       {/* AUTH MODAL */}
       <AuthModal
         isOpen={isAuthModalOpen}
