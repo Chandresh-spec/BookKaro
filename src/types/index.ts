@@ -66,22 +66,7 @@ export interface Movie {
 export * from './event';
 export * from './venue';
 export * from './booking';
-
-export interface SportEvent {
-  id: string;
-  title: string;
-  sportType: string;
-  date: string;
-  time?: string;
-  venue: string;
-  city: string;
-  distanceOrCategory?: string;
-  startingPrice: number;
-  currency: string;
-  image: string;
-  isOutdoor?: boolean;
-  isFastFilling?: boolean;
-}
+export * from './sports';
 
 export interface FeaturedHero {
   tag: string;
