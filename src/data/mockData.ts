@@ -1,5 +1,6 @@
 import { CategoryItem, Movie, LiveEvent, SportEvent, FeaturedHero, CityOption, CinemaShowtime } from '@/types';
 import { LIVE_EVENTS_MOCK } from './mockEvents';
+import { MOCK_SPORTS_EVENTS, SPORTS_FILTER_OPTIONS } from './mockSportsEvents';
 
 export const CITIES: CityOption[] = [
   { id: 'bengaluru', name: 'Bengaluru', isPopular: true },
@@ -924,127 +925,8 @@ export const TRENDING_EXPERIENCES: LiveEvent[] = [
 
 export const LIVE_EVENTS = TRENDING_EXPERIENCES;
 
-export const SPORTS_FILTERS = {
-  sportTypes: [
-    'Running',
-    'Chess',
-    'Mixed Martial Arts',
-    'Shooting',
-    'Basketball',
-    'Card Games',
-    'Football',
-    'Motorsports',
-    'Pool',
-  ],
-  dates: ['Today', 'Tomorrow', 'This Weekend'],
-  moreFilters: ['Outdoor Events', 'Fast Filling'],
-  priceRanges: ['Free', '0 - 500', '501 - 2000', 'Above 2000'],
-};
-
-export const SPORTS_EVENTS: SportEvent[] = [
-  {
-    id: 'empire-heritage-run',
-    title: 'Empire Heritage Run 2027',
-    sportType: 'Running',
-    date: 'Sun, 17 Jan',
-    venue: 'Cubbon Park: Bengaluru',
-    city: 'Bengaluru',
-    distanceOrCategory: '5k',
-    startingPrice: 399,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=800&auto=format&fit=crop',
-    isOutdoor: true,
-  },
-  {
-    id: 'maverick-car-racing',
-    title: 'Maverick Car Racing Event',
-    sportType: 'Motorsports',
-    date: 'Sun, 22 Nov',
-    venue: 'Meco Kartopia: Bengaluru',
-    city: 'Bengaluru',
-    distanceOrCategory: 'Car Racing',
-    startingPrice: 349,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=800&auto=format&fit=crop',
-    isFastFilling: true,
-  },
-  {
-    id: 'bengaluru-corporate-wellness-run',
-    title: 'Bengaluru Corporate Wellness Run',
-    sportType: 'Running',
-    date: 'Sun, 10 Jan',
-    venue: 'Sree Kanteerava Stadium:...',
-    city: 'Bengaluru',
-    distanceOrCategory: 'Marathon',
-    startingPrice: 999,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=800&auto=format&fit=crop',
-    isOutdoor: true,
-  },
-  {
-    id: 'bangalore-5k-challenge',
-    title: 'Bangalore 5K Challenge 2026',
-    sportType: 'Running',
-    date: 'Sun, 29 Nov',
-    venue: 'Decathlon Sports,...',
-    city: 'Bengaluru',
-    distanceOrCategory: 'Marathon',
-    startingPrice: 444,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=800&auto=format&fit=crop',
-    isOutdoor: true,
-  },
-  {
-    id: 'bangalore-3x3-basketball',
-    title: 'Bangalore 3x3 Basketball League',
-    sportType: 'Basketball',
-    date: 'Sat, 5 Dec',
-    venue: 'Play Arena: Sarjapur',
-    city: 'Bengaluru',
-    distanceOrCategory: 'Tournament',
-    startingPrice: 299,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'karnataka-grandmaster-chess',
-    title: 'Karnataka Grandmaster Chess Open',
-    sportType: 'Chess',
-    date: 'Sun, 12 Dec',
-    venue: 'Kanteerava Indoor Stadium',
-    city: 'Bengaluru',
-    distanceOrCategory: 'Rapid Chess',
-    startingPrice: 500,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'bangalore-super-football',
-    title: 'Bangalore Super Football Championship',
-    sportType: 'Football',
-    date: 'Sun, 19 Dec',
-    venue: 'Bangalore Football Stadium',
-    city: 'Bengaluru',
-    distanceOrCategory: '7-a-side',
-    startingPrice: 499,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800&auto=format&fit=crop',
-    isOutdoor: true,
-  },
-  {
-    id: 'mma-fight-night',
-    title: 'MMA Fight Night Championship',
-    sportType: 'Mixed Martial Arts',
-    date: 'Sat, 26 Dec',
-    venue: 'Koramangala Indoor Stadium',
-    city: 'Bengaluru',
-    distanceOrCategory: 'Pro League',
-    startingPrice: 1200,
-    currency: '₹',
-    image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
-    isFastFilling: true,
-  },
-];
+export const SPORTS_FILTERS = SPORTS_FILTER_OPTIONS;
+export const SPORTS_EVENTS: SportEvent[] = MOCK_SPORTS_EVENTS;
 
 export const EVENTS_FILTERS = {
   categories: [
