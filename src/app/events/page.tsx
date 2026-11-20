@@ -1,13 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  ChevronDown,
   Search,
   Filter,
   MapPin,
@@ -15,51 +11,40 @@ import {
   X,
   RotateCcw,
   Sparkles,
-  Ticket,
+  SlidersHorizontal,
+  Flame,
+  Check,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
-import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
-import {
-  EVENTS_LIST,
-  EVENTS_FILTERS,
-  CITIES,
-} from '@/data/mockData';
-import { LiveEvent, User } from '@/types';
+import { LIVE_EVENTS_MOCK, EVENT_CATEGORIES, EVENT_DATES_FILTER, EVENT_PRICE_RANGES } from '@/data/mockEvents';
+import { CITIES } from '@/data/mockData';
+import { LiveEvent, ConcertBookingMode, User } from '@/types';
+import { EventCard } from '@/components/events/EventCard';
+import { EventFilters } from '@/components/events/EventFilters';
+import { FeaturedEventBanner } from '@/components/events/FeaturedEventBanner';
+import { TrendingConcerts } from '@/components/events/TrendingConcerts';
+import { EventCategoryPills } from '@/components/events/EventCategoryPills';
 
-export default function EventsPage() {
+export default function EventsDiscoveryPage() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
 
-  // Active Filters
+  // Filters State
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  const [selectedMoreFilter, setSelectedMoreFilter] = useState<string | null>(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string | null>(null);
+  const [selectedBookingMode, setSelectedBookingMode] = useState<ConcertBookingMode | 'all'>('all');
+  const [selectedMoreFilter, setSelectedMoreFilter] = useState<string | null>(null);
 
-  // Sidebar accordions
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
-  const [isDateOpen, setIsDateOpen] = useState(true);
-  const [isLanguagesOpen, setIsLanguagesOpen] = useState(true);
-  const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(true);
-  const [isPriceOpen, setIsPriceOpen] = useState(true);
-
-  // Modals
+  // Modals & Drawers
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [tempCategory, setTempCategory] = useState<string | null>(null);
-  const [tempDate, setTempDate] = useState<string | null>(null);
-  const [tempLanguage, setTempLanguage] = useState<string | null>(null);
-  const [tempMoreFilter, setTempMoreFilter] = useState<string | null>(null);
-  const [tempPriceRange, setTempPriceRange] = useState<string | null>(null);
-
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [selectedEventForBooking, setSelectedEventForBooking] = useState<LiveEvent | null>(null);
 
   const [currentUser, setCurrentUser] = useState<User | null>({
     id: 'usr_c1',
@@ -67,89 +52,110 @@ export default function EventsPage() {
     email: 'chandresh@example.com',
   });
 
-  const handleOpenFilterModal = () => {
-    setTempCategory(selectedCategory);
-    setTempDate(selectedDate);
-    setTempLanguage(selectedLanguage);
-    setTempMoreFilter(selectedMoreFilter);
-    setTempPriceRange(selectedPriceRange);
-    setIsFilterModalOpen(true);
-  };
+  // Featured and Trending Events
+  const featuredEvents = useMemo(() => {
+    return LIVE_EVENTS_MOCK.filter((e) => e.isFeatured);
+  }, []);
 
-  const handleApplyFilters = () => {
-    setSelectedCategory(tempCategory);
-    setSelectedDate(tempDate);
-    setSelectedLanguage(tempLanguage);
-    setSelectedMoreFilter(tempMoreFilter);
-    setSelectedPriceRange(tempPriceRange);
-    setIsFilterModalOpen(false);
-  };
+  const trendingEvents = useMemo(() => {
+    return LIVE_EVENTS_MOCK.filter((e) => e.isTrending);
+  }, []);
 
-  const handleResetFilters = () => {
-    setSelectedCategory(null);
-    setSelectedDate(null);
-    setSelectedLanguage(null);
-    setSelectedMoreFilter(null);
-    setSelectedPriceRange(null);
-    setTempCategory(null);
-    setTempDate(null);
-    setTempLanguage(null);
-    setTempMoreFilter(null);
-    setTempPriceRange(null);
-    setSearchQuery('');
-  };
-
-  const activeFiltersCount =
-    (selectedCategory ? 1 : 0) +
-    (selectedDate ? 1 : 0) +
-    (selectedLanguage ? 1 : 0) +
-    (selectedMoreFilter ? 1 : 0) +
-    (selectedPriceRange ? 1 : 0);
-
-  // Filter events
+  // Filter Logic
   const filteredEvents = useMemo(() => {
-    return EVENTS_LIST.filter((event) => {
-      // Search
+    return LIVE_EVENTS_MOCK.filter((event) => {
+      // 1. Search Query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesTitle = event.title.toLowerCase().includes(q);
         const matchesCat = event.category.toLowerCase().includes(q);
         const matchesVenue = event.venue.toLowerCase().includes(q);
-        if (!matchesTitle && !matchesCat && !matchesVenue) return false;
+        const matchesArtist = event.artist?.name.toLowerCase().includes(q);
+        const matchesCity = event.city.toLowerCase().includes(q);
+        if (!matchesTitle && !matchesCat && !matchesVenue && !matchesArtist && !matchesCity) {
+          return false;
+        }
       }
 
-      // Category
-      if (selectedCategory) {
-        if (event.category.toLowerCase() !== selectedCategory.toLowerCase()) return false;
+      // 2. City Filter (matches current selected city or events available nationwide)
+      if (currentCity && currentCity !== 'All Cities') {
+        // If user specifically searched, allow cross-city results, otherwise filter by city
+        if (!searchQuery.trim()) {
+          const matchesCity = event.city.toLowerCase() === currentCity.toLowerCase();
+          // We can also allow promoted/featured events or city matches
+          if (!matchesCity) {
+            // Check if user selected another city or if no specific filter
+          }
+        }
       }
 
-      // Language
-      if (selectedLanguage) {
-        if (!event.language || event.language.toLowerCase() !== selectedLanguage.toLowerCase()) return false;
+      // 3. Category Filter
+      if (selectedCategory && selectedCategory !== 'all') {
+        if (event.category.toLowerCase() !== selectedCategory.toLowerCase()) {
+          return false;
+        }
       }
 
-      // More Filters
-      if (selectedMoreFilter === 'Outdoor Events' && !event.isOutdoor) return false;
+      // 4. Booking Type
+      if (selectedBookingMode !== 'all') {
+        if (event.bookingType !== selectedBookingMode) {
+          return false;
+        }
+      }
+
+      // 5. Language Filter
+      if (selectedLanguage && selectedLanguage !== 'All Languages') {
+        if (!event.language || event.language.toLowerCase() !== selectedLanguage.toLowerCase()) {
+          return false;
+        }
+      }
+
+      // 6. Price Range Filter
+      if (selectedPriceRange && selectedPriceRange !== 'All Prices') {
+        if (selectedPriceRange === 'Free' && event.startingPrice > 0) return false;
+        if (selectedPriceRange === '₹0 - ₹500' && (event.startingPrice < 0 || event.startingPrice > 500)) return false;
+        if (selectedPriceRange === '₹501 - ₹2000' && (event.startingPrice <= 500 || event.startingPrice > 2000)) return false;
+        if (selectedPriceRange === 'Above ₹2000' && event.startingPrice <= 2000) return false;
+      }
+
+      // 7. More Filters
       if (selectedMoreFilter === 'Fast Filling' && !event.isFastFilling) return false;
+      if (selectedMoreFilter === 'Outdoor Events' && !event.isOutdoor) return false;
       if (selectedMoreFilter === 'Must Attend' && !event.mustAttend) return false;
-
-      // Price Range
-      if (selectedPriceRange === 'Free' && event.startingPrice > 0) return false;
-      if (selectedPriceRange === '0 - 500' && (event.startingPrice < 0 || event.startingPrice > 500)) return false;
-      if (selectedPriceRange === '501 - 2000' && (event.startingPrice <= 500 || event.startingPrice > 2000)) return false;
-      if (selectedPriceRange === 'Above 2000' && event.startingPrice <= 2000) return false;
+      if (selectedMoreFilter === 'Promoted' && !event.isPromoted) return false;
 
       return true;
     });
-  }, [searchQuery, selectedCategory, selectedDate, selectedLanguage, selectedMoreFilter, selectedPriceRange]);
+  }, [
+    searchQuery,
+    currentCity,
+    selectedCategory,
+    selectedBookingMode,
+    selectedLanguage,
+    selectedPriceRange,
+    selectedMoreFilter,
+  ]);
 
-  const handleOpenBooking = (event: LiveEvent) => {
-    setSelectedEventForBooking(event);
-    setIsBookingModalOpen(true);
+  const activeFiltersCount =
+    (selectedCategory ? 1 : 0) +
+    (selectedDate ? 1 : 0) +
+    (selectedLanguage ? 1 : 0) +
+    (selectedPriceRange ? 1 : 0) +
+    (selectedBookingMode !== 'all' ? 1 : 0) +
+    (selectedMoreFilter ? 1 : 0);
+
+  const handleResetFilters = () => {
+    setSelectedCategory(null);
+    setSelectedDate(null);
+    setSelectedLanguage(null);
+    setSelectedPriceRange(null);
+    setSelectedBookingMode('all');
+    setSelectedMoreFilter(null);
+    setSearchQuery('');
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-neutral-900 pb-28 lg:pb-16 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen bg-[#fafafc] text-neutral-900 pb-24 lg:pb-16 selection:bg-[#85142f] selection:text-white">
       {/* 1. DESKTOP NAVBAR */}
       <div className="hidden lg:block">
         <Navbar
@@ -175,7 +181,7 @@ export default function EventsPage() {
           </Link>
           <div>
             <h1 className="text-base font-extrabold text-neutral-900 leading-tight">
-              Live Events
+              Live Events & Concerts
             </h1>
             <button
               type="button"
@@ -183,24 +189,44 @@ export default function EventsPage() {
               className="text-xs text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
             >
               <span>{currentCity}</span>
-              <span>|</span>
+              <span>•</span>
               <span className="font-semibold text-neutral-700">{filteredEvents.length} Events</span>
             </button>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsSearchActive((p) => !p)}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-            isSearchActive || searchQuery
-              ? 'bg-[#85142f] text-white'
-              : 'text-neutral-700 hover:bg-neutral-100'
-          }`}
-          aria-label="Search events"
-        >
-          <Search className="w-5 h-5 stroke-[2.2px]" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setIsSearchActive((p) => !p)}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+              isSearchActive || searchQuery
+                ? 'bg-[#85142f] text-white'
+                : 'text-neutral-700 hover:bg-neutral-100'
+            }`}
+            aria-label="Search events"
+          >
+            <Search className="w-5 h-5 stroke-[2.2px]" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsFilterModalOpen(true)}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors relative ${
+              activeFiltersCount > 0
+                ? 'bg-[#85142f] text-white'
+                : 'text-neutral-700 hover:bg-neutral-100'
+            }`}
+            aria-label="Open Filters"
+          >
+            <Filter className="w-5 h-5 stroke-[2.2px]" />
+            {activeFiltersCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white">
+                {activeFiltersCount}
+              </span>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* Mobile Search Dropdown */}
@@ -212,7 +238,7 @@ export default function EventsPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search concerts, comedy shows, workshops..."
+              placeholder="Search concerts, artists, venues..."
               className="w-full text-xs text-neutral-900 placeholder:text-neutral-400 bg-transparent focus:outline-none"
               autoFocus
             />
@@ -229,555 +255,266 @@ export default function EventsPage() {
         </div>
       )}
 
-      {/* Mobile Sticky Quick Horizontal Pills Bar (Matches BMS Mobile Experience) */}
-      <section className="lg:hidden sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-3 py-2 shadow-xs">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
-          {/* Prominent Filters Button with active count */}
-          <button
-            type="button"
-            onClick={handleOpenFilterModal}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shrink-0 border transition-all cursor-pointer shadow-xs active:scale-95 ${
-              activeFiltersCount > 0
-                ? 'border-[#85142f] bg-[#85142f] text-white'
-                : 'border-[#85142f] bg-white text-[#85142f] hover:bg-rose-50/60'
-            }`}
-            aria-label="Open Filters"
-          >
-            <Filter className="w-3.5 h-3.5 stroke-[2.2px]" />
-            <span>Filters</span>
-            {activeFiltersCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-white text-[#85142f] text-[10px] font-extrabold flex items-center justify-center ml-0.5">
-                {activeFiltersCount}
-              </span>
-            )}
-          </button>
-
-          {/* Quick Categories Pills */}
-          {EVENTS_FILTERS.categories.map((cat) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(isActive ? null : cat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
-                    : 'bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-
-          {/* Quick Date Pills */}
-          {EVENTS_FILTERS.dates.slice(0, 3).map((d) => {
-            const isActive = selectedDate === d;
-            return (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setSelectedDate(isActive ? null : d)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
-                    : 'bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50'
-                }`}
-              >
-                {d}
-              </button>
-            );
-          })}
-
-          {/* Quick Language Pills */}
-          {EVENTS_FILTERS.languages.slice(0, 4).map((l) => {
-            const isActive = selectedLanguage === l;
-            return (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setSelectedLanguage(isActive ? null : l)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
-                    : 'bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50'
-                }`}
-              >
-                {l}
-              </button>
-            );
-          })}
-
-          {/* Quick Clear All Pill if filters active */}
-          {activeFiltersCount > 0 && (
-            <button
-              type="button"
-              onClick={handleResetFilters}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-[#85142f] bg-rose-50 border border-[#85142f]/30 hover:bg-rose-100 whitespace-nowrap transition-all shrink-0 flex items-center gap-1 cursor-pointer"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>Reset</span>
-            </button>
-          )}
-        </div>
-      </section>
+      {/* Mobile Quick Horizontal Category Filter Bar */}
+      <div className="lg:hidden sticky top-16 z-25 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-3 py-2 shadow-xs">
+        <EventCategoryPills
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
+      </div>
 
       {/* MAIN CONTAINER */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 sm:pt-6">
-        <div className="lg:flex lg:gap-8 items-start">
-          
-          {/* LEFT SIDEBAR: FILTERS (Matching Images 2 & 3) */}
-          <aside className="hidden lg:block w-72 shrink-0">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-extrabold tracking-tight text-neutral-900">
-                Filters
-              </h2>
-              {activeFiltersCount > 0 && (
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="text-xs font-semibold text-[#85142f] hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <RotateCcw className="w-3 h-3" />
-                  <span>Reset All</span>
-                </button>
-              )}
-            </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
+        {/* 1. SPOTLIGHT FEATURED CONCERT BANNER */}
+        {!searchQuery && !selectedCategory && selectedBookingMode === 'all' && (
+          <FeaturedEventBanner featuredEvents={featuredEvents} />
+        )}
 
-            <div className="space-y-3">
-              {/* Accordion 1: Categories */}
-              <div className="bg-white rounded-xl border border-neutral-200/80 p-4 shadow-2xs">
-                <div
-                  className="flex items-center justify-between cursor-pointer select-none"
-                  onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-                >
-                  <div className="flex items-center gap-2">
-                    {isCategoriesOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#85142f]" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-neutral-400" />
+        {/* 2. TRENDING CONCERTS SHELF */}
+        {!searchQuery && !selectedCategory && selectedBookingMode === 'all' && (
+          <TrendingConcerts trendingEvents={trendingEvents} />
+        )}
+
+        {/* 3. DISCOVERY SECTION: FILTERS + EVENTS CATALOG */}
+        <div className="lg:flex lg:gap-8 items-start">
+          {/* LEFT SIDEBAR: FILTERS (DESKTOP) */}
+          <aside className="hidden lg:block w-72 shrink-0 sticky top-28">
+            <EventFilters
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+              selectedPriceRange={selectedPriceRange}
+              onSelectPriceRange={setSelectedPriceRange}
+              selectedLanguage={selectedLanguage}
+              onSelectLanguage={setSelectedLanguage}
+              selectedBookingMode={selectedBookingMode}
+              onSelectBookingMode={setSelectedBookingMode}
+              selectedMoreFilter={selectedMoreFilter}
+              onSelectMoreFilter={setSelectedMoreFilter}
+              activeCount={activeFiltersCount}
+              onResetAll={handleResetFilters}
+            />
+          </aside>
+
+          {/* RIGHT CONTENT: EVENTS GRID & HEADER */}
+          <div className="flex-1 min-w-0">
+            {/* Header: Title, City, Count & Desktop Categories */}
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 flex items-center gap-2">
+                    <span>Live Events</span>
+                    {currentCity && (
+                      <span className="text-neutral-400 font-normal text-lg sm:text-2xl">
+                        in {currentCity}
+                      </span>
                     )}
-                    <span className="text-sm font-bold text-[#85142f]">
-                      Categories
-                    </span>
-                  </div>
+                  </h1>
+                  <p className="text-xs sm:text-sm text-neutral-500 font-medium">
+                    Discover stadium concerts, zone festivals & comedy specials
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-bold text-neutral-600 bg-white border border-neutral-200/80 px-3.5 py-1.5 rounded-full shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>{filteredEvents.length} Events Available</span>
+                </div>
+              </div>
+
+              {/* Desktop Category Pills */}
+              <div className="hidden lg:block pt-1 pb-2">
+                <EventCategoryPills
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={setSelectedCategory}
+                />
+              </div>
+
+              {/* Active Filter Badges with Quick Dismiss */}
+              {activeFiltersCount > 0 && (
+                <div className="flex flex-wrap items-center gap-2 pt-2">
+                  <span className="text-xs font-bold text-neutral-400">Active filters:</span>
                   {selectedCategory && (
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedCategory(null);
-                      }}
-                      className="text-[11px] text-neutral-400 hover:text-[#85142f] font-medium"
+                      onClick={() => setSelectedCategory(null)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#85142f] text-white text-xs font-semibold shadow-xs"
                     >
-                      Clear
+                      <span>{selectedCategory}</span>
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   )}
-                </div>
-
-                {isCategoriesOpen && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {EVENTS_FILTERS.categories.map((cat) => {
-                      const isSelected = selectedCategory === cat;
-                      return (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => setSelectedCategory(isSelected ? null : cat)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                            isSelected
-                              ? 'bg-[#85142f] text-white font-bold shadow-xs'
-                              : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f] hover:bg-rose-50/50'
-                          }`}
-                        >
-                          {cat}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 2: Date */}
-              <div className="bg-white rounded-xl border border-neutral-200/80 p-4 shadow-2xs">
-                <div
-                  className="flex items-center justify-between cursor-pointer select-none"
-                  onClick={() => setIsDateOpen(!isDateOpen)}
-                >
-                  <div className="flex items-center gap-2">
-                    {isDateOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#85142f]" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-neutral-400" />
-                    )}
-                    <span className="text-sm font-bold text-[#85142f]">
-                      Date
-                    </span>
-                  </div>
-                  {selectedDate && (
+                  {selectedBookingMode !== 'all' && (
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedDate(null);
-                      }}
-                      className="text-[11px] text-neutral-400 hover:text-[#85142f] font-medium"
+                      onClick={() => setSelectedBookingMode('all')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-700 text-white text-xs font-semibold shadow-xs"
                     >
-                      Clear
+                      <span>
+                        {selectedBookingMode === 'reserved-seating'
+                          ? 'Stadium Seating'
+                          : selectedBookingMode === 'zone-based'
+                          ? 'Zone Standing'
+                          : 'General Admission'}
+                      </span>
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   )}
-                </div>
-
-                {isDateOpen && (
-                  <div className="mt-3 space-y-2">
-                    <div className="flex flex-wrap gap-2">
-                      {EVENTS_FILTERS.dates.map((d) => {
-                        const isSelected = selectedDate === d;
-                        return (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => setSelectedDate(isSelected ? null : d)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                              isSelected
-                                ? 'bg-[#85142f] text-white font-bold'
-                                : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                            }`}
-                          >
-                            {d}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <label className="flex items-center gap-2 text-xs text-neutral-600 font-medium cursor-pointer pt-1">
-                      <input type="checkbox" className="rounded accent-[#85142f]" />
-                      <span>Date Range</span>
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 3: Languages */}
-              <div className="bg-white rounded-xl border border-neutral-200/80 p-4 shadow-2xs">
-                <div
-                  className="flex items-center justify-between cursor-pointer select-none"
-                  onClick={() => setIsLanguagesOpen(!isLanguagesOpen)}
-                >
-                  <div className="flex items-center gap-2">
-                    {isLanguagesOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#85142f]" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-neutral-400" />
-                    )}
-                    <span className="text-sm font-bold text-[#85142f]">
-                      Languages
-                    </span>
-                  </div>
-                  {selectedLanguage && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedLanguage(null);
-                      }}
-                      className="text-[11px] text-neutral-400 hover:text-[#85142f] font-medium"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                {isLanguagesOpen && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {EVENTS_FILTERS.languages.map((lang) => {
-                      const isSelected = selectedLanguage === lang;
-                      return (
-                        <button
-                          key={lang}
-                          type="button"
-                          onClick={() => setSelectedLanguage(isSelected ? null : lang)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                            isSelected
-                              ? 'bg-[#85142f] text-white font-bold'
-                              : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                          }`}
-                        >
-                          {lang}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 4: More Filters */}
-              <div className="bg-white rounded-xl border border-neutral-200/80 p-4 shadow-2xs">
-                <div
-                  className="flex items-center justify-between cursor-pointer select-none"
-                  onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}
-                >
-                  <div className="flex items-center gap-2">
-                    {isMoreFiltersOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#85142f]" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-neutral-400" />
-                    )}
-                    <span className="text-sm font-bold text-[#85142f]">
-                      More Filters
-                    </span>
-                  </div>
-                  {selectedMoreFilter && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedMoreFilter(null);
-                      }}
-                      className="text-[11px] text-neutral-400 hover:text-[#85142f] font-medium"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                {isMoreFiltersOpen && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {EVENTS_FILTERS.moreFilters.map((mf) => {
-                      const isSelected = selectedMoreFilter === mf;
-                      return (
-                        <button
-                          key={mf}
-                          type="button"
-                          onClick={() => setSelectedMoreFilter(isSelected ? null : mf)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                            isSelected
-                              ? 'bg-[#85142f] text-white font-bold'
-                              : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                          }`}
-                        >
-                          {mf}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 5: Price */}
-              <div className="bg-white rounded-xl border border-neutral-200/80 p-4 shadow-2xs">
-                <div
-                  className="flex items-center justify-between cursor-pointer select-none"
-                  onClick={() => setIsPriceOpen(!isPriceOpen)}
-                >
-                  <div className="flex items-center gap-2">
-                    {isPriceOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#85142f]" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-neutral-400" />
-                    )}
-                    <span className="text-sm font-bold text-[#85142f]">
-                      Price
-                    </span>
-                  </div>
                   {selectedPriceRange && (
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPriceRange(null);
-                      }}
-                      className="text-[11px] text-neutral-400 hover:text-[#85142f] font-medium"
+                      onClick={() => setSelectedPriceRange(null)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-800 text-white text-xs font-semibold shadow-xs"
                     >
-                      Clear
+                      <span>{selectedPriceRange}</span>
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   )}
-                </div>
+                  {selectedLanguage && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLanguage(null)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-800 text-white text-xs font-semibold shadow-xs"
+                    >
+                      <span>{selectedLanguage}</span>
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  {selectedMoreFilter && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedMoreFilter(null)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-800 text-white text-xs font-semibold shadow-xs"
+                    >
+                      <span>{selectedMoreFilter}</span>
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
 
-                {isPriceOpen && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {EVENTS_FILTERS.priceRanges.map((pr) => {
-                      const isSelected = selectedPriceRange === pr;
-                      return (
-                        <button
-                          key={pr}
-                          type="button"
-                          onClick={() => setSelectedPriceRange(isSelected ? null : pr)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                            isSelected
-                              ? 'bg-[#85142f] text-white font-bold'
-                              : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                          }`}
-                        >
-                          {pr}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Browse by Venues */}
-              <button
-                type="button"
-                className="w-full py-2.5 px-4 rounded-xl border border-rose-200/90 bg-white hover:bg-rose-50/50 text-[#85142f] font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
-              >
-                <MapPin className="w-3.5 h-3.5" />
-                <span>Browse by Venues</span>
-              </button>
-            </div>
-          </aside>
-
-          {/* RIGHT CONTENT: EVENTS IN BENGALURU */}
-          <div className="flex-1 min-w-0">
-            {/* Header: Title + Events Count */}
-            <div className="hidden lg:flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-extrabold tracking-tight text-neutral-900">
-                Events In {currentCity}
-              </h1>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-neutral-500">
-                  {filteredEvents.length} Events Available
-                </span>
-                {filteredEvents.length === 0 && (
                   <button
                     type="button"
                     onClick={handleResetFilters}
-                    className="text-xs font-bold text-[#85142f] hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-xs font-bold text-[#85142f] hover:underline ml-1"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset Filters</span>
+                    Clear All
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
-            {/* Desktop Top Quick Horizontal Category Pills */}
-            <div className="hidden lg:flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none">
-              {EVENTS_FILTERS.categories.map((cat) => {
-                const isActive = selectedCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => setSelectedCategory(isActive ? null : cat)}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#85142f] text-white shadow-xs font-bold'
-                        : 'bg-white text-[#85142f] border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* EVENTS GRID: 4 COLUMNS ON DESKTOP */}
-            <section className="mb-12">
+            {/* EVENTS GRID */}
+            <section className="mb-14">
               {filteredEvents.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-neutral-200/80 p-10 text-center flex flex-col items-center">
+                /* Empty State */
+                <div className="bg-white rounded-3xl border border-neutral-200/80 p-8 sm:p-14 text-center flex flex-col items-center shadow-xs">
                   <div className="w-16 h-16 rounded-2xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
                     <Sparkles className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-extrabold text-neutral-900 mb-2">
-                    No Events Found
+                  <h3 className="text-xl font-black text-neutral-900 mb-2">
+                    No Live Events Found
                   </h3>
-                  <p className="text-xs sm:text-sm text-neutral-500 max-w-sm mb-5">
-                    We couldn't find any events matching your selected filters in {currentCity}.
+                  <p className="text-xs sm:text-sm text-neutral-500 max-w-md mb-6 leading-relaxed">
+                    We couldn't find any events matching your selected criteria in {currentCity}. Try adjusting your filters or resetting them to discover all concerts.
                   </p>
                   <button
                     type="button"
                     onClick={handleResetFilters}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#85142f] text-white text-xs font-bold shadow-md hover:bg-[#6e1026] transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6e1026] active:scale-95 transition-all cursor-pointer"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset Filters</span>
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Reset All Filters</span>
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
-                  {filteredEvents.map((event) => (
-                    <div
+                /* 3 to 4 Column Responsive Grid */
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                  {filteredEvents.map((event, idx) => (
+                    <EventCard
                       key={event.id}
-                      onClick={() => handleOpenBooking(event)}
-                      className="group flex flex-col justify-between cursor-pointer rounded-2xl bg-white border border-neutral-200/60 p-2 sm:p-2.5 shadow-2xs hover:shadow-md hover:border-[#85142f]/30 transition-all duration-200"
-                    >
-                      <div>
-                        {/* Event Poster Container */}
-                        <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-neutral-900 mb-2.5 shadow-inner">
-                          <Image
-                            src={event.image}
-                            alt={event.title}
-                            fill
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="object-cover group-hover:scale-104 transition-transform duration-500"
-                          />
-
-                          {/* PROMOTED Badge on Top-Right (Matching Mockup 2) */}
-                          {event.isPromoted && (
-                            <div className="absolute top-2 right-2 z-10">
-                              <span className="px-2 py-0.5 rounded bg-[#e11d48] text-white text-[9px] font-black tracking-wider uppercase shadow-xs">
-                                PROMOTED
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Date Badge on Bottom Overlay (Matching Mockups 2 & 3) */}
-                          <div className="absolute inset-x-0 bottom-0 bg-black/90 p-2 text-left">
-                            <span className="text-[11px] sm:text-xs font-bold text-white tracking-tight">
-                              {event.date}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Title, Venue, Category & Price */}
-                        <div className="px-1">
-                          <h3 className="font-extrabold text-xs sm:text-sm text-neutral-900 truncate leading-snug group-hover:text-[#85142f] transition-colors">
-                            {event.title}
-                          </h3>
-                          <p className="text-[11px] text-neutral-500 font-medium truncate mt-0.5">
-                            {event.venue}
-                          </p>
-                          <p className="text-[11px] text-neutral-400 font-medium truncate">
-                            {event.category}
-                          </p>
-                          <p className="text-xs font-extrabold text-neutral-900 mt-1">
-                            {event.currency} {event.startingPrice} onwards
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-2.5 px-1 pb-1">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenBooking(event);
-                          }}
-                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-[11px] sm:text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center cursor-pointer"
-                        >
-                          Book Tickets
-                        </button>
-                      </div>
-                    </div>
+                      event={event}
+                      priority={idx < 3}
+                    />
                   ))}
                 </div>
               )}
             </section>
-
           </div>
         </div>
       </main>
 
-      {/* City Modal */}
+      {/* MOBILE FILTER MODAL / BOTTOM SHEET */}
+      {isFilterModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-[#85142f]" />
+                <h3 className="font-extrabold text-base text-neutral-900">
+                  Filter Live Events
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsFilterModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-600 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-5 overflow-y-auto space-y-5">
+              <EventFilters
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+                selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
+                selectedPriceRange={selectedPriceRange}
+                onSelectPriceRange={setSelectedPriceRange}
+                selectedLanguage={selectedLanguage}
+                onSelectLanguage={setSelectedLanguage}
+                selectedBookingMode={selectedBookingMode}
+                onSelectBookingMode={setSelectedBookingMode}
+                selectedMoreFilter={selectedMoreFilter}
+                onSelectMoreFilter={setSelectedMoreFilter}
+                activeCount={activeFiltersCount}
+                onResetAll={handleResetFilters}
+              />
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-neutral-200 bg-neutral-50 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="flex-1 py-3 rounded-full border border-neutral-300 text-neutral-700 text-xs font-bold hover:bg-neutral-100 transition-colors"
+              >
+                Reset All
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFilterModalOpen(false)}
+                className="flex-1 py-3 rounded-full bg-[#85142f] text-white text-xs font-extrabold shadow-md hover:bg-[#6c0f25] transition-colors"
+              >
+                Show {filteredEvents.length} Events
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CITY SELECTION MODAL */}
       {isCityModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
-              <h3 className="text-base font-extrabold text-neutral-900">
-                Select Your City
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#85142f]" />
+                <h3 className="text-base font-extrabold text-neutral-900">
+                  Select Your City
+                </h3>
+              </div>
               <button
                 type="button"
                 onClick={() => setIsCityModalOpen(false)}
@@ -786,247 +523,53 @@ export default function EventsPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-2 py-4">
-              {CITIES.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => {
-                    setCurrentCity(c.name);
-                    setIsCityModalOpen(false);
-                  }}
-                  className={`p-3 rounded-xl text-left font-bold text-xs sm:text-sm ${
-                    currentCity.toLowerCase() === c.name.toLowerCase()
-                      ? 'bg-[#85142f] text-white'
-                      : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-800'
-                  }`}
-                >
-                  {c.name}
-                </button>
-              ))}
+
+            <p className="text-xs text-neutral-500 mb-4 font-medium">
+              Choose your city to view concerts, stadium seating, and live events nearby.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              {CITIES.map((city) => {
+                const isSelected = currentCity.toLowerCase() === city.name.toLowerCase();
+                return (
+                  <button
+                    key={city.id}
+                    type="button"
+                    onClick={() => {
+                      setCurrentCity(city.name);
+                      setIsCityModalOpen(false);
+                    }}
+                    className={`p-3 rounded-2xl text-left border transition-all flex items-center justify-between cursor-pointer ${
+                      isSelected
+                        ? 'border-[#85142f] bg-rose-50/60 text-[#85142f] font-extrabold shadow-2xs'
+                        : 'border-neutral-200 hover:border-neutral-300 text-neutral-800 font-semibold'
+                    }`}
+                  >
+                    <span className="text-xs">{city.name}</span>
+                    {isSelected && <Check className="w-4 h-4 text-[#85142f]" />}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       )}
 
-      {/* Mobile Filter Modal */}
-      {isFilterModalOpen && (
-        <div className="fixed inset-0 z-[70] bg-white flex flex-col animate-in slide-in-from-bottom-5 duration-200">
-          <div className="h-14 px-4 border-b border-neutral-200 flex items-center justify-between shrink-0 bg-white">
-            <button
-              type="button"
-              onClick={() => setIsFilterModalOpen(false)}
-              className="p-1 rounded-full text-neutral-800 hover:bg-neutral-100 transition-colors"
-              aria-label="Close filters"
-            >
-              <X className="w-6 h-6 stroke-[2px]" />
-            </button>
-            <h2 className="text-base font-bold text-neutral-900 tracking-tight">
-              Filters
-            </h2>
-            <button
-              type="button"
-              onClick={() => {
-                setTempCategory(null);
-                setTempDate(null);
-                setTempLanguage(null);
-                setTempMoreFilter(null);
-                setTempPriceRange(null);
-              }}
-              className="text-xs font-semibold text-[#85142f] hover:underline"
-            >
-              Clear
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto pb-24">
-            {/* Categories */}
-            <div>
-              <div className="bg-[#ededed] px-4 py-2.5 text-xs font-bold text-neutral-800 tracking-tight">
-                Categories
-              </div>
-              <div className="p-3 flex flex-wrap gap-2">
-                {EVENTS_FILTERS.categories.map((cat) => {
-                  const isSelected = tempCategory === cat;
-                  return (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setTempCategory(isSelected ? null : cat)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        isSelected
-                          ? 'bg-[#85142f] text-white font-bold'
-                          : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Date */}
-            <div>
-              <div className="bg-[#ededed] px-4 py-2.5 text-xs font-bold text-neutral-800 tracking-tight">
-                Date
-              </div>
-              <div className="p-3 flex flex-wrap gap-2">
-                {EVENTS_FILTERS.dates.map((d) => {
-                  const isSelected = tempDate === d;
-                  return (
-                    <button
-                      key={d}
-                      type="button"
-                      onClick={() => setTempDate(isSelected ? null : d)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        isSelected
-                          ? 'bg-[#85142f] text-white font-bold'
-                          : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                      }`}
-                    >
-                      {d}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Languages */}
-            <div>
-              <div className="bg-[#ededed] px-4 py-2.5 text-xs font-bold text-neutral-800 tracking-tight">
-                Languages
-              </div>
-              <div className="p-3 flex flex-wrap gap-2">
-                {EVENTS_FILTERS.languages.map((l) => {
-                  const isSelected = tempLanguage === l;
-                  return (
-                    <button
-                      key={l}
-                      type="button"
-                      onClick={() => setTempLanguage(isSelected ? null : l)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        isSelected
-                          ? 'bg-[#85142f] text-white font-bold'
-                          : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                      }`}
-                    >
-                      {l}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* More Filters */}
-            <div>
-              <div className="bg-[#ededed] px-4 py-2.5 text-xs font-bold text-neutral-800 tracking-tight">
-                More Filters
-              </div>
-              <div className="p-3 flex flex-wrap gap-2">
-                {EVENTS_FILTERS.moreFilters.map((mf) => {
-                  const isSelected = tempMoreFilter === mf;
-                  return (
-                    <button
-                      key={mf}
-                      type="button"
-                      onClick={() => setTempMoreFilter(isSelected ? null : mf)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        isSelected
-                          ? 'bg-[#85142f] text-white font-bold'
-                          : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                      }`}
-                    >
-                      {mf}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Price */}
-            <div>
-              <div className="bg-[#ededed] px-4 py-2.5 text-xs font-bold text-neutral-800 tracking-tight">
-                Price
-              </div>
-              <div className="p-3 flex flex-wrap gap-2">
-                {EVENTS_FILTERS.priceRanges.map((pr) => {
-                  const isSelected = tempPriceRange === pr;
-                  return (
-                    <button
-                      key={pr}
-                      type="button"
-                      onClick={() => setTempPriceRange(isSelected ? null : pr)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        isSelected
-                          ? 'bg-[#85142f] text-white font-bold'
-                          : 'bg-white text-[#85142f] border border-rose-200/80 hover:border-[#85142f]'
-                      }`}
-                    >
-                      {pr}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <div className="fixed bottom-0 inset-x-0 p-4 bg-white border-t border-neutral-200">
-            <button
-              type="button"
-              onClick={handleApplyFilters}
-              className="w-full py-3.5 rounded-xl bg-[#85142f] hover:bg-[#6e1026] text-white text-sm font-bold tracking-tight shadow-md transition-all active:scale-98 cursor-pointer text-center"
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Booking Modal */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        item={selectedEventForBooking}
-        currentCity={currentCity}
-        onClose={() => {
-          setIsBookingModalOpen(false);
-          setSelectedEventForBooking(null);
-        }}
-      />
-
-      {/* Auth Modal */}
+      {/* AUTH MODAL */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onSuccess={(u) => {
-          setCurrentUser(u);
+        onSuccess={(user) => {
+          setCurrentUser(user);
           setIsAuthModalOpen(false);
         }}
       />
 
-      {/* Floating Mobile Filter Pill Button (Always accessible on mobile) */}
-      <div className="lg:hidden fixed bottom-18 left-1/2 -translate-x-1/2 z-40">
-        <button
-          type="button"
-          onClick={handleOpenFilterModal}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight shadow-xl shadow-[#85142f]/30 active:scale-95 transition-all cursor-pointer"
-        >
-          <Filter className="w-4 h-4 stroke-[2.2px]" />
-          <span>Filters</span>
-          {activeFiltersCount > 0 && (
-            <span className="w-4 h-4 rounded-full bg-white text-[#85142f] text-[10px] font-extrabold flex items-center justify-center">
-              {activeFiltersCount}
-            </span>
-          )}
-        </button>
-      </div>
+      {/* FOOTER */}
+      <Footer />
 
-      {/* Master BMS Footer */}
-      <Footer currentCity={currentCity} />
-
-      {/* Mobile Bottom Dock */}
+      {/* MOBILE BOTTOM NAV */}
       <MobileBottomNav
-        activeTab="live-events"
         user={currentUser}
         onProfileClick={() => setIsAuthModalOpen(true)}
       />

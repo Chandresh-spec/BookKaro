@@ -63,25 +63,9 @@ export interface Movie {
   showtimes?: CinemaShowtime[];
 }
 
-export interface LiveEvent {
-  id: string;
-  title: string;
-  category: string;
-  date: string;
-  time?: string;
-  venue: string;
-  city: string;
-  startingPrice: number;
-  currency: string;
-  image: string;
-  badgeText?: string;
-  isTrending?: boolean;
-  isPromoted?: boolean;
-  language?: string;
-  isOutdoor?: boolean;
-  isFastFilling?: boolean;
-  mustAttend?: boolean;
-}
+export * from './event';
+export * from './venue';
+export * from './booking';
 
 export interface SportEvent {
   id: string;
