@@ -44,12 +44,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-neutral-100 max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border border-neutral-100 max-h-[92vh] flex flex-col">
         
         {/* Close Button */}
         <button
           onClick={handleReset}
-          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-lg bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
@@ -57,17 +57,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
         {isBooked ? (
           <div className="p-8 text-center flex flex-col items-center justify-center my-auto">
-            <div className="w-16 h-16 rounded-full bg-[#85142f]/10 text-[#85142f] flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-xl bg-[#85142f]/10 text-[#85142f] flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-7 h-7" />
             </div>
-            <h3 className="text-2xl font-bold text-neutral-900 mb-1">
+            <h3 className="text-2xl font-black text-neutral-900 mb-1">
               Booking Confirmed!
             </h3>
-            <p className="text-sm text-neutral-500 mb-6 max-w-xs">
+            <p className="text-xs sm:text-sm text-neutral-500 mb-6 max-w-xs leading-relaxed">
               Your tickets for <strong className="text-neutral-800">{item.title}</strong> have been reserved.
             </p>
 
-            <div className="w-full bg-[#fbf9f8] rounded-2xl p-4 border border-neutral-200/70 text-left space-y-2 mb-6 text-xs sm:text-sm">
+            <div className="w-full bg-[#fbf9f8] rounded-xl p-4 border border-neutral-200/70 text-left space-y-2 mb-6 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral-500">Tickets:</span>
                 <span className="font-semibold text-neutral-900">{ticketCount} Seats</span>
@@ -88,7 +88,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
             <button
               onClick={handleReset}
-              className="w-full py-3 bg-[#85142f] text-white font-bold rounded-xl hover:bg-[#701027] transition-colors cursor-pointer"
+              className="w-full py-3 bg-[#85142f] text-white font-bold rounded-lg hover:bg-[#6e1026] transition-colors cursor-pointer btn-press"
             >
               Done
             </button>
@@ -106,12 +106,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5 flex flex-col justify-end">
                 <div className="flex items-center gap-2 mb-1">
                   {isMovie ? (
-                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/70 text-white text-[11px] font-bold">
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-bold">
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                       <span>{(item as Movie).rating}</span>
                     </div>
                   ) : (
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#85142f] text-white text-[10px] font-bold uppercase">
+                    <span className="px-2 py-0.5 rounded-md bg-[#85142f] text-white text-[10px] font-bold uppercase">
                       {(item as LiveEvent).category}
                     </span>
                   )}
@@ -119,14 +119,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     {isMovie ? (item as Movie).languages.join(', ') : (item as LiveEvent).venue}
                   </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                   {item.title}
                 </h3>
               </div>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6">
+            <div className="p-6 overflow-y-auto space-y-5">
               
               {/* Location & Details pill */}
               <div className="flex flex-wrap items-center gap-4 text-xs text-neutral-600 bg-[#fbf9f8] p-3 rounded-xl border border-neutral-200/80">
@@ -147,7 +147,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Showtime Selector (for movies) */}
               {isMovie && (
                 <div>
-                  <label className="block text-xs font-bold text-neutral-900 uppercase tracking-wider mb-2.5">
+                  <label className="block text-xs font-black text-neutral-900 uppercase tracking-wider mb-2">
                     Select Showtime
                   </label>
                   <div className="grid grid-cols-4 gap-2">
@@ -156,7 +156,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         key={st}
                         type="button"
                         onClick={() => setSelectedShowtime(st)}
-                        className={`py-2 text-xs font-bold rounded-xl border text-center transition-all cursor-pointer ${
+                        className={`py-2 text-xs font-bold rounded-lg border text-center transition-all cursor-pointer ${
                           selectedShowtime === st
                             ? 'bg-[#85142f] text-white border-[#85142f] shadow-xs'
                             : 'bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400'
@@ -171,7 +171,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {/* Ticket Quantity */}
               <div>
-                <label className="block text-xs font-bold text-neutral-900 uppercase tracking-wider mb-2.5">
+                <label className="block text-xs font-black text-neutral-900 uppercase tracking-wider mb-2">
                   Tickets
                 </label>
                 <div className="flex items-center justify-between p-3.5 bg-[#fbf9f8] rounded-xl border border-neutral-200/80">
@@ -217,7 +217,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div className="p-4 sm:p-5 border-t border-neutral-100 bg-[#fbf9f8] flex items-center justify-between">
               <div>
                 <div className="text-[11px] text-neutral-500 font-medium">Total Amount</div>
-                <div className="text-lg font-extrabold text-[#85142f]">
+                <div className="text-lg font-black text-[#85142f]">
                   ₹{totalAmount.toLocaleString('en-IN')}
                 </div>
               </div>
@@ -226,7 +226,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 type="button"
                 onClick={handleBooking}
                 disabled={isSubmitting}
-                className="px-6 py-2.5 bg-[#85142f] hover:bg-[#701027] text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-sm active:scale-95 disabled:bg-neutral-400 cursor-pointer"
+                className="px-6 py-2.5 bg-[#85142f] hover:bg-[#6e1026] text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-sm active:scale-95 disabled:bg-neutral-400 cursor-pointer btn-press"
               >
                 {isSubmitting ? 'Reserving...' : 'Book Tickets'}
               </button>

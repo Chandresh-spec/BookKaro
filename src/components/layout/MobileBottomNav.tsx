@@ -128,7 +128,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               >
                 {/* Active Top Bar Indicator */}
                 {isActive && (
-                  <span className="absolute top-0 inset-x-4 h-[2px] bg-[#85142f] rounded-full" />
+                  <span className="absolute top-0 inset-x-4 h-[2.5px] bg-[#85142f] rounded-xs" />
                 )}
 
                 <div className="relative mb-0.5">
@@ -155,7 +155,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             >
               {/* Active Top Bar Indicator */}
               {isActive && (
-                <span className="absolute top-0 inset-x-4 h-[2px] bg-[#85142f] rounded-full" />
+                <span className="absolute top-0 inset-x-4 h-[2.5px] bg-[#85142f] rounded-xs" />
               )}
 
               <div className="relative mb-0.5">

@@ -53,8 +53,8 @@ export default function EventDetailPage() {
         />
 
         <main className="max-w-xl mx-auto px-4 py-20 text-center">
-          <div className="bg-white rounded-3xl border border-neutral-200/80 p-8 sm:p-12 shadow-xs flex flex-col items-center">
-            <div className="w-16 h-16 rounded-2xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
+          <div className="bg-white rounded-xl border border-neutral-200/80 p-8 sm:p-12 shadow-xs flex flex-col items-center">
+            <div className="w-16 h-16 rounded-xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
               <Sparkles className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-black text-neutral-900 mb-2">
@@ -65,7 +65,7 @@ export default function EventDetailPage() {
             </p>
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6c0f25] active:scale-95 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6c0f25] active:scale-95 transition-all btn-press"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Browse All Live Events</span>

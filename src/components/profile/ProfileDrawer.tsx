@@ -155,21 +155,21 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* User Avatar Circle */}
-            <div className="w-12 h-12 rounded-full bg-neutral-200 border-2 border-white shadow-xs flex items-center justify-center text-neutral-700 font-bold text-base overflow-hidden">
+            {/* User Avatar */}
+            <div className="w-11 h-11 rounded-xl bg-neutral-200 border border-neutral-200 shadow-2xs flex items-center justify-center text-neutral-700 font-bold text-base overflow-hidden">
               {user ? (
-                <span className="bg-[#85142f] text-white w-full h-full flex items-center justify-center text-lg font-black">
+                <span className="bg-[#85142f] text-white w-full h-full flex items-center justify-center text-base font-black">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               ) : (
-                <UserIcon className="w-6 h-6 text-neutral-400" />
+                <UserIcon className="w-5 h-5 text-neutral-400" />
               )}
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
               aria-label="Close menu"
             >
               <X className="w-5 h-5 stroke-[2px]" />
@@ -283,7 +283,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onSignOut();
                 onClose();
               }}
-              className="w-full py-2.5 rounded-xl border border-[#85142f] text-[#85142f] hover:bg-rose-50 text-sm font-bold tracking-tight transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-lg border border-[#85142f] text-[#85142f] hover:bg-rose-50 text-xs sm:text-sm font-bold tracking-tight transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2 btn-press"
             >
               <LogOut className="w-4 h-4 stroke-[2.2px]" />
               <span>Sign out</span>
@@ -295,7 +295,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClose();
                 onSignInClick?.();
               }}
-              className="w-full py-2.5 rounded-xl bg-[#85142f] hover:bg-[#6e1026] text-white text-sm font-bold tracking-tight shadow-md transition-all active:scale-98 cursor-pointer text-center"
+              className="w-full py-2.5 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs sm:text-sm font-bold tracking-tight shadow-md transition-all active:scale-98 cursor-pointer text-center btn-press"
             >
               Sign In / Register
             </button>

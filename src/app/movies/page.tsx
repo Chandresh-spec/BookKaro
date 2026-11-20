@@ -664,10 +664,10 @@ export default function MoviesPage() {
                     key={lang}
                     type="button"
                     onClick={() => handleLanguageToggle(lang)}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
-                        : 'bg-white text-[#85142f] border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
+                        ? 'bg-[#85142f] text-white shadow-xs font-bold'
+                        : 'bg-white text-neutral-800 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
                     }`}
                   >
                     {lang}
@@ -795,11 +795,11 @@ export default function MoviesPage() {
                     <Link
                       key={movie.id}
                       href={`/movies/${movie.id}`}
-                      className="group flex flex-col justify-between cursor-pointer rounded-2xl bg-white border border-neutral-200/60 p-2 sm:p-2.5 shadow-2xs hover:shadow-md hover:border-[#85142f]/30 transition-all duration-200"
+                      className="group flex flex-col justify-between cursor-pointer rounded-xl bg-white border border-neutral-200/70 p-2 sm:p-2.5 shadow-2xs hover:shadow-md hover:border-[#85142f]/30 transition-all duration-200"
                     >
                       <div>
-                        {/* Movie Poster with Rounded Corners */}
-                        <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-neutral-900 mb-2.5 shadow-inner">
+                        {/* Movie Poster with Refined Proportions (True 2:3 Cinematic Ratio) */}
+                        <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-neutral-900 mb-2.5 shadow-xs">
                           <Image
                             src={movie.posterImage}
                             alt={movie.title}
@@ -808,16 +808,16 @@ export default function MoviesPage() {
                             className="object-cover group-hover:scale-104 transition-transform duration-500"
                           />
 
-                          {/* PROMOTED Badge on Top-Right (Matching Laptop Mockup) */}
+                          {/* PROMOTED Badge on Top-Right */}
                           {movie.isPromoted && (
                             <div className="absolute top-2 right-2 z-10">
-                              <span className="px-2 py-0.5 rounded bg-[#e11d48] text-white text-[9px] font-black tracking-wider uppercase shadow-xs">
+                              <span className="px-2 py-0.5 rounded-md bg-[#85142f] text-white text-[9px] font-black tracking-wider uppercase shadow-xs">
                                 PROMOTED
                               </span>
                             </div>
                           )}
 
-                          {/* Bottom Dark Overlay with Likes / Rating (Matching Laptop Mockup) */}
+                          {/* Bottom Dark Overlay with Likes / Rating */}
                           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent p-2.5 pt-6">
                             {movie.likes ? (
                               <div className="flex items-center gap-1.5 text-xs font-bold text-white">
@@ -843,7 +843,7 @@ export default function MoviesPage() {
                           </div>
                         </div>
 
-                        {/* Title, Certificate & Languages (Matching Laptop Mockup) */}
+                        {/* Title, Certificate & Languages */}
                         <div className="px-1">
                           <h3 className="font-extrabold text-sm sm:text-base text-neutral-900 truncate leading-snug group-hover:text-[#85142f] transition-colors">
                             {movie.title}
@@ -868,7 +868,7 @@ export default function MoviesPage() {
                       {/* Quick Book Button */}
                       <div className="mt-2.5 px-1 pb-1">
                         <span
-                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center block"
+                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center block btn-press"
                         >
                           Book Tickets
                         </span>

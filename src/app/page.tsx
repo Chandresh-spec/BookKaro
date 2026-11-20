@@ -12,7 +12,7 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { TrailerModal } from '@/components/common/TrailerModal';
-import { MOVIES, TRENDING_EXPERIENCES, FEATURED_HERO } from '@/data/mockData';
+import { MOVIES, TRENDING_EXPERIENCES, FEATURED_HERO, FEATURED_HEROES } from '@/data/mockData';
 import { Movie, LiveEvent, CategoryType, User } from '@/types';
 
 export default function Home() {
@@ -63,18 +63,19 @@ export default function Home() {
     setIsBookingModalOpen(true);
   };
 
-  const handleHeroBooking = () => {
+  const handleHeroBooking = (heroIndex: number = 0) => {
+    const hero = FEATURED_HEROES?.[heroIndex] || FEATURED_HERO;
     setSelectedItemForBooking({
-      id: 'after-hours-hero',
-      title: FEATURED_HERO.badgeName + ' — ' + FEATURED_HERO.title.replace('\n', ' '),
-      category: 'CONCERT',
-      date: FEATURED_HERO.date,
-      time: FEATURED_HERO.time,
-      venue: FEATURED_HERO.venue,
+      id: 'featured-hero-' + heroIndex,
+      title: hero.badgeName + ' — ' + hero.title.replace('\n', ' '),
+      category: hero.tag.includes('SPORT') ? 'SPORTS' : 'CONCERT',
+      date: hero.date,
+      time: hero.time,
+      venue: hero.venue,
       city: currentCity,
       startingPrice: 1499,
       currency: '₹',
-      image: FEATURED_HERO.bgImage,
+      image: hero.bgImage,
     });
     setIsBookingModalOpen(true);
   };

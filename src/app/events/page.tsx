@@ -232,7 +232,7 @@ export default function EventsDiscoveryPage() {
       {/* Mobile Search Dropdown */}
       {isSearchActive && (
         <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-16 z-30 shadow-sm">
-          <div className="relative flex items-center bg-neutral-100 rounded-full px-3.5 py-1.5">
+          <div className="relative flex items-center bg-neutral-100 rounded-xl px-3.5 py-1.5">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
               type="text"
@@ -406,8 +406,8 @@ export default function EventsDiscoveryPage() {
             <section className="mb-14">
               {filteredEvents.length === 0 ? (
                 /* Empty State */
-                <div className="bg-white rounded-3xl border border-neutral-200/80 p-8 sm:p-14 text-center flex flex-col items-center shadow-xs">
-                  <div className="w-16 h-16 rounded-2xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
+                <div className="bg-white rounded-xl border border-neutral-200/80 p-8 sm:p-14 text-center flex flex-col items-center shadow-xs">
+                  <div className="w-16 h-16 rounded-xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
                     <Sparkles className="w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-black text-neutral-900 mb-2">
@@ -419,7 +419,7 @@ export default function EventsDiscoveryPage() {
                   <button
                     type="button"
                     onClick={handleResetFilters}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6e1026] active:scale-95 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6e1026] active:scale-95 transition-all cursor-pointer btn-press"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span>Reset All Filters</span>
@@ -445,7 +445,7 @@ export default function EventsDiscoveryPage() {
       {/* MOBILE FILTER MODAL / BOTTOM SHEET */}
       {isFilterModalOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
-          <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+          <div className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -457,7 +457,7 @@ export default function EventsDiscoveryPage() {
               <button
                 type="button"
                 onClick={() => setIsFilterModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-600 transition-colors"
+                className="w-8 h-8 rounded-lg bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-600 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -488,14 +488,14 @@ export default function EventsDiscoveryPage() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="flex-1 py-3 rounded-full border border-neutral-300 text-neutral-700 text-xs font-bold hover:bg-neutral-100 transition-colors"
+                className="flex-1 py-2.5 rounded-lg border border-neutral-300 text-neutral-700 text-xs font-bold hover:bg-neutral-100 transition-colors"
               >
                 Reset All
               </button>
               <button
                 type="button"
                 onClick={() => setIsFilterModalOpen(false)}
-                className="flex-1 py-3 rounded-full bg-[#85142f] text-white text-xs font-extrabold shadow-md hover:bg-[#6c0f25] transition-colors"
+                className="flex-1 py-2.5 rounded-lg bg-[#85142f] text-white text-xs font-extrabold shadow-md hover:bg-[#6c0f25] transition-colors btn-press"
               >
                 Show {filteredEvents.length} Events
               </button>

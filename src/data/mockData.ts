@@ -11,19 +11,49 @@ export const CITIES: CityOption[] = [
   { id: 'pune', name: 'Pune', isPopular: true },
 ];
 
-export const FEATURED_HERO: FeaturedHero = {
-  tag: 'FEATURED EVENT',
-  title: 'Your next\nunforgettable moment.',
-  subtitle: 'Discover and book the best movies, concerts, sports, theatre and live events in your city.',
-  date: 'Sat, 24 Nov',
-  time: '7:00 PM',
-  venue: 'Phoenix Marketcity',
-  city: 'Bengaluru',
-  badgeName: 'After Hours',
-  badgeSub: 'LIVE SHOWCASE',
-  bgImage: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1600&auto=format&fit=crop',
-  trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-};
+export const FEATURED_HEROES: FeaturedHero[] = [
+  {
+    tag: 'SPOTLIGHT CONCERT',
+    title: 'Your next\nunforgettable moment.',
+    subtitle: 'Discover and book the best movies, concerts, sports, theatre and live events in your city.',
+    date: 'Sat, 24 Nov',
+    time: '7:00 PM',
+    venue: 'Phoenix Marketcity',
+    city: 'Bengaluru',
+    badgeName: 'After Hours',
+    badgeSub: 'LIVE SHOWCASE',
+    bgImage: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1600&auto=format&fit=crop',
+    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  },
+  {
+    tag: 'WORLD TOUR',
+    title: 'Coldplay: Music of\nthe Spheres Tour',
+    subtitle: 'Experience kinetic energy dancefloors, lasers, LED wristbands, and timeless stadium anthems.',
+    date: 'Sat, 18 Jan 2027',
+    time: '6:00 PM',
+    venue: 'DY Patil Stadium',
+    city: 'Mumbai',
+    badgeName: 'Coldplay',
+    badgeSub: 'STADIUM SPECTACLE',
+    bgImage: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1600&auto=format&fit=crop',
+    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  },
+  {
+    tag: 'SPORTS BLOCKBUSTER',
+    title: 'ISL: Bengaluru FC\nvs Mohun Bagan SG',
+    subtitle: 'The ultimate battle of Indian football rivals under the floodlights at the Fortress.',
+    date: 'Sat, 05 Dec 2026',
+    time: '7:30 PM',
+    venue: 'Sree Kanteerava Stadium',
+    city: 'Bengaluru',
+    badgeName: 'ISL Derby',
+    badgeSub: 'CHAMPIONS CLASH',
+    bgImage: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop',
+    trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  },
+];
+
+export const FEATURED_HERO: FeaturedHero = FEATURED_HEROES[0];
 
 export const CATEGORIES: CategoryItem[] = [
   { id: 'movies', label: 'Movies', iconName: 'clapperboard', href: '/movies' },

@@ -46,10 +46,10 @@ export const EventCategoryPills: React.FC<EventCategoryPillsProps> = ({
             key={cat.id}
             type="button"
             onClick={() => onSelectCategory(cat.id === 'all' ? null : cat.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer shadow-2xs ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer shadow-2xs ${
               isSelected
-                ? 'bg-[#85142f] text-white shadow-sm shadow-[#85142f]/30 scale-[1.02]'
-                : 'bg-white text-neutral-700 border border-neutral-200/80 hover:border-neutral-300 hover:bg-neutral-50'
+                ? 'bg-[#85142f] text-white border border-[#85142f] shadow-xs'
+                : 'bg-white text-neutral-800 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50'
             }`}
           >
             <span>{getIcon(cat.icon)}</span>

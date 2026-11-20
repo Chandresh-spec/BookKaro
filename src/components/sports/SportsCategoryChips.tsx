@@ -26,16 +26,16 @@ export const SportsCategoryChips: React.FC<SportsCategoryChipsProps> = ({
           onClick={() => {
             if (onClearSports) onClearSports();
           }}
-          className={`px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
+          className={`px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
             selectedSports.length === 0
-              ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
-              : 'bg-white text-neutral-700 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
+              ? 'bg-[#85142f] text-white shadow-xs font-bold'
+              : 'bg-white text-neutral-800 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
           }`}
         >
           All Sports
         </button>
 
-        {/* Categories from Screenshot */}
+        {/* Categories */}
         {SPORTS_CATEGORIES.map((category) => {
           const isSelected = selectedSports.includes(category);
           return (
@@ -43,10 +43,10 @@ export const SportsCategoryChips: React.FC<SportsCategoryChipsProps> = ({
               key={category}
               type="button"
               onClick={() => onToggleSport(category)}
-              className={`px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
+              className={`px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                 isSelected
-                  ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
-                  : 'bg-white text-neutral-700 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
+                  ? 'bg-[#85142f] text-white shadow-xs font-bold'
+                  : 'bg-white text-neutral-800 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
               }`}
             >
               {category}

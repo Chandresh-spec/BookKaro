@@ -87,53 +87,6 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
 
   return (
     <div className="min-h-screen bg-[#fafafc] pb-28 lg:pb-20">
-      {/* 1. TOP BREADCRUMB & BACK NAVIGATION */}
-      <div className="bg-white border-b border-neutral-200/80 sticky top-16 lg:top-20 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-neutral-500 font-medium truncate">
-            <Link
-              href="/events"
-              className="inline-flex items-center gap-1 text-neutral-800 hover:text-[#85142f] font-bold transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4 stroke-[2.5px]" />
-              <span>Back to Live Events</span>
-            </Link>
-            <span className="text-neutral-300">/</span>
-            <span className="text-neutral-400 truncate">{event.category}</span>
-            <span className="text-neutral-300">/</span>
-            <span className="text-neutral-900 font-bold truncate max-w-[200px] sm:max-w-xs">
-              {event.title}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleShare}
-              className="p-2 rounded-full hover:bg-neutral-100 text-neutral-600 transition-colors relative"
-              aria-label="Share Event"
-            >
-              <Share2 className="w-4 h-4" />
-              {copiedToast && (
-                <span className="absolute -bottom-8 right-0 bg-neutral-900 text-white text-[10px] font-bold px-2 py-1 rounded shadow whitespace-nowrap">
-                  Link copied!
-                </span>
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsLiked(!isLiked)}
-              className={`p-2 rounded-full hover:bg-neutral-100 transition-colors ${
-                isLiked ? 'text-[#85142f]' : 'text-neutral-600'
-              }`}
-              aria-label="Add to Wishlist"
-            >
-              <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#85142f]' : ''}`} />
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* 2. EVENT HERO SECTION WITH VIBRANT BACKDROP */}
       <section className="relative bg-neutral-950 text-white overflow-hidden">
         {/* Blurred ambient background image */}
@@ -150,11 +103,49 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
           <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/70 to-transparent" />
         </div>
 
+        {/* Integrated navigation & actions bar inside hero */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 flex items-center justify-between">
+          <Link
+            href="/events"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/90 hover:text-white text-xs font-bold border border-white/10 transition-all"
+          >
+            <ChevronLeft className="w-4 h-4 stroke-[2.5px]" />
+            <span>Live Events</span>
+          </Link>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/80 hover:text-white transition-all relative"
+              aria-label="Share Event"
+            >
+              <Share2 className="w-4 h-4" />
+              {copiedToast && (
+                <span className="absolute -bottom-9 right-0 bg-white text-neutral-900 text-[10px] font-bold px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap z-50">
+                  Link copied!
+                </span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsLiked(!isLiked)}
+              className={`w-9 h-9 rounded-lg backdrop-blur-md border border-white/10 flex items-center justify-center transition-all ${isLiked
+                ? 'bg-[#85142f]/80 text-white border-[#85142f]/50'
+                : 'bg-white/10 hover:bg-white/20 text-white/80 hover:text-white'
+                }`}
+              aria-label="Add to Wishlist"
+            >
+              <Heart className={`w-4 h-4 ${isLiked ? 'fill-white' : ''}`} />
+            </button>
+          </div>
+        </div>
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
             {/* Event Poster Card */}
             <div className="w-full sm:w-[320px] lg:w-[340px] shrink-0 mx-auto lg:mx-0">
-              <div className="relative aspect-[3/4] w-full rounded-3xl overflow-hidden shadow-2xl border border-white/15 bg-neutral-900 group">
+              <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-neutral-900 group">
                 <Image
                   src={event.image}
                   alt={event.title}
@@ -227,7 +218,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
 
               {/* Artist Spotlight (if available) */}
               {event.artist && (
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md max-w-md mb-6">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md max-w-md mb-6">
                   {event.artist.image ? (
                     <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-white/20">
                       <Image
@@ -254,9 +245,9 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
               )}
 
               {/* Quick Info Grid: Date, Time, Venue, Duration */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-neutral-200 font-medium mb-6">
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs sm:text-sm text-neutral-200 font-medium mb-6">
+                <div className="flex items-center gap-3 p-3.5 rounded-xl bg-white/5 border border-white/10">
+                  <div className="w-10 h-10 rounded-lg bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div>
@@ -269,8 +260,8 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3 p-3.5 rounded-xl bg-white/5 border border-white/10">
+                  <div className="w-10 h-10 rounded-lg bg-[#85142f]/30 text-rose-300 flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
@@ -284,8 +275,8 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                 </div>
 
                 {event.duration && (
-                  <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="w-10 h-10 rounded-xl bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
+                  <div className="flex items-center gap-3 p-3.5 rounded-xl bg-white/5 border border-white/10">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
                       <Clock className="w-5 h-5" />
                     </div>
                     <div>
@@ -299,8 +290,8 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-3 p-3.5 rounded-xl bg-white/5 border border-white/10">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 text-neutral-300 flex items-center justify-center shrink-0">
                     <BookingIcon className="w-5 h-5" />
                   </div>
                   <div>
@@ -321,14 +312,14 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
       {/* 3. MAIN CONTENT: LEFT DETAILS + RIGHT STICKY BOOKING PANEL */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
         <div className="lg:flex lg:gap-12 items-start">
-          
+
           {/* LEFT COLUMN: ABOUT, TERMS & ARTIST BIO */}
           <div className="flex-1 min-w-0 space-y-8">
-            
+
             {/* Booking Mode Informational Callout */}
-            <div className="p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-xs flex items-start gap-4">
-              <div className="w-11 h-11 rounded-2xl bg-[#85142f]/10 text-[#85142f] flex items-center justify-center shrink-0">
-                <BookingIcon className="w-6 h-6" />
+            <div className="p-4 sm:p-5 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-[#85142f]/10 text-[#85142f] flex items-center justify-center shrink-0">
+                <BookingIcon className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="text-sm font-extrabold text-neutral-900 mb-1 flex items-center gap-2">
@@ -344,7 +335,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             </div>
 
             {/* About the Event */}
-            <section className="bg-white rounded-3xl border border-neutral-200/80 p-6 sm:p-8 shadow-xs">
+            <section className="bg-white rounded-xl border border-neutral-200/80 p-6 sm:p-7 shadow-2xs">
               <h2 className="text-lg sm:text-xl font-black tracking-tight text-neutral-950 mb-4 pb-2 border-b border-neutral-100 flex items-center gap-2">
                 <span>About The Event</span>
                 <Sparkles className="w-4 h-4 text-[#85142f]" />
@@ -368,21 +359,21 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                   <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">
                     Available Delivery Modes
                   </h4>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-2">
                     {event.deliveryOptions.includes('digital') && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                         <span>M-Ticket (Digital QR)</span>
                       </span>
                     )}
                     {event.deliveryOptions.includes('home_delivery') && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
                         <span>Home Delivery (Physical Band/Pass)</span>
                       </span>
                     )}
                     {event.deliveryOptions.includes('venue_pickup') && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
                         <span>Box Office Venue Pickup</span>
                       </span>
@@ -393,7 +384,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             </section>
 
             {/* Terms and Conditions */}
-            <section className="bg-white rounded-3xl border border-neutral-200/80 p-6 sm:p-8 shadow-xs">
+            <section className="bg-white rounded-xl border border-neutral-200/80 p-6 sm:p-7 shadow-2xs">
               <h2 className="text-lg sm:text-xl font-black tracking-tight text-neutral-950 mb-4 pb-2 border-b border-neutral-100 flex items-center gap-2">
                 <span>Terms & Conditions</span>
                 <ShieldCheck className="w-4 h-4 text-neutral-400" />
@@ -425,7 +416,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
 
           {/* RIGHT COLUMN: STICKY BOOKING PANEL (DESKTOP) */}
           <aside className="hidden lg:block w-96 shrink-0 sticky top-28">
-            <div className="bg-white rounded-3xl border border-neutral-200/80 p-6 shadow-md space-y-6">
+            <div className="bg-white rounded-xl border border-neutral-200/80 p-6 shadow-sm space-y-6">
               
               {/* Pricing & Status */}
               <div>
@@ -434,9 +425,8 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                 </span>
                 <div className="flex items-baseline gap-2">
                   <span
-                    className={`text-3xl font-black ${
-                      event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
-                    }`}
+                    className={`text-3xl font-black ${event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
+                      }`}
                   >
                     {event.isSoldOut ? 'Sold Out' : `${event.currency} ${event.startingPrice.toLocaleString('en-IN')}`}
                   </span>
@@ -449,7 +439,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
               </div>
 
               {/* Status pill */}
-              <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/60 text-xs">
+              <div className="p-3.5 rounded-lg bg-neutral-50 border border-neutral-200/60 text-xs">
                 {event.isSoldOut ? (
                   <div className="flex items-center gap-2 text-rose-700 font-bold">
                     <AlertCircle className="w-4 h-4 shrink-0" />
@@ -491,7 +481,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
                 type="button"
                 disabled={event.isSoldOut}
                 onClick={handleProceedBooking}
-                className={`w-full py-4 px-6 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer ${
+                className={`w-full py-3.5 px-6 rounded-lg font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer btn-press ${
                   event.isSoldOut
                     ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none'
                     : 'bg-[#85142f] hover:bg-[#6e1026] text-white shadow-[#85142f]/30'
@@ -521,9 +511,8 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
               {event.isSoldOut ? 'Status' : 'Starting From'}
             </span>
             <span
-              className={`text-lg font-black ${
-                event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
-              }`}
+              className={`text-lg font-black ${event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
+                }`}
             >
               {event.isSoldOut ? 'Sold Out' : `${event.currency} ${event.startingPrice.toLocaleString('en-IN')}`}
             </span>
@@ -533,7 +522,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             type="button"
             disabled={event.isSoldOut}
             onClick={handleProceedBooking}
-            className={`py-3 px-6 rounded-full font-extrabold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all ${
+            className={`py-2.5 px-6 rounded-lg font-extrabold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all btn-press ${
               event.isSoldOut
                 ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
                 : 'bg-[#85142f] text-white shadow-[#85142f]/30'
