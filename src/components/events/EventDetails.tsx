@@ -21,6 +21,9 @@ import {
   Layers,
   Sparkles,
   Info,
+  ChevronRight,
+  TrendingUp,
+  Check,
 } from 'lucide-react';
 import { LiveEvent } from '@/types/event';
 
@@ -30,6 +33,24 @@ interface EventDetailsProps {
   onBookClick?: () => void;
 }
 
+const eventOffers = [
+  {
+    id: 'off-1',
+    title: 'YES Private Debit Card Offer',
+    subtitle: 'Tap to view details',
+  },
+  {
+    id: 'off-2',
+    title: 'Buy 1 get 1 live pass',
+    subtitle: 'Tap to view details',
+  },
+  {
+    id: 'off-3',
+    title: 'Flat ₹150 Off with ICICI Netbanking',
+    subtitle: 'Tap to view details',
+  },
+];
+
 export const EventDetails: React.FC<EventDetailsProps> = ({
   event,
   relatedEvents = [],
@@ -38,6 +59,8 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
+  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const [isTermsExpanded, setIsTermsExpanded] = useState(false);
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -86,10 +109,375 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafc] pb-28 md:pb-32 lg:pb-20">
-      
-      {/* 1. TOP NAVIGATION / BREADCRUMB (Mobile & Tablet Optimized) */}
-      <div className="bg-white border-b border-neutral-200/80">
+    <div className="min-h-screen bg-[#fafafc]">
+      {/* ========================================================= */}
+      {/* MOBILE EVENT VIEW (BookMyShow Mobile Layout: lg:hidden)   */}
+      {/* ========================================================= */}
+      <div className="lg:hidden pb-24 bg-white">
+        {/* 1. Hero Card: 16:9 Banner with Badges */}
+        <div className="p-3">
+          <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg bg-neutral-900 border border-neutral-100">
+            <Image
+              src={event.bannerImage || event.image}
+              alt={event.title}
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 640px"
+              className="object-cover object-center"
+            />
+
+            {/* Badges Top Overlay */}
+            <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 z-10">
+              <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${bookingInfo.badgeColor} shadow-md backdrop-blur-md`}>
+                {bookingInfo.title}
+              </span>
+
+              {event.isSoldOut ? (
+                <span className="px-2.5 py-1 rounded-md bg-red-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                  SOLD OUT
+                </span>
+              ) : event.isPromoted ? (
+                <span className="px-2.5 py-1 rounded-md bg-[#e11d48] text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                  PROMOTED
+                </span>
+              ) : event.isFastFilling ? (
+                <span className="px-2.5 py-1 rounded-md bg-amber-500 text-neutral-950 text-[10px] font-black uppercase tracking-wider shadow-md">
+                  FAST FILLING
+                </span>
+              ) : null}
+            </div>
+
+            {/* Bottom Highlight Badge */}
+            {event.badgeText && (
+              <div className="absolute bottom-2.5 left-2.5 z-10">
+                <span className="px-2.5 py-1 rounded-md bg-neutral-950/85 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest shadow-md flex items-center gap-1 border border-white/10">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>{event.badgeText}</span>
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 2. Event Title */}
+        <div className="px-4 pt-1 pb-1">
+          <h1 className="text-xl font-black text-neutral-950 tracking-tight leading-snug">
+            {event.title}
+          </h1>
+        </div>
+
+        {/* 3. Event Meta Tags Line (Category • Language • Age • Duration) */}
+        <div className="px-4 py-1.5 text-xs text-neutral-600 font-medium flex items-center gap-1.5 flex-wrap">
+          <span className="font-bold text-[#85142f]">{event.category}</span>
+          {event.language && (
+            <>
+              <span>•</span>
+              <span>{event.language}</span>
+            </>
+          )}
+          {event.ageRestriction && (
+            <>
+              <span>•</span>
+              <span className="px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700 text-[11px] font-bold">
+                {event.ageRestriction}
+              </span>
+            </>
+          )}
+          {event.duration && (
+            <>
+              <span>•</span>
+              <span>{event.duration}</span>
+            </>
+          )}
+        </div>
+
+        {/* 4. Date & Venue Details Card (Clean BookMyShow Style) */}
+        <div className="px-4 py-2 space-y-2">
+          {/* Date & Time */}
+          <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200/70 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-rose-50 text-[#85142f] flex items-center justify-center shrink-0 border border-rose-100">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+                Date & Time
+              </span>
+              <p className="text-xs font-black text-neutral-900 truncate">
+                {event.date} {event.time ? `• ${event.time}` : ''}
+              </p>
+            </div>
+          </div>
+
+          {/* Venue & City */}
+          <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200/70 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center shrink-0 border border-neutral-200">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+                Location
+              </span>
+              <p className="text-xs font-black text-neutral-900 truncate">
+                {event.venue}
+              </p>
+              <p className="text-[11px] text-neutral-500 font-medium">
+                {event.city}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 5. Trending / Fast-filling Velocity Strip */}
+        <div className="px-4 py-1.5">
+          <div className="p-2.5 rounded-xl border border-neutral-200/80 bg-white flex items-center gap-2.5 shadow-2xs">
+            <span className="px-2 py-1 rounded-md bg-[#387bf8] text-white text-[10px] font-black tracking-wide flex items-center gap-1 shrink-0">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>Trending</span>
+            </span>
+            <span className="text-xs font-bold text-emerald-600 truncate">
+              {event.isFastFilling ? 'Selling out rapidly! Reserve passes now' : 'High demand: Over 10.5K passes booked'}
+            </span>
+          </div>
+        </div>
+
+        {/* 6. Top Offers For You */}
+        <div className="pt-3 pb-2">
+          <div className="px-4 mb-2">
+            <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+              Top offers for you
+            </h3>
+          </div>
+          <div className="flex items-center gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+            {eventOffers.map((offer) => (
+              <div
+                key={offer.id}
+                className="shrink-0 w-64 p-3 rounded-xl border border-neutral-200/80 bg-white flex items-center gap-3 shadow-2xs"
+              >
+                <div className="w-9 h-9 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center shrink-0">
+                  <Check className="w-5 h-5 text-[#85142f] stroke-[2.5px]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-neutral-900 truncate">
+                    {offer.title}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 font-medium">
+                    {offer.subtitle}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 7. Artist / Headliner Section */}
+        {event.artist && (
+          <div className="pt-3 pb-2 border-t border-neutral-100">
+            <div className="px-4 mb-2">
+              <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                Artist & Lineup
+              </h3>
+            </div>
+            <div className="px-4">
+              <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-center gap-3.5">
+                {event.artist.image ? (
+                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-neutral-200 shadow-xs">
+                    <Image
+                      src={event.artist.image}
+                      alt={event.artist.name}
+                      fill
+                      sizes="56px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-14 h-14 rounded-2xl bg-[#85142f] text-white flex items-center justify-center font-black text-base shrink-0">
+                    {event.artist.name.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <h4 className="text-sm font-black text-neutral-900 truncate">
+                    {event.artist.name}
+                  </h4>
+                  <p className="text-xs text-[#85142f] font-bold truncate">
+                    {event.artist.role}
+                  </p>
+                  {event.artist.bio && (
+                    <p className="text-[11px] text-neutral-500 line-clamp-1 mt-0.5">
+                      {event.artist.bio}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 8. About The Event (Expandable) */}
+        <div className="pt-3 pb-2 border-t border-neutral-100">
+          <div className="px-4 mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+              About The Event
+            </h3>
+          </div>
+          <div className="px-4 text-xs text-neutral-600 leading-relaxed font-normal">
+            <p>
+              {isAboutExpanded
+                ? (event.about?.join(' ') ||
+                    'Experience an unforgettable live event with premium sound, stage lighting, and timeless performances. Book passes now.')
+                : (event.about?.[0] ||
+                    'Experience an unforgettable live event with premium sound, stage lighting, and timeless performances.')}
+              <button
+                type="button"
+                onClick={() => setIsAboutExpanded(!isAboutExpanded)}
+                className="font-bold text-[#85142f] ml-1 hover:underline cursor-pointer"
+              >
+                {isAboutExpanded ? ' Show less' : '...Read more'}
+              </button>
+            </p>
+          </div>
+
+          {/* Delivery Mode Badges */}
+          {event.deliveryOptions && event.deliveryOptions.length > 0 && (
+            <div className="px-4 pt-3 flex items-center gap-2 flex-wrap">
+              {event.deliveryOptions.includes('digital') && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                  <span>M-Ticket (Digital QR)</span>
+                </span>
+              )}
+              {event.deliveryOptions.includes('home_delivery') && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-[10px] font-bold">
+                  <CheckCircle2 className="w-3 h-3 text-blue-600" />
+                  <span>Home Delivery</span>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* 9. Terms and Conditions Guide */}
+        <div className="pt-3 pb-2 border-t border-neutral-100">
+          <div className="px-4 mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-black text-neutral-900 tracking-tight flex items-center gap-1.5">
+              <span>Terms & Guidelines</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
+            </h3>
+            <button
+              type="button"
+              onClick={() => setIsTermsExpanded(!isTermsExpanded)}
+              className="text-xs font-bold text-[#85142f] cursor-pointer"
+            >
+              {isTermsExpanded ? 'Collapse' : 'View all'}
+            </button>
+          </div>
+          <div className="px-4">
+            <ul className="text-xs text-neutral-600 space-y-1.5 list-disc list-inside">
+              {(isTermsExpanded ? (event.terms || []) : (event.terms?.slice(0, 2) || [
+                'Tickets once booked cannot be exchanged, cancelled, or refunded.',
+                'Valid government photo ID is mandatory at the security gates.'
+              ])).map((term, idx) => (
+                <li key={idx} className="marker:text-[#85142f]">
+                  {term}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* 10. You Might Also Like / Related Events */}
+        {relatedEvents.length > 0 && (
+          <div className="pt-4 pb-2 border-t border-neutral-100">
+            <div className="px-4 flex items-center justify-between mb-3">
+              <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                You might also like
+              </h3>
+              <Link
+                href="/events"
+                className="text-xs font-bold text-[#85142f] flex items-center cursor-pointer"
+              >
+                View All
+                <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+              </Link>
+            </div>
+            <div className="flex items-center gap-3 overflow-x-auto px-4 pb-3 scrollbar-none">
+              {relatedEvents.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/events/${item.id}`}
+                  className="flex flex-col shrink-0 w-44 group cursor-pointer"
+                >
+                  <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-neutral-900 mb-2 shadow-xs">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="180px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-1.5 left-1.5">
+                      <span className="px-1.5 py-0.5 rounded bg-black/75 text-white text-[9px] font-bold">
+                        {item.category}
+                      </span>
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-xs text-neutral-900 group-hover:text-[#85142f] transition-colors line-clamp-1">
+                    {item.title}
+                  </h4>
+                  <p className="text-[10px] text-neutral-500 font-medium truncate mt-0.5">
+                    {item.date} • {item.venue}
+                  </p>
+                  <p className="text-xs font-black text-neutral-900 mt-1">
+                    {item.currency} {item.startingPrice.toLocaleString('en-IN')} <span className="text-[10px] font-normal text-neutral-500">onwards</span>
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 11. Fixed Bottom Action Bar for Mobile */}
+        <div className="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200/90 p-3 z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
+          <div>
+            <span className="block text-[10px] uppercase font-bold text-neutral-400 tracking-wider">
+              {event.isSoldOut ? 'Status' : 'Starting From'}
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span
+                className={`text-lg font-black ${
+                  event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
+                }`}
+              >
+                {event.isSoldOut ? 'Sold Out' : `${event.currency} ${event.startingPrice.toLocaleString('en-IN')}`}
+              </span>
+              {!event.isSoldOut && (
+                <span className="text-[11px] text-neutral-400 font-semibold">onwards</span>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            disabled={event.isSoldOut}
+            onClick={handleProceedBooking}
+            className={`py-3 px-6 rounded-xl font-black text-sm flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer ${
+              event.isSoldOut
+                ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none'
+                : 'bg-[#85142f] hover:bg-[#6e1026] text-white shadow-[#85142f]/30'
+            }`}
+          >
+            <Ticket className="w-4 h-4" />
+            <span>{event.isSoldOut ? 'Sold Out' : 'Book Tickets'}</span>
+            {!event.isSoldOut && <ChevronRight className="w-4 h-4 ml-0.5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* DESKTOP EVENT VIEW (Preserved 100% as-is: hidden lg:block) */}
+      {/* ========================================================= */}
+      <div className="hidden lg:block pb-20">
+        {/* 1. TOP NAVIGATION / BREADCRUMB (Mobile & Tablet Optimized) */}
+        <div className="bg-white border-b border-neutral-200/80">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
           
           {/* Mobile view: Clean back button without squished long breadcrumbs */}
@@ -545,43 +933,6 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
           </aside>
         </div>
       </main>
-
-      {/* 4. MOBILE & TABLET STICKY BOTTOM BOOKING BAR (Visible on screens < lg) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-neutral-200/90 px-4 py-3 z-50 shadow-2xl">
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          <div>
-            <span className="block text-[10px] uppercase font-bold text-neutral-400 tracking-wider">
-              {event.isSoldOut ? 'Status' : 'Starting From'}
-            </span>
-            <div className="flex items-baseline gap-1">
-              <span
-                className={`text-lg sm:text-xl font-black ${
-                  event.isSoldOut ? 'text-neutral-500 line-through' : 'text-neutral-950'
-                }`}
-              >
-                {event.isSoldOut ? 'Sold Out' : `${event.currency} ${event.startingPrice.toLocaleString('en-IN')}`}
-              </span>
-              {!event.isSoldOut && (
-                <span className="text-[11px] text-neutral-400 font-semibold">onwards</span>
-              )}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            disabled={event.isSoldOut}
-            onClick={handleProceedBooking}
-            className={`py-3.5 px-6 sm:px-8 rounded-full font-extrabold text-xs sm:text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer ${
-              event.isSoldOut
-                ? 'bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none'
-                : 'bg-[#85142f] text-white shadow-[#85142f]/35 hover:bg-[#6c0f25]'
-            }`}
-          >
-            <Ticket className="w-4 h-4" />
-            <span>{event.isSoldOut ? 'Sold Out' : 'Book Tickets'}</span>
-            {!event.isSoldOut && <ArrowRight className="w-4 h-4 ml-0.5" />}
-          </button>
-        </div>
       </div>
     </div>
   );
