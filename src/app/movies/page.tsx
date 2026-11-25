@@ -246,7 +246,7 @@ export default function MoviesPage() {
 
       {/* Mobile Search Input Bar */}
       {isSearchActive && (
-        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 animate-in fade-in slide-in-from-top-2 duration-150 sticky top-16 z-30 shadow-sm">
+        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 animate-in fade-in slide-in-from-top-2 duration-150 sticky top-14 z-30 shadow-sm">
           <div className="relative flex items-center bg-neutral-100 rounded-full px-3.5 py-1.5">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
@@ -315,7 +315,7 @@ export default function MoviesPage() {
         </section>
 
         {/* Mobile Horizontal Filter Pill Row (Sticky below header) */}
-        <section className="sticky top-14 z-20 bg-white/95 backdrop-blur-md py-2 -mx-3 px-3 mb-3 border-b border-neutral-200/80 shadow-xs">
+        <section className="sticky top-14 z-30 bg-white py-2 -mx-3 px-3 mb-3 border-b border-neutral-200/80 shadow-xs">
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
             {/* Prominent Filters Button with active count */}
             <button

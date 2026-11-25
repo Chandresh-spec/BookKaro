@@ -213,7 +213,7 @@ export default function EventsDiscoveryPage() {
 
       {/* Mobile Search Dropdown */}
       {isSearchActive && (
-        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-16 z-30 shadow-sm">
+        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-14 z-30 shadow-sm">
           <div className="relative flex items-center bg-neutral-100 rounded-full px-3.5 py-1.5">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
@@ -238,7 +238,7 @@ export default function EventsDiscoveryPage() {
       )}
 
       {/* Mobile Quick Horizontal Category Filter Bar */}
-      <div className="lg:hidden sticky top-14 z-25 bg-white border-b border-neutral-200/80 px-3 py-2 shadow-xs flex items-center gap-2">
+      <div className="lg:hidden sticky top-14 z-30 bg-white border-b border-neutral-200/80 px-3 py-2 shadow-xs flex items-center gap-2">
         <button
           type="button"
           onClick={() => setIsFilterModalOpen(true)}
