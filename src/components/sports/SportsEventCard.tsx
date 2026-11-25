@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Trophy } from 'lucide-react';
+import { MapPin, Trophy, ArrowRight } from 'lucide-react';
 import { SportEvent } from '@/types/sports';
 
 interface SportsEventCardProps {
@@ -75,19 +75,27 @@ export const SportsEventCard: React.FC<SportsEventCardProps> = ({ event }) => {
             {event.distanceOrCategory || event.sportType}
           </p>
 
-          {/* Starting Ticket Price */}
-          <p className="text-xs sm:text-sm font-extrabold text-neutral-950 pt-1">
+        </div>
+      </div>
+
+      {/* Footer / Price & Action (Matching BookMyShow Mobile Design) */}
+      <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between gap-1.5">
+        <div>
+          <span className="block text-[9px] uppercase font-bold text-neutral-400 tracking-wider leading-none">
+            Starting From
+          </span>
+          <span className="text-xs sm:text-sm font-black text-neutral-900 mt-0.5 block leading-tight">
             {event.startingPrice === 0 ? (
               <span className="text-emerald-700">Free</span>
             ) : (
-              <span>
-                {event.currency} {event.startingPrice}{' '}
-                <span className="text-[10px] sm:text-xs font-normal text-neutral-500">
-                  onwards
-                </span>
-              </span>
+              <span>₹{event.startingPrice}</span>
             )}
-          </p>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold transition-all shadow-2xs group-hover:bg-[#85142f] group-hover:text-white bg-white text-neutral-800 border border-neutral-200 shrink-0">
+          <span>Book</span>
+          <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
         </div>
       </div>
     </Link>

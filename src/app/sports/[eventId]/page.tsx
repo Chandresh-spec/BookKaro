@@ -22,6 +22,9 @@ import {
   Sparkles,
   ShieldCheck,
   ExternalLink,
+  TrendingUp,
+  Check,
+  CheckCircle2,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -30,6 +33,24 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { SportsEventCard } from '@/components/sports/SportsEventCard';
 import { MOCK_SPORTS_EVENTS } from '@/data/mockSportsEvents';
 import { User, SportEvent } from '@/types';
+
+const sportsOffers = [
+  {
+    id: 'off-1',
+    title: 'YES Private Debit Card Offer',
+    subtitle: 'Tap to view details',
+  },
+  {
+    id: 'off-2',
+    title: 'Flat ₹100 Off with ICICI Netbanking',
+    subtitle: 'Tap to view details',
+  },
+  {
+    id: 'off-3',
+    title: 'Marathon Runner Perk: Free Hydration Pack',
+    subtitle: 'Tap to view details',
+  },
+];
 
 export default function SportEventDetailPage() {
   const params = useParams();
@@ -116,19 +137,364 @@ export default function SportEventDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#fafafc] text-neutral-900 pb-28 lg:pb-16 selection:bg-[#85142f] selection:text-white">
-      {/* 1. TOP NAVBAR */}
-      <Navbar
-        currentCity={currentCity}
-        user={currentUser}
-        onSelectCity={setCurrentCity}
-        onSignInClick={() => setIsAuthModalOpen(true)}
-        onSignOut={() => setCurrentUser(null)}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      {/* 1. DESKTOP NAVBAR */}
+      <div className="hidden lg:block">
+        <Navbar
+          currentCity={currentCity}
+          user={currentUser}
+          onSelectCity={setCurrentCity}
+          onSignInClick={() => setIsAuthModalOpen(true)}
+          onSignOut={() => setCurrentUser(null)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+      </div>
 
-      {/* 2. MAIN CONTENT: 2-COLUMN LAYOUT (Matching BookMyShow Screenshots 2, 3, 4, 5) */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+      {/* 2. MOBILE HEADER */}
+      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.push('/sports')}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors cursor-pointer"
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
+          </button>
+          <h1 className="text-sm font-extrabold text-neutral-900 truncate max-w-[220px]">
+            {event.title}
+          </h1>
+        </div>
+        <button
+          type="button"
+          onClick={handleShare}
+          className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+          aria-label="Share"
+        >
+          <Share2 className="w-4 h-4" />
+        </button>
+      </header>
+
+      {/* ========================================================= */}
+      {/* MOBILE SPORTS VIEW (BookMyShow Mobile Layout: lg:hidden)  */}
+      {/* ========================================================= */}
+      <div className="lg:hidden pb-24 bg-white">
+        {/* 1. Hero Card: 16:9 Aspect Banner with Badges */}
+        <div className="p-3">
+          <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg bg-neutral-900 border border-neutral-100">
+            <Image
+              src={event.bannerImage || event.image}
+              alt={event.title}
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 640px"
+              className="object-cover object-center"
+            />
+
+            {/* Badges Top Overlay */}
+            <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 z-10">
+              <span className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-neutral-900/90 text-white shadow-md backdrop-blur-md">
+                {event.sportType}
+              </span>
+
+              {event.isFastFilling ? (
+                <span className="px-2.5 py-1 rounded-md bg-[#85142f] text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                  FAST FILLING
+                </span>
+              ) : event.isFree ? (
+                <span className="px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+                  FREE ENTRY
+                </span>
+              ) : null}
+            </div>
+
+            {/* Bottom Highlight */}
+            {event.distanceOrCategory && (
+              <div className="absolute bottom-2.5 left-2.5 z-10">
+                <span className="px-2.5 py-1 rounded-md bg-neutral-950/85 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest shadow-md flex items-center gap-1 border border-white/10">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>{event.distanceOrCategory}</span>
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 2. Event Title */}
+        <div className="px-4 pt-1 pb-1">
+          <h1 className="text-xl font-black text-neutral-950 tracking-tight leading-snug">
+            {event.title}
+          </h1>
+        </div>
+
+        {/* 3. Event Meta Line */}
+        <div className="px-4 py-1.5 text-xs text-neutral-600 font-medium flex items-center gap-1.5 flex-wrap">
+          <span className="font-bold text-[#85142f]">{event.sportType}</span>
+          {event.distanceOrCategory && (
+            <>
+              <span>•</span>
+              <span>{event.distanceOrCategory}</span>
+            </>
+          )}
+          {event.isFamilyFriendly && (
+            <>
+              <span>•</span>
+              <span className="px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700 text-[11px] font-bold">
+                Family Friendly
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* 4. Date & Venue Details Card (Clean BookMyShow Style) */}
+        <div className="px-4 py-2 space-y-2">
+          {/* Date & Time */}
+          <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200/70 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-rose-50 text-[#85142f] flex items-center justify-center shrink-0 border border-rose-100">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+                Date & Time
+              </span>
+              <p className="text-xs font-black text-neutral-900 truncate">
+                {event.date} {event.time ? `• ${event.time}` : ''}
+              </p>
+            </div>
+          </div>
+
+          {/* Venue & Location */}
+          <div className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200/70 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center shrink-0 border border-neutral-200">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+                Location
+              </span>
+              <p className="text-xs font-black text-neutral-900 truncate">
+                {event.venue}
+              </p>
+              <p className="text-[11px] text-neutral-500 font-medium">
+                {event.city}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 5. Trending / Fast-filling Velocity Strip */}
+        <div className="px-4 py-1.5">
+          <div className="p-2.5 rounded-xl border border-neutral-200/80 bg-white flex items-center gap-2.5 shadow-2xs">
+            <span className="px-2 py-1 rounded-md bg-[#387bf8] text-white text-[10px] font-black tracking-wide flex items-center gap-1 shrink-0">
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>Trending</span>
+            </span>
+            <span className="text-xs font-bold text-emerald-600 truncate">
+              {interestedTotal} sports enthusiasts are interested
+            </span>
+          </div>
+        </div>
+
+        {/* 6. Top Offers For You */}
+        <div className="pt-3 pb-2">
+          <div className="px-4 mb-2">
+            <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+              Top offers for you
+            </h3>
+          </div>
+          <div className="flex items-center gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+            {sportsOffers.map((offer) => (
+              <div
+                key={offer.id}
+                className="shrink-0 w-64 p-3 rounded-xl border border-neutral-200/80 bg-white flex items-center gap-3 shadow-2xs"
+              >
+                <div className="w-9 h-9 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center shrink-0">
+                  <Check className="w-5 h-5 text-[#85142f] stroke-[2.5px]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-neutral-900 truncate">
+                    {offer.title}
+                  </p>
+                  <p className="text-[11px] text-neutral-500 font-medium">
+                    {offer.subtitle}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 7. Participation Categories / Registration Tiers */}
+        {event.participationCategories && event.participationCategories.length > 0 && (
+          <div className="pt-3 pb-2 border-t border-neutral-100">
+            <div className="px-4 mb-2.5">
+              <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                Race Categories & Tiers
+              </h3>
+            </div>
+            <div className="px-4 space-y-2">
+              {event.participationCategories.map((cat, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-2xl bg-neutral-50 border border-neutral-200/80 flex items-center justify-between"
+                >
+                  <div>
+                    <h4 className="text-xs font-black text-neutral-900">
+                      {cat.name}
+                    </h4>
+                    <p className="text-[10px] text-neutral-500 font-medium">
+                      Official BIB, Finisher Medal, Hydration & Breakfast
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0 ml-2">
+                    <span className="text-xs font-black text-neutral-950 block">
+                      ₹{cat.fee}
+                    </span>
+                    <span className="text-[9px] font-bold text-emerald-600 uppercase">
+                      Available
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 8. About The Event (Expandable) */}
+        <div className="pt-3 pb-2 border-t border-neutral-100">
+          <div className="px-4 mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+              About The Event
+            </h3>
+          </div>
+          <div className="px-4 text-xs text-neutral-600 leading-relaxed font-normal">
+            <p>
+              {isReadMoreOpen
+                ? event.description
+                : event.description?.slice(0, 160) + '...'}
+              <button
+                type="button"
+                onClick={() => setIsReadMoreOpen(!isReadMoreOpen)}
+                className="font-bold text-[#85142f] ml-1 hover:underline cursor-pointer"
+              >
+                {isReadMoreOpen ? ' Show less' : '...Read more'}
+              </button>
+            </p>
+          </div>
+        </div>
+
+        {/* 9. Terms and Guidelines */}
+        <div className="pt-3 pb-2 border-t border-neutral-100">
+          <div className="px-4 mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-black text-neutral-900 tracking-tight flex items-center gap-1.5">
+              <span>Terms & Guidelines</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
+            </h3>
+            <button
+              type="button"
+              onClick={() => setIsTermsOpen(!isTermsOpen)}
+              className="text-xs font-bold text-[#85142f] cursor-pointer"
+            >
+              {isTermsOpen ? 'Collapse' : 'View all'}
+            </button>
+          </div>
+          <div className="px-4">
+            <ul className="text-xs text-neutral-600 space-y-1.5 list-disc list-inside">
+              {(isTermsOpen ? (event.terms || []) : (event.terms?.slice(0, 2) || [
+                'Registrations once booked cannot be exchanged, cancelled, or refunded.',
+                'BIB collection is mandatory before race morning.'
+              ])).map((term, idx) => (
+                <li key={idx} className="marker:text-[#85142f]">
+                  {term}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* 10. You Might Also Like / Related Sports */}
+        {relatedEvents.length > 0 && (
+          <div className="pt-4 pb-2 border-t border-neutral-100">
+            <div className="px-4 flex items-center justify-between mb-3">
+              <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                You might also like
+              </h3>
+              <Link
+                href="/sports"
+                className="text-xs font-bold text-[#85142f] flex items-center cursor-pointer"
+              >
+                View All
+                <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+              </Link>
+            </div>
+            <div className="flex items-center gap-3 overflow-x-auto px-4 pb-3 scrollbar-none">
+              {relatedEvents.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/sports/${item.id}`}
+                  className="flex flex-col shrink-0 w-44 group cursor-pointer"
+                >
+                  <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-neutral-900 mb-2 shadow-xs">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="180px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-1.5 left-1.5">
+                      <span className="px-1.5 py-0.5 rounded bg-black/75 text-white text-[9px] font-bold">
+                        {item.sportType}
+                      </span>
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-xs text-neutral-900 group-hover:text-[#85142f] transition-colors line-clamp-1">
+                    {item.title}
+                  </h4>
+                  <p className="text-[10px] text-neutral-500 font-medium truncate mt-0.5">
+                    {item.date} • {item.venue}
+                  </p>
+                  <p className="text-xs font-black text-neutral-900 mt-1">
+                    {item.currency} {item.startingPrice} <span className="text-[10px] font-normal text-neutral-500">onwards</span>
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 11. Fixed Bottom Action Bar for Mobile */}
+        <div className="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200/90 p-3 z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
+          <div>
+            <span className="block text-[10px] uppercase font-bold text-neutral-400 tracking-wider">
+              Starting From
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-black text-neutral-950">
+                ₹{event.startingPrice}
+              </span>
+              <span className="text-[11px] text-neutral-400 font-semibold">onwards</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleBookNow}
+            className="py-3 px-6 rounded-xl font-black text-sm flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer bg-[#85142f] hover:bg-[#6e1026] text-white shadow-[#85142f]/30"
+          >
+            <Ticket className="w-4 h-4" />
+            <span>Book Tickets</span>
+            <ChevronRight className="w-4 h-4 ml-0.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* DESKTOP SPORTS VIEW (Preserved 100% as-is: hidden lg:block) */}
+      {/* ========================================================= */}
+      <div className="hidden lg:block">
+        {/* 2. MAIN CONTENT: 2-COLUMN LAYOUT (Matching BookMyShow Screenshots 2, 3, 4, 5) */}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
         {/* Title and Share Action Row (Directly above Banner, matching BookMyShow Screenshot 2) */}
         <div className="flex items-center justify-between gap-4 pb-4 sm:pb-6">
           <div className="flex items-center gap-3">
@@ -479,7 +845,7 @@ export default function SportEventDetailPage() {
                 <button
                   type="button"
                   onClick={handleBookNow}
-                  className="py-3 px-8 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-extrabold text-sm shadow-md active:scale-95 transition-all cursor-pointer"
+                  className="py-3 px-8 rounded-xl bg-[#85142f] hover:bg-[#6e1026] text-white font-extrabold text-sm shadow-md active:scale-95 transition-all cursor-pointer"
                 >
                   Book Now
                 </button>
@@ -488,25 +854,6 @@ export default function SportEventDetailPage() {
           </aside>
         </div>
       </main>
-
-      {/* 4. MOBILE STICKY BOTTOM BAR (Screenshot 2, 3, 4, 5 on Mobile) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-neutral-200 px-4 py-3 z-40 flex items-center justify-between shadow-lg">
-        <div>
-          <p className="text-[11px] text-neutral-500 font-semibold">Starting from</p>
-          <div className="flex items-baseline gap-1">
-            <span className="text-lg font-black text-neutral-950">
-              ₹{event.startingPrice}
-            </span>
-            <span className="text-xs text-neutral-400">onwards</span>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={handleBookNow}
-          className="px-8 py-3 rounded-xl bg-[#e11d48] hover:bg-[#be123c] text-white font-extrabold text-sm tracking-tight shadow-md active:scale-95 transition-all cursor-pointer"
-        >
-          Book Now
-        </button>
       </div>
 
       {/* Auth Modal */}
@@ -521,13 +868,6 @@ export default function SportEventDetailPage() {
 
       {/* Master BMS Footer */}
       <Footer currentCity={currentCity} />
-
-      {/* Mobile Bottom Dock */}
-      <MobileBottomNav
-        activeTab="sports"
-        user={currentUser}
-        onProfileClick={() => setIsAuthModalOpen(true)}
-      />
     </div>
   );
 }
