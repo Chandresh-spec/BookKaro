@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MapPin, Search, X, ChevronDown, Check, Ticket, LogOut } from 'lucide-react';
 import { ProfileDrawer } from '@/components/profile/ProfileDrawer';
 import { CITIES } from '@/data/mockData';
@@ -30,7 +31,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Home');
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -77,7 +79,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Desktop Navigation Links */}
               <nav className="flex items-center gap-7 text-[14px]">
                 {navLinks.map((link) => {
-                  const isActive = activeTab === link.label;
+                  const isActive =
+                    (link.href !== '/' && pathname?.startsWith(link.href)) ||
+                    (link.href === '/' && pathname === '/');
                   return (
                     <Link
                       key={link.label}
