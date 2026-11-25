@@ -473,6 +473,59 @@ export const MOCK_SPORTS_EVENTS: SportEvent[] = [
       { id: 'chess-u15', name: 'Under-15 Junior Division', fee: 500, minAge: 5 },
       { id: 'chess-u11', name: 'Under-11 Cadets Division', fee: 500, minAge: 5 },
     ],
+    artists: [
+      {
+        name: 'IA V. K. Sharma',
+        role: 'Chief Arbiter & FIDE IA',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop',
+      },
+      {
+        name: 'GM Pravin Thipsay',
+        role: 'Chief Guest & Grandmaster',
+        image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
+      },
+      {
+        name: 'WIM Raghavi N.',
+        role: 'Official Tournament Commentator',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop',
+      },
+    ],
+    gallery: [
+      {
+        category: 'DGT Boards',
+        count: 4,
+        image: 'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=600&auto=format&fit=crop',
+      },
+      {
+        category: 'Arena',
+        count: 8,
+        image: 'https://images.unsplash.com/photo-1580541832626-2a7131ee809f?q=80&w=600&auto=format&fit=crop',
+      },
+      {
+        category: 'Trophies',
+        count: 6,
+        image: 'https://images.unsplash.com/photo-1560174038-da43ac74f01b?q=80&w=600&auto=format&fit=crop',
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is the tournament format and time control?',
+        answer: 'The tournament follows a 7-round Swiss League format with rapid time control of 15 minutes + 10 seconds increment per move from move 1.',
+      },
+      {
+        question: 'Are unrated players eligible to participate?',
+        answer: 'Yes! Both FIDE-rated and unrated players are welcome. Unrated players will receive initial FIDE rapid rating performance calculations.',
+      },
+      {
+        question: 'Are electronic devices permitted inside the playing hall?',
+        answer: 'Strictly prohibited. All mobile phones, smartwatches, and wireless earphones must be switched off and deposited at the registration desk prior to entering the arena.',
+      },
+    ],
+    terms: [
+      'Reporting time is strictly 08:30 AM at Kanteerava Indoor Stadium for attendance and initial pairing verification.',
+      'FIDE rapid chess rules apply. A player making two illegal moves will forfeit the active game.',
+      'Registration is confirmed upon completion of mock payment and presentation of valid student/age ID for junior categories.',
+    ],
   },
   {
     id: 'namma-bengaluru-blitz-chess',

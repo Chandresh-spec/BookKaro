@@ -117,29 +117,29 @@ export default function SportEventDetailPage() {
   return (
     <div className="min-h-screen bg-[#fafafc] text-neutral-900 pb-28 lg:pb-16 selection:bg-[#85142f] selection:text-white">
       {/* 1. TOP NAVBAR */}
-      <div className="hidden lg:block">
-        <Navbar
-          currentCity={currentCity}
-          user={currentUser}
-          onSelectCity={setCurrentCity}
-          onSignInClick={() => setIsAuthModalOpen(true)}
-          onSignOut={() => setCurrentUser(null)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-      </div>
+      <Navbar
+        currentCity={currentCity}
+        user={currentUser}
+        onSelectCity={setCurrentCity}
+        onSignInClick={() => setIsAuthModalOpen(true)}
+        onSignOut={() => setCurrentUser(null)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
-      {/* 2. PAGE HEADER BAR WITH TITLE & SHARE */}
-      <header className="bg-white border-b border-neutral-200/80 sticky top-0 lg:top-20 z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 truncate">
+      {/* 2. MAIN CONTENT: 2-COLUMN LAYOUT (Matching BookMyShow Screenshots 2, 3, 4, 5) */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+        {/* Title and Share Action Row (Directly above Banner, matching BookMyShow Screenshot 2) */}
+        <div className="flex items-center justify-between gap-4 pb-4 sm:pb-6">
+          <div className="flex items-center gap-3">
             <Link
               href="/sports"
-              className="p-1 rounded-full text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
+              className="p-1.5 -ml-1.5 rounded-full text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
+              aria-label="Back to Sports"
             >
               <ChevronLeft className="w-5 h-5 stroke-[2.5px]" />
             </Link>
-            <h1 className="text-lg sm:text-2xl font-black text-neutral-950 tracking-tight truncate">
+            <h1 className="text-xl sm:text-3xl font-black text-neutral-950 tracking-tight">
               {event.title}
             </h1>
           </div>
@@ -147,7 +147,7 @@ export default function SportEventDetailPage() {
           <button
             type="button"
             onClick={handleShare}
-            className="p-2 rounded-full border border-neutral-200 text-neutral-700 hover:bg-neutral-100 transition-all relative shrink-0"
+            className="p-2.5 rounded-full border border-neutral-200/90 text-neutral-700 hover:bg-neutral-100 transition-all relative shrink-0 shadow-2xs"
             aria-label="Share event"
           >
             <Share2 className="w-4 h-4" />
@@ -158,10 +158,6 @@ export default function SportEventDetailPage() {
             )}
           </button>
         </div>
-      </header>
-
-      {/* 3. MAIN CONTENT: 2-COLUMN LAYOUT (Matching BookMyShow Screenshots 2, 3, 4, 5) */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-start">
           
           {/* LEFT COLUMN: HERO BANNER, ABOUT, ARTISTS, GALLERY, FAQS (8 cols) */}
@@ -213,9 +209,15 @@ export default function SportEventDetailPage() {
                 <p className="font-extrabold text-neutral-950 uppercase tracking-wide">
                   {event.title}
                 </p>
-                <p className="text-neutral-600 font-semibold">
-                  Celebrating 60 Years of Hotel Empire
-                </p>
+                {event.id === 'empire-heritage-run-2027' ? (
+                  <p className="text-neutral-600 font-semibold">
+                    Celebrating 60 Years of Hotel Empire
+                  </p>
+                ) : event.distanceOrCategory ? (
+                  <p className="text-neutral-600 font-semibold">
+                    {event.distanceOrCategory}
+                  </p>
+                ) : null}
                 <p className="text-neutral-600">
                   {isReadMoreOpen
                     ? event.description
@@ -421,7 +423,7 @@ export default function SportEventDetailPage() {
           </div>
 
           {/* RIGHT COLUMN: STICKY BOOKING CARD (Screenshot 2, 3, 4, 5) */}
-          <aside className="hidden lg:block lg:col-span-4 sticky top-36">
+          <aside className="hidden lg:block lg:col-span-4 sticky top-24">
             <div className="bg-white rounded-3xl border border-neutral-200/90 p-6 shadow-md space-y-5">
               
               {/* Event Attributes Checklist */}
