@@ -187,7 +187,7 @@ export default function MoviesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-neutral-900 pb-28 lg:pb-16 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between bg-[#f5f6f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* ============================================================ */}
       {/* 1. DESKTOP / LAPTOP NAVBAR                                   */}
       {/* ============================================================ */}

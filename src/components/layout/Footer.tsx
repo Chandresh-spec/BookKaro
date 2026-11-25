@@ -236,7 +236,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
   ];
 
   return (
-    <footer className="w-full font-sans text-[#777777] selection:bg-[#ec5e7b] selection:text-white mt-auto pb-20 lg:pb-0">
+    <footer className="w-full font-sans text-[#777777] selection:bg-[#ec5e7b] selection:text-white mt-auto bg-[#313131]">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed bottom-20 right-4 z-50 bg-[#85142f] text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 animate-in slide-in-from-bottom-2">
@@ -383,7 +383,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       {/* ============================================================ */}
       {/* ROW 3: DEEP SEO DIRECTORY LINKS (Desktop / Laptop Only)      */}
       {/* ============================================================ */}
-      <div className="bg-[#313131] py-8 sm:py-10">
+      <div className="bg-[#313131] pt-6 sm:pt-8 lg:pt-10 pb-24 lg:pb-10">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="hidden lg:block space-y-5">
             {directorySections.map((section, idx) => (
@@ -413,7 +413,7 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
           {/* ============================================================ */}
           {/* ROW 4: LOGO DIVIDER & SOCIAL ICONS (Exact Match to Screenshot 2) */}
           {/* ============================================================ */}
-          <div className="pt-10 pb-4">
+          <div className="pt-2 lg:pt-10 pb-2">
             
             {/* Centered Brand Line with BookKaro Logo */}
             <div className="relative flex items-center justify-center mb-7">

@@ -158,7 +158,7 @@ export default function EventsDiscoveryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafc] text-neutral-900 pb-24 lg:pb-16 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between bg-[#fafafc] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* 1. DESKTOP NAVBAR */}
       <div className="hidden lg:block">
         <Navbar

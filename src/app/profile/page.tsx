@@ -75,7 +75,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-neutral-900 pb-24 lg:pb-12 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between bg-[#f5f6f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* 1. DESKTOP NAVBAR */}
       <div className="hidden lg:block">
         <Navbar

@@ -109,7 +109,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white pb-16 lg:pb-0">
+    <div className="min-h-screen flex flex-col justify-between bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* Top Navigation */}
       <Navbar
         currentCity={currentCity}
