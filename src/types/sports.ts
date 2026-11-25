@@ -24,6 +24,8 @@ export interface ParticipationCategory {
   includesTShirt?: boolean;
   minAge?: number;
   availableSlots?: number;
+  statusText?: string;
+  isSoldOut?: boolean;
 }
 
 export interface TicketCategory {
@@ -32,6 +34,20 @@ export interface TicketCategory {
   price: number;
   available: boolean;
   perks?: string[];
+  statusText?: string;
+  isSoldOut?: boolean;
+}
+
+export interface SportArtist {
+  name: string;
+  role: string;
+  image: string;
+}
+
+export interface SportGalleryCategory {
+  category: string;
+  count: number;
+  image: string;
 }
 
 export interface SportEvent {
@@ -66,6 +82,11 @@ export interface SportEvent {
   bookingMode: SportBookingMode;
   participationCategories?: ParticipationCategory[];
   ticketCategories?: TicketCategory[];
+  interestedCount?: number;
+  languages?: string[];
+  artists?: SportArtist[];
+  gallery?: SportGalleryCategory[];
+  faqs?: { question: string; answer: string }[];
 }
 
 export interface SportVenue {
