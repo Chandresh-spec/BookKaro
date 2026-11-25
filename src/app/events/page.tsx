@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ChevronLeft,
+  ChevronDown,
   Search,
   Filter,
   MapPin,
@@ -14,6 +15,7 @@ import {
   SlidersHorizontal,
   Flame,
   Check,
+  Layers,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -32,6 +34,7 @@ export default function EventsDiscoveryPage() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
 
   // Filters State
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -169,64 +172,43 @@ export default function EventsDiscoveryPage() {
         />
       </div>
 
-      {/* 2. MOBILE HEADER */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-16 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
+      {/* 2. MOBILE HEADER (Matching BookMyShow Mobile Reference) */}
+      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors"
+            className="p-1 -ml-1 text-neutral-800 hover:text-[#85142f] transition-colors"
             aria-label="Back to home"
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
           </Link>
           <div>
-            <h1 className="text-base font-extrabold text-neutral-900 leading-tight">
-              Live Events & Concerts
+            <h1 className="text-sm font-black text-neutral-950 leading-tight">
+              Live Events
             </h1>
             <button
               type="button"
               onClick={() => setIsCityModalOpen(true)}
-              className="text-xs text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
+              className="text-[11px] text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
             >
               <span>{currentCity}</span>
-              <span>•</span>
-              <span className="font-semibold text-neutral-700">{filteredEvents.length} Events</span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
             </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setIsSearchActive((p) => !p)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-              isSearchActive || searchQuery
-                ? 'bg-[#85142f] text-white'
-                : 'text-neutral-700 hover:bg-neutral-100'
-            }`}
-            aria-label="Search events"
-          >
-            <Search className="w-5 h-5 stroke-[2.2px]" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsFilterModalOpen(true)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors relative ${
-              activeFiltersCount > 0
-                ? 'bg-[#85142f] text-white'
-                : 'text-neutral-700 hover:bg-neutral-100'
-            }`}
-            aria-label="Open Filters"
-          >
-            <Filter className="w-5 h-5 stroke-[2.2px]" />
-            {activeFiltersCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white">
-                {activeFiltersCount}
-              </span>
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsSearchActive((p) => !p)}
+          className={`p-2 rounded-full transition-colors ${
+            isSearchActive || searchQuery
+              ? 'bg-[#85142f] text-white'
+              : 'text-neutral-700 hover:text-neutral-900'
+          }`}
+          aria-label="Search events"
+        >
+          <Search className="w-5 h-5 stroke-[2.2px]" />
+        </button>
       </header>
 
       {/* Mobile Search Dropdown */}
@@ -438,6 +420,49 @@ export default function EventsDiscoveryPage() {
                 </div>
               )}
             </section>
+
+            {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+            <div className="py-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsFilterModalOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-neutral-200/90 bg-white hover:bg-neutral-50 text-xs font-bold text-[#85142f] shadow-2xs active:scale-95 transition-all cursor-pointer"
+              >
+                <Layers className="w-4 h-4 text-[#85142f]" />
+                <span>Explore All Categories</span>
+              </button>
+            </div>
+
+            {/* BREADCRUMB PATH */}
+            <div className="py-3 text-xs text-neutral-500 font-medium border-t border-neutral-200/70">
+              <Link href="/" className="hover:underline">Home</Link>
+              <span className="mx-1.5 text-neutral-400">→</span>
+              <span className="text-neutral-800 font-semibold">Events</span>
+            </div>
+
+            {/* KNOW MORE ABOUT EVENTS ACCORDION */}
+            <div className="border-t border-neutral-200 bg-neutral-50/60 rounded-xl my-4 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+              >
+                <span>Know more about Events</span>
+                <span className="text-base font-light text-neutral-500">
+                  {isKnowMoreOpen ? '−' : '+'}
+                </span>
+              </button>
+              {isKnowMoreOpen && (
+                <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+                  <p>
+                    Looking for the best live concerts, comedy nights, theatre acts, or outdoor adventures in {currentCity}? BookKaro brings you verified tickets to the city&apos;s most anticipated live experiences with seamless digital passes, interactive seating, and instant confirmation.
+                  </p>
+                  <p>
+                    Browse through diverse categories including music tours, sports championships, workshops, and exclusive fan meets. Check seating layouts, artist line-ups, and early bird discounts all in one place.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
