@@ -246,9 +246,9 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       )}
 
       {/* ============================================================ */}
-      {/* ROW 1: "LIST YOUR SHOW" (Exact Match to Screenshot 1)        */}
+      {/* ROW 1: "LIST YOUR SHOW" (Desktop / Laptop Only)              */}
       {/* ============================================================ */}
-      <div className="bg-[#333338] text-white border-b border-[#3b3b40]">
+      <div className="hidden lg:block bg-[#333338] text-white border-b border-[#3b3b40]">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3.5 text-center md:text-left">
             {/* Outline Tent Icon with top flag */}
@@ -289,9 +289,9 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       </div>
 
       {/* ============================================================ */}
-      {/* ROW 2: 3 CUSTOMER CARE ITEMS (Exact Match to Screenshot 1)   */}
+      {/* ROW 2: 3 CUSTOMER CARE ITEMS (Desktop / Laptop Only)         */}
       {/* ============================================================ */}
-      <div className="bg-[#404040]">
+      <div className="hidden lg:block bg-[#404040]">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
             
@@ -381,32 +381,34 @@ export const Footer: React.FC<FooterProps> = ({ currentCity = 'Bengaluru' }) => 
       </div>
 
       {/* ============================================================ */}
-      {/* ROW 3: DEEP SEO DIRECTORY LINKS (Exact Match to Screenshot 1 & 2) */}
+      {/* ROW 3: DEEP SEO DIRECTORY LINKS (Desktop / Laptop Only)      */}
       {/* ============================================================ */}
       <div className="bg-[#313131] py-8 sm:py-10">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
-          {directorySections.map((section, idx) => (
-            <div key={idx} className="space-y-1">
-              <h4 className="text-[11px] font-semibold text-[#8c8c92] tracking-wider uppercase">
-                {section.title}
-              </h4>
-              <p className="text-[11px] leading-[22px] text-[#636368]">
-                {section.links.map((link, lIdx) => (
-                  <React.Fragment key={lIdx}>
-                    <Link
-                      href={section.href}
-                      className="hover:text-white transition-colors"
-                    >
-                      {link}
-                    </Link>
-                    {lIdx < section.links.length - 1 && (
-                      <span className="text-[#44444a] mx-1.5 select-none">|</span>
-                    )}
-                  </React.Fragment>
-                ))}
-              </p>
-            </div>
-          ))}
+        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="hidden lg:block space-y-5">
+            {directorySections.map((section, idx) => (
+              <div key={idx} className="space-y-1">
+                <h4 className="text-[11px] font-semibold text-[#8c8c92] tracking-wider uppercase">
+                  {section.title}
+                </h4>
+                <p className="text-[11px] leading-[22px] text-[#636368]">
+                  {section.links.map((link, lIdx) => (
+                    <React.Fragment key={lIdx}>
+                      <Link
+                        href={section.href}
+                        className="hover:text-white transition-colors"
+                      >
+                        {link}
+                      </Link>
+                      {lIdx < section.links.length - 1 && (
+                        <span className="text-[#44444a] mx-1.5 select-none">|</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </p>
+              </div>
+            ))}
+          </div>
 
           {/* ============================================================ */}
           {/* ROW 4: LOGO DIVIDER & SOCIAL ICONS (Exact Match to Screenshot 2) */}

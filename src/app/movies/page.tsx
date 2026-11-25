@@ -888,9 +888,9 @@ export default function MoviesPage() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                   setIsFilterModalOpen(true);
                 }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-neutral-200/90 bg-white hover:bg-neutral-50 text-xs font-bold text-[#85142f] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#ec5e7b] hover:text-[#85142f] active:scale-95 transition-all cursor-pointer"
               >
-                <Layers className="w-4 h-4 text-[#85142f]" />
+                <Layers className="w-4 h-4 text-[#ec5e7b]" />
                 <span>Explore All Categories</span>
               </button>
             </div>
