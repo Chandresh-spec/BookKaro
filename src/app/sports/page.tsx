@@ -620,18 +620,7 @@ export default function SportsPage() {
       {selectedEventForBooking && (
         <BookingModal
           isOpen={isBookingModalOpen}
-          item={{
-            id: selectedEventForBooking.id,
-            title: selectedEventForBooking.title,
-            category: selectedEventForBooking.sportType,
-            date: selectedEventForBooking.date,
-            time: selectedEventForBooking.time || '06:00 AM',
-            venue: selectedEventForBooking.venue,
-            city: currentCity,
-            startingPrice: selectedEventForBooking.startingPrice,
-            currency: selectedEventForBooking.currency,
-            image: selectedEventForBooking.image,
-          }}
+          item={selectedEventForBooking}
           currentCity={currentCity}
           onClose={() => {
             setIsBookingModalOpen(false);

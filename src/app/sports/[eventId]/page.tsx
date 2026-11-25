@@ -499,18 +499,7 @@ export default function SportEventDetailPage() {
       {event && (
         <BookingModal
           isOpen={isBookingModalOpen}
-          item={{
-            id: event.id,
-            title: event.title,
-            category: event.sportType,
-            date: event.date,
-            time: event.time || '06:00 AM',
-            venue: event.venue,
-            city: event.city,
-            startingPrice: event.startingPrice,
-            currency: event.currency,
-            image: event.image,
-          } as any}
+          item={event}
           currentCity={currentCity}
           onClose={() => setIsBookingModalOpen(false)}
         />
