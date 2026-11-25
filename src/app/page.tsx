@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Layers } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/home/Hero';
 import { CategoryBar } from '@/components/home/CategoryBar';
@@ -19,6 +20,7 @@ export default function Home() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('movies');
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState('home');
   const [selectedItemForBooking, setSelectedItemForBooking] = useState<Movie | LiveEvent | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -149,6 +151,46 @@ export default function Home() {
           events={filteredEvents}
           onSelectEvent={handleOpenEventBooking}
         />
+
+        {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+        <div className="lg:hidden py-6 flex justify-center">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('trending');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else router.push('/events');
+            }}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-neutral-200/90 bg-white hover:bg-neutral-50 text-xs font-bold text-[#85142f] shadow-2xs active:scale-95 transition-all cursor-pointer"
+          >
+            <Layers className="w-4 h-4 text-[#85142f]" />
+            <span>Explore All Categories</span>
+          </button>
+        </div>
+
+        {/* KNOW MORE ABOUT ONLINE TICKET BOOKING ACCORDION */}
+        <div className="lg:hidden border-t border-neutral-200 bg-neutral-50/60 rounded-xl mx-4 my-4 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+            className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+          >
+            <span>Know more about Online Ticket Booking</span>
+            <span className="text-base font-light text-neutral-500">
+              {isKnowMoreOpen ? '−' : '+'}
+            </span>
+          </button>
+          {isKnowMoreOpen && (
+            <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+              <p>
+                BookKaro is your one-stop entertainment destination in {currentCity} for movies, live concerts, stand-up comedy, sports marathons, theatre plays, and family experiences.
+              </p>
+              <p>
+                Enjoy seamless instant seat reservations, M-Tickets on WhatsApp, verified event organizers, and exclusive bank offers with 24/7 dedicated customer assistance.
+              </p>
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Footer */}

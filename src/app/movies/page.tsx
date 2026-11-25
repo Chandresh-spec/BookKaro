@@ -18,6 +18,7 @@ import {
   Check,
   RotateCcw,
   Film,
+  Layers,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -38,6 +39,7 @@ export default function MoviesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [showUpcomingOnly, setShowUpcomingOnly] = useState(false);
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
 
   // Active filter states
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -202,29 +204,28 @@ export default function MoviesPage() {
       </div>
 
       {/* ============================================================ */}
-      {/* 2. MOBILE HEADER (Matches Mobile Mockup)                     */}
+      {/* 2. MOBILE HEADER (Matches BookMyShow Reference Screenshot)   */}
       {/* ============================================================ */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-16 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
+      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors active:scale-95"
+            className="p-1 -ml-1 text-neutral-800 hover:text-[#85142f] transition-colors"
             aria-label="Back to home"
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
           </Link>
           <div>
-            <h1 className="text-base font-extrabold text-neutral-900 leading-tight">
-              Now Showing
+            <h1 className="text-sm font-black text-neutral-950 leading-tight">
+              Movies
             </h1>
             <button
               type="button"
               onClick={() => setIsCityModalOpen(true)}
-              className="text-xs text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors text-left"
+              className="text-[11px] text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors text-left"
             >
               <span>{currentCity}</span>
-              <span>|</span>
-              <span className="font-semibold text-neutral-700">{filteredMovies.length} Movies</span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
             </button>
           </div>
         </div>
@@ -232,10 +233,10 @@ export default function MoviesPage() {
         <button
           type="button"
           onClick={() => setIsSearchActive((prev) => !prev)}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+          className={`p-2 rounded-full transition-colors cursor-pointer ${
             isSearchActive || searchQuery
               ? 'bg-[#85142f] text-white shadow-xs'
-              : 'text-neutral-700 hover:bg-neutral-100'
+              : 'text-neutral-700 hover:text-neutral-900'
           }`}
           aria-label="Search movies"
         >
@@ -878,6 +879,52 @@ export default function MoviesPage() {
                 </div>
               )}
             </section>
+
+            {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+            <div className="py-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setIsFilterModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-neutral-200/90 bg-white hover:bg-neutral-50 text-xs font-bold text-[#85142f] shadow-2xs active:scale-95 transition-all cursor-pointer"
+              >
+                <Layers className="w-4 h-4 text-[#85142f]" />
+                <span>Explore All Categories</span>
+              </button>
+            </div>
+
+            {/* BREADCRUMB PATH */}
+            <div className="py-3 text-xs text-neutral-500 font-medium border-t border-neutral-200/70">
+              <Link href="/" className="hover:underline">Home</Link>
+              <span className="mx-1.5 text-neutral-400">→</span>
+              <span className="text-neutral-800 font-semibold">Movies</span>
+            </div>
+
+            {/* KNOW MORE ABOUT MOVIES ACCORDION */}
+            <div className="border-t border-neutral-200 bg-neutral-50/60 rounded-xl my-4 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+              >
+                <span>Know more about Movies</span>
+                <span className="text-base font-light text-neutral-500">
+                  {isKnowMoreOpen ? '−' : '+'}
+                </span>
+              </button>
+              {isKnowMoreOpen && (
+                <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+                  <p>
+                    Catch the latest blockbusters and upcoming movie releases across multiplexes and single-screen theatres in {currentCity}. From high-octane action and romantic dramas to family animations and IMAX 3D experiences, BookKaro provides seamless advance booking and real-time seat selection.
+                  </p>
+                  <p>
+                    Check showtimes, theatre locations, movie trailers, certifications, and exclusive concession discounts for PVR, INOX, Cinepolis, and top local cinemas.
+                  </p>
+                </div>
+              )}
+            </div>
 
           </div>
         </div>
