@@ -84,18 +84,16 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafc] text-neutral-900 selection:bg-[#85142f] selection:text-white">
-      {/* 1. DESKTOP NAVBAR */}
-      <div className="hidden lg:block">
-        <Navbar
-          currentCity={event.city || currentCity}
-          user={currentUser}
-          onSelectCity={setCurrentCity}
-          onSignInClick={() => setIsAuthModalOpen(true)}
-          onSignOut={() => setCurrentUser(null)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-      </div>
+      {/* 1. TOP NAVBAR */}
+      <Navbar
+        currentCity={event.city || currentCity}
+        user={currentUser}
+        onSelectCity={setCurrentCity}
+        onSignInClick={() => setIsAuthModalOpen(true)}
+        onSignOut={() => setCurrentUser(null)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
       {/* 2. EVENT DETAILS COMPONENT */}
       <main className="flex-1">

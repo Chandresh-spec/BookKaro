@@ -271,31 +271,26 @@ export default function EventBookingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafc] text-neutral-900 selection:bg-[#85142f] selection:text-white pb-32 sm:pb-36 lg:pb-16">
       
-      {/* 1. TOP NAVBAR (Hidden on small mobile to maximize screen area for maps) */}
-      <div className="hidden lg:block">
-        <Navbar
-          currentCity={event.city || currentCity}
-          user={currentUser}
-          onSelectCity={setCurrentCity}
-          onSignInClick={() => setIsAuthModalOpen(true)}
-          onSignOut={() => setCurrentUser(null)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
-      </div>
-
-      {/* 2. SUB-HEADER WITH TIMER & BREADCRUMB */}
-      <header className="bg-white border-b border-neutral-200/80 sticky top-0 lg:top-20 z-40 px-3 sm:px-6 py-2.5 shadow-2xs">
+      {/* 1. TOP BOOKING HEADER */}
+      <header className="bg-white border-b border-neutral-200 sticky top-0 z-40 px-3 sm:px-6 py-2.5 shadow-2xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <Link
-            href={`/events/${event.id}`}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-700 hover:text-[#85142f] transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 stroke-[2.5px] text-[#85142f]" />
-            <span className="truncate max-w-[170px] sm:max-w-md font-extrabold text-neutral-950">
-              {event.title}
-            </span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="text-[#85142f] font-black text-xl tracking-tight hidden sm:block"
+            >
+              Book<span className="text-neutral-950 font-normal">Karo</span>
+            </Link>
+            <Link
+              href={`/events/${event.id}`}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-700 hover:text-[#85142f] transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5 stroke-[2.5px] text-[#85142f]" />
+              <span className="truncate max-w-[170px] sm:max-w-md font-extrabold text-neutral-950">
+                {event.title}
+              </span>
+            </Link>
+          </div>
 
           {!isConfirmed && (
             <ReservationTimer
@@ -442,7 +437,7 @@ export default function EventBookingPage() {
             </div>
 
             {/* RIGHT COLUMN: STICKY BOOKING SUMMARY (Desktop lg and up) */}
-            <aside className="hidden lg:block w-96 shrink-0 lg:sticky lg:top-36">
+            <aside className="hidden lg:block w-96 shrink-0 lg:sticky lg:top-20">
               <BookingSummary
                 event={event}
                 selectedItems={selectedItems}

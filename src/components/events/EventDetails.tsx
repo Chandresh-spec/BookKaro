@@ -89,7 +89,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
     <div className="min-h-screen bg-[#fafafc] pb-28 md:pb-32 lg:pb-20">
       
       {/* 1. TOP NAVIGATION / BREADCRUMB (Mobile & Tablet Optimized) */}
-      <div className="bg-white border-b border-neutral-200/80 sticky top-0 lg:top-20 z-30 shadow-2xs">
+      <div className="bg-white border-b border-neutral-200/80">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
           
           {/* Mobile view: Clean back button without squished long breadcrumbs */}
