@@ -22,7 +22,6 @@ import {
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
-import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { MOCK_SPORTS_EVENTS } from '@/data/mockSportsEvents';
 import { MOCK_SPORTS_VENUES } from '@/data/mockSportsVenues';
@@ -41,7 +40,7 @@ export default function SportEventDetailPage() {
     email: 'chandresh@example.com',
   });
 
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  // booking modal replaced by full page booking route
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -74,7 +73,9 @@ export default function SportEventDetailPage() {
   };
 
   const handleBookNow = () => {
-    setIsBookingModalOpen(true);
+    if (event) {
+      router.push(`/sports/${event.id}/book`);
+    }
   };
 
   if (!event) {
@@ -463,7 +464,7 @@ export default function SportEventDetailPage() {
                 onClick={handleBookNow}
                 className="w-full py-3.5 rounded-xl bg-[#85142f] hover:bg-[#6e1026] text-white font-extrabold text-sm tracking-tight shadow-md transition-all active:scale-98 cursor-pointer text-center"
               >
-                Book Now
+                {event.bookingMode === 'participation' ? 'Register Now' : event.bookingMode === 'reserved-seating' ? 'Select Seats' : 'Book Tickets'}
               </button>
 
               <p className="text-[11px] text-center text-neutral-400">
@@ -491,24 +492,7 @@ export default function SportEventDetailPage() {
         </button>
       </div>
 
-      {/* Booking Modal */}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        item={{
-          id: event.id,
-          title: event.title,
-          category: event.sportType,
-          date: event.date,
-          time: event.time || '06:00 AM',
-          venue: event.venue,
-          city: event.city,
-          startingPrice: event.startingPrice,
-          currency: event.currency,
-          image: event.image,
-        }}
-        currentCity={currentCity}
-        onClose={() => setIsBookingModalOpen(false)}
-      />
+
 
       {/* Auth Modal */}
       <AuthModal

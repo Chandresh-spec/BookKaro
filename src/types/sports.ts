@@ -83,6 +83,37 @@ export interface SportVenue {
   metroConnectivity?: string;
 }
 
+export interface ParticipantInfo {
+  id: string;
+  fullName: string;
+  age: number | string;
+  gender: 'male' | 'female' | 'other' | '';
+  email: string;
+  phone: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  tshirtSize?: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | '';
+  bloodGroup?: string;
+  medicalDeclarationAccepted?: boolean;
+}
+
+export interface SportBookingItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  distance?: string;
+  includesTShirt?: boolean;
+  participants?: ParticipantInfo[];
+  seatDetails?: {
+    stand?: string;
+    block?: string;
+    row?: string;
+    seatNumber?: number;
+    tier?: string;
+  };
+}
+
 export interface SportFilterState {
   sports: string[];
   dateOption: string | null;
