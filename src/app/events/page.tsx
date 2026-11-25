@@ -238,23 +238,46 @@ export default function EventsDiscoveryPage() {
       )}
 
       {/* Mobile Quick Horizontal Category Filter Bar */}
-      <div className="lg:hidden sticky top-16 z-25 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-3 py-2 shadow-xs">
-        <EventCategoryPills
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+      <div className="lg:hidden sticky top-14 z-25 bg-white border-b border-neutral-200/80 px-3 py-2 shadow-xs flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setIsFilterModalOpen(true)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold shrink-0 cursor-pointer transition-colors ${
+            activeFiltersCount > 0
+              ? 'bg-[#85142f] text-white border-[#85142f]'
+              : 'border-[#85142f]/30 text-[#85142f] bg-white hover:bg-neutral-50'
+          }`}
+        >
+          <Filter className="w-3.5 h-3.5 stroke-[2.2px]" />
+          <span>Filters</span>
+          {activeFiltersCount > 0 && (
+            <span className="w-4 h-4 rounded-full bg-white text-[#85142f] text-[10px] font-bold flex items-center justify-center">
+              {activeFiltersCount}
+            </span>
+          )}
+        </button>
+        <div className="flex-1 overflow-x-auto scrollbar-none">
+          <EventCategoryPills
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </div>
       </div>
 
       {/* MAIN CONTAINER */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
-        {/* 1. SPOTLIGHT FEATURED CONCERT BANNER */}
+        {/* 1. SPOTLIGHT FEATURED CONCERT BANNER (Desktop Only) */}
         {!searchQuery && !selectedCategory && selectedBookingMode === 'all' && (
-          <FeaturedEventBanner featuredEvents={featuredEvents} />
+          <div className="hidden lg:block">
+            <FeaturedEventBanner featuredEvents={featuredEvents} />
+          </div>
         )}
 
-        {/* 2. TRENDING CONCERTS SHELF */}
+        {/* 2. TRENDING CONCERTS SHELF (Desktop Only) */}
         {!searchQuery && !selectedCategory && selectedBookingMode === 'all' && (
-          <TrendingConcerts trendingEvents={trendingEvents} />
+          <div className="hidden lg:block">
+            <TrendingConcerts trendingEvents={trendingEvents} />
+          </div>
         )}
 
         {/* 3. DISCOVERY SECTION: FILTERS + EVENTS CATALOG */}
@@ -409,7 +432,7 @@ export default function EventsDiscoveryPage() {
                 </div>
               ) : (
                 /* 3 to 4 Column Responsive Grid */
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-6">
                   {filteredEvents.map((event, idx) => (
                     <EventCard
                       key={event.id}

@@ -315,7 +315,7 @@ export default function MoviesPage() {
         </section>
 
         {/* Mobile Horizontal Filter Pill Row (Sticky below header) */}
-        <section className="sticky top-16 z-20 bg-white/95 backdrop-blur-md py-2 -mx-3 px-3 mb-3 border-b border-neutral-200/80 shadow-xs">
+        <section className="sticky top-14 z-20 bg-white/95 backdrop-blur-md py-2 -mx-3 px-3 mb-3 border-b border-neutral-200/80 shadow-xs">
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
             {/* Prominent Filters Button with active count */}
             <button
@@ -933,7 +933,7 @@ export default function MoviesPage() {
       {/* ============================================================ */}
       {/* 5. MOBILE FLOATING ACTION PILLS: Cinemas & Filters           */}
       {/* ============================================================ */}
-      <div className="lg:hidden fixed bottom-18 inset-x-0 z-40 flex justify-center items-center gap-2 pointer-events-none px-4">
+      <div className="hidden">
         <button
           type="button"
           onClick={() => setIsCinemaModalOpen(true)}

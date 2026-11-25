@@ -645,8 +645,8 @@ export default function SportsPage() {
         </div>
       )}
 
-      {/* Floating Mobile Filter Pill Button */}
-      <div className="lg:hidden fixed bottom-18 left-1/2 -translate-x-1/2 z-40">
+      {/* Mobile Filter Drawer (Modal) */}
+      <div className="hidden">
         <button
           type="button"
           onClick={() => setIsMobileFilterOpen(true)}
