@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ChevronLeft,
+  ChevronDown,
   Search,
   Filter,
   MapPin,
@@ -14,6 +15,7 @@ import {
   SlidersHorizontal,
   Flame,
   Check,
+  Layers,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -32,6 +34,7 @@ export default function EventsDiscoveryPage() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
 
   // Filters State
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -155,7 +158,7 @@ export default function EventsDiscoveryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafc] text-neutral-900 pb-24 lg:pb-16 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between bg-[#fafafc] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* 1. DESKTOP NAVBAR */}
       <div className="hidden lg:block">
         <Navbar
@@ -169,70 +172,49 @@ export default function EventsDiscoveryPage() {
         />
       </div>
 
-      {/* 2. MOBILE HEADER */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-16 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
+      {/* 2. MOBILE HEADER (Matching BookMyShow Mobile Reference) */}
+      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors"
+            className="p-1 -ml-1 text-neutral-800 hover:text-[#85142f] transition-colors"
             aria-label="Back to home"
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
           </Link>
           <div>
-            <h1 className="text-base font-extrabold text-neutral-900 leading-tight">
-              Live Events & Concerts
+            <h1 className="text-sm font-black text-neutral-950 leading-tight">
+              Live Events
             </h1>
             <button
               type="button"
               onClick={() => setIsCityModalOpen(true)}
-              className="text-xs text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
+              className="text-[11px] text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
             >
               <span>{currentCity}</span>
-              <span>•</span>
-              <span className="font-semibold text-neutral-700">{filteredEvents.length} Events</span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
             </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setIsSearchActive((p) => !p)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-              isSearchActive || searchQuery
-                ? 'bg-[#85142f] text-white'
-                : 'text-neutral-700 hover:bg-neutral-100'
-            }`}
-            aria-label="Search events"
-          >
-            <Search className="w-5 h-5 stroke-[2.2px]" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsFilterModalOpen(true)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors relative ${
-              activeFiltersCount > 0
-                ? 'bg-[#85142f] text-white'
-                : 'text-neutral-700 hover:bg-neutral-100'
-            }`}
-            aria-label="Open Filters"
-          >
-            <Filter className="w-5 h-5 stroke-[2.2px]" />
-            {activeFiltersCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white">
-                {activeFiltersCount}
-              </span>
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsSearchActive((p) => !p)}
+          className={`p-2 rounded-full transition-colors ${
+            isSearchActive || searchQuery
+              ? 'bg-[#85142f] text-white'
+              : 'text-neutral-700 hover:text-neutral-900'
+          }`}
+          aria-label="Search events"
+        >
+          <Search className="w-5 h-5 stroke-[2.2px]" />
+        </button>
       </header>
 
       {/* Mobile Search Dropdown */}
       {isSearchActive && (
-        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-16 z-30 shadow-sm">
-          <div className="relative flex items-center bg-neutral-100 rounded-xl px-3.5 py-1.5">
+        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-14 z-30 shadow-sm">
+          <div className="relative flex items-center bg-neutral-100 rounded-full px-3.5 py-1.5">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
               type="text"
@@ -256,23 +238,46 @@ export default function EventsDiscoveryPage() {
       )}
 
       {/* Mobile Quick Horizontal Category Filter Bar */}
-      <div className="lg:hidden sticky top-16 z-25 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-3 py-2 shadow-xs">
-        <EventCategoryPills
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+      <div className="lg:hidden sticky top-14 z-30 bg-white border-b border-neutral-200/80 px-3 py-2 shadow-xs flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setIsFilterModalOpen(true)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold shrink-0 cursor-pointer transition-colors ${
+            activeFiltersCount > 0
+              ? 'bg-[#85142f] text-white border-[#85142f]'
+              : 'border-[#85142f]/30 text-[#85142f] bg-white hover:bg-neutral-50'
+          }`}
+        >
+          <Filter className="w-3.5 h-3.5 stroke-[2.2px]" />
+          <span>Filters</span>
+          {activeFiltersCount > 0 && (
+            <span className="w-4 h-4 rounded-full bg-white text-[#85142f] text-[10px] font-bold flex items-center justify-center">
+              {activeFiltersCount}
+            </span>
+          )}
+        </button>
+        <div className="flex-1 overflow-x-auto scrollbar-none">
+          <EventCategoryPills
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </div>
       </div>
 
       {/* MAIN CONTAINER */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
-        {/* 1. SPOTLIGHT FEATURED CONCERT BANNER */}
+        {/* 1. SPOTLIGHT FEATURED CONCERT BANNER (Desktop Only) */}
         {!searchQuery && !selectedCategory && selectedBookingMode === 'all' && (
-          <FeaturedEventBanner featuredEvents={featuredEvents} />
+          <div className="hidden lg:block">
+            <FeaturedEventBanner featuredEvents={featuredEvents} />
+          </div>
         )}
 
-        {/* 2. TRENDING CONCERTS SHELF */}
+        {/* 2. TRENDING CONCERTS SHELF (Desktop Only) */}
         {!searchQuery && !selectedCategory && selectedBookingMode === 'all' && (
-          <TrendingConcerts trendingEvents={trendingEvents} />
+          <div className="hidden lg:block">
+            <TrendingConcerts trendingEvents={trendingEvents} />
+          </div>
         )}
 
         {/* 3. DISCOVERY SECTION: FILTERS + EVENTS CATALOG */}
@@ -406,8 +411,8 @@ export default function EventsDiscoveryPage() {
             <section className="mb-14">
               {filteredEvents.length === 0 ? (
                 /* Empty State */
-                <div className="bg-white rounded-xl border border-neutral-200/80 p-8 sm:p-14 text-center flex flex-col items-center shadow-xs">
-                  <div className="w-16 h-16 rounded-xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
+                <div className="bg-white rounded-3xl border border-neutral-200/80 p-8 sm:p-14 text-center flex flex-col items-center shadow-xs">
+                  <div className="w-16 h-16 rounded-2xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
                     <Sparkles className="w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-black text-neutral-900 mb-2">
@@ -419,7 +424,7 @@ export default function EventsDiscoveryPage() {
                   <button
                     type="button"
                     onClick={handleResetFilters}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6e1026] active:scale-95 transition-all cursor-pointer btn-press"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6e1026] active:scale-95 transition-all cursor-pointer"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span>Reset All Filters</span>
@@ -427,7 +432,7 @@ export default function EventsDiscoveryPage() {
                 </div>
               ) : (
                 /* 3 to 4 Column Responsive Grid */
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-6">
                   {filteredEvents.map((event, idx) => (
                     <EventCard
                       key={event.id}
@@ -438,6 +443,49 @@ export default function EventsDiscoveryPage() {
                 </div>
               )}
             </section>
+
+            {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+            <div className="py-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsFilterModalOpen(true)}
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#ec5e7b] hover:text-[#85142f] active:scale-95 transition-all cursor-pointer"
+              >
+                <Layers className="w-4 h-4 text-[#ec5e7b]" />
+                <span>Explore All Categories</span>
+              </button>
+            </div>
+
+            {/* BREADCRUMB PATH */}
+            <div className="py-3 text-xs text-neutral-500 font-medium border-t border-neutral-200/70">
+              <Link href="/" className="hover:underline">Home</Link>
+              <span className="mx-1.5 text-neutral-400">→</span>
+              <span className="text-neutral-800 font-semibold">Events</span>
+            </div>
+
+            {/* KNOW MORE ABOUT EVENTS ACCORDION */}
+            <div className="border-t border-neutral-200 bg-neutral-50/60 rounded-xl my-4 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+              >
+                <span>Know more about Events</span>
+                <span className="text-base font-light text-neutral-500">
+                  {isKnowMoreOpen ? '−' : '+'}
+                </span>
+              </button>
+              {isKnowMoreOpen && (
+                <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+                  <p>
+                    Looking for the best live concerts, comedy nights, theatre acts, or outdoor adventures in {currentCity}? BookKaro brings you verified tickets to the city&apos;s most anticipated live experiences with seamless digital passes, interactive seating, and instant confirmation.
+                  </p>
+                  <p>
+                    Browse through diverse categories including music tours, sports championships, workshops, and exclusive fan meets. Check seating layouts, artist line-ups, and early bird discounts all in one place.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
@@ -445,7 +493,7 @@ export default function EventsDiscoveryPage() {
       {/* MOBILE FILTER MODAL / BOTTOM SHEET */}
       {isFilterModalOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
-          <div className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+          <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -457,7 +505,7 @@ export default function EventsDiscoveryPage() {
               <button
                 type="button"
                 onClick={() => setIsFilterModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-600 transition-colors"
+                className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-600 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -488,14 +536,14 @@ export default function EventsDiscoveryPage() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="flex-1 py-2.5 rounded-lg border border-neutral-300 text-neutral-700 text-xs font-bold hover:bg-neutral-100 transition-colors"
+                className="flex-1 py-3 rounded-full border border-neutral-300 text-neutral-700 text-xs font-bold hover:bg-neutral-100 transition-colors"
               >
                 Reset All
               </button>
               <button
                 type="button"
                 onClick={() => setIsFilterModalOpen(false)}
-                className="flex-1 py-2.5 rounded-lg bg-[#85142f] text-white text-xs font-extrabold shadow-md hover:bg-[#6c0f25] transition-colors btn-press"
+                className="flex-1 py-3 rounded-full bg-[#85142f] text-white text-xs font-extrabold shadow-md hover:bg-[#6c0f25] transition-colors"
               >
                 Show {filteredEvents.length} Events
               </button>

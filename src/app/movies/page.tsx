@@ -18,6 +18,7 @@ import {
   Check,
   RotateCcw,
   Film,
+  Layers,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -38,6 +39,7 @@ export default function MoviesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [showUpcomingOnly, setShowUpcomingOnly] = useState(false);
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
 
   // Active filter states
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -185,7 +187,7 @@ export default function MoviesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-neutral-900 pb-28 lg:pb-16 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between bg-[#f5f6f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* ============================================================ */}
       {/* 1. DESKTOP / LAPTOP NAVBAR                                   */}
       {/* ============================================================ */}
@@ -202,29 +204,28 @@ export default function MoviesPage() {
       </div>
 
       {/* ============================================================ */}
-      {/* 2. MOBILE HEADER (Matches Mobile Mockup)                     */}
+      {/* 2. MOBILE HEADER (Matches BookMyShow Reference Screenshot)   */}
       {/* ============================================================ */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-16 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
+      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors active:scale-95"
+            className="p-1 -ml-1 text-neutral-800 hover:text-[#85142f] transition-colors"
             aria-label="Back to home"
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
           </Link>
           <div>
-            <h1 className="text-base font-extrabold text-neutral-900 leading-tight">
-              Now Showing
+            <h1 className="text-sm font-black text-neutral-950 leading-tight">
+              Movies
             </h1>
             <button
               type="button"
               onClick={() => setIsCityModalOpen(true)}
-              className="text-xs text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors text-left"
+              className="text-[11px] text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors text-left"
             >
               <span>{currentCity}</span>
-              <span>|</span>
-              <span className="font-semibold text-neutral-700">{filteredMovies.length} Movies</span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
             </button>
           </div>
         </div>
@@ -232,10 +233,10 @@ export default function MoviesPage() {
         <button
           type="button"
           onClick={() => setIsSearchActive((prev) => !prev)}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+          className={`p-2 rounded-full transition-colors cursor-pointer ${
             isSearchActive || searchQuery
               ? 'bg-[#85142f] text-white shadow-xs'
-              : 'text-neutral-700 hover:bg-neutral-100'
+              : 'text-neutral-700 hover:text-neutral-900'
           }`}
           aria-label="Search movies"
         >
@@ -245,7 +246,7 @@ export default function MoviesPage() {
 
       {/* Mobile Search Input Bar */}
       {isSearchActive && (
-        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 animate-in fade-in slide-in-from-top-2 duration-150 sticky top-16 z-30 shadow-sm">
+        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 animate-in fade-in slide-in-from-top-2 duration-150 sticky top-14 z-30 shadow-sm">
           <div className="relative flex items-center bg-neutral-100 rounded-full px-3.5 py-1.5">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
@@ -314,7 +315,7 @@ export default function MoviesPage() {
         </section>
 
         {/* Mobile Horizontal Filter Pill Row (Sticky below header) */}
-        <section className="sticky top-16 z-20 bg-white/95 backdrop-blur-md py-2 -mx-3 px-3 mb-3 border-b border-neutral-200/80 shadow-xs">
+        <section className="sticky top-14 z-30 bg-white py-2 -mx-3 px-3 mb-3 border-b border-neutral-200/80 shadow-xs">
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
             {/* Prominent Filters Button with active count */}
             <button
@@ -664,10 +665,10 @@ export default function MoviesPage() {
                     key={lang}
                     type="button"
                     onClick={() => handleLanguageToggle(lang)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[#85142f] text-white shadow-xs font-bold'
-                        : 'bg-white text-neutral-800 border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
+                        ? 'bg-[#85142f] text-white shadow-xs font-bold scale-[1.02]'
+                        : 'bg-white text-[#85142f] border border-neutral-200/90 hover:border-neutral-300 hover:bg-neutral-50 shadow-2xs'
                     }`}
                   >
                     {lang}
@@ -795,11 +796,11 @@ export default function MoviesPage() {
                     <Link
                       key={movie.id}
                       href={`/movies/${movie.id}`}
-                      className="group flex flex-col justify-between cursor-pointer rounded-xl bg-white border border-neutral-200/70 p-2 sm:p-2.5 shadow-2xs hover:shadow-md hover:border-[#85142f]/30 transition-all duration-200"
+                      className="group flex flex-col justify-between cursor-pointer rounded-2xl bg-white border border-neutral-200/60 p-2 sm:p-2.5 shadow-2xs hover:shadow-md hover:border-[#85142f]/30 transition-all duration-200"
                     >
                       <div>
-                        {/* Movie Poster with Refined Proportions (True 2:3 Cinematic Ratio) */}
-                        <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-neutral-900 mb-2.5 shadow-xs">
+                        {/* Movie Poster with Rounded Corners */}
+                        <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-neutral-900 mb-2.5 shadow-inner">
                           <Image
                             src={movie.posterImage}
                             alt={movie.title}
@@ -808,16 +809,16 @@ export default function MoviesPage() {
                             className="object-cover group-hover:scale-104 transition-transform duration-500"
                           />
 
-                          {/* PROMOTED Badge on Top-Right */}
+                          {/* PROMOTED Badge on Top-Right (Matching Laptop Mockup) */}
                           {movie.isPromoted && (
                             <div className="absolute top-2 right-2 z-10">
-                              <span className="px-2 py-0.5 rounded-md bg-[#85142f] text-white text-[9px] font-black tracking-wider uppercase shadow-xs">
+                              <span className="px-2 py-0.5 rounded bg-[#e11d48] text-white text-[9px] font-black tracking-wider uppercase shadow-xs">
                                 PROMOTED
                               </span>
                             </div>
                           )}
 
-                          {/* Bottom Dark Overlay with Likes / Rating */}
+                          {/* Bottom Dark Overlay with Likes / Rating (Matching Laptop Mockup) */}
                           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent p-2.5 pt-6">
                             {movie.likes ? (
                               <div className="flex items-center gap-1.5 text-xs font-bold text-white">
@@ -843,7 +844,7 @@ export default function MoviesPage() {
                           </div>
                         </div>
 
-                        {/* Title, Certificate & Languages */}
+                        {/* Title, Certificate & Languages (Matching Laptop Mockup) */}
                         <div className="px-1">
                           <h3 className="font-extrabold text-sm sm:text-base text-neutral-900 truncate leading-snug group-hover:text-[#85142f] transition-colors">
                             {movie.title}
@@ -868,7 +869,7 @@ export default function MoviesPage() {
                       {/* Quick Book Button */}
                       <div className="mt-2.5 px-1 pb-1">
                         <span
-                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center block btn-press"
+                          className="w-full py-1.5 sm:py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold tracking-tight transition-all active:scale-95 shadow-xs text-center block"
                         >
                           Book Tickets
                         </span>
@@ -879,6 +880,52 @@ export default function MoviesPage() {
               )}
             </section>
 
+            {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+            <div className="py-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setIsFilterModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#ec5e7b] hover:text-[#85142f] active:scale-95 transition-all cursor-pointer"
+              >
+                <Layers className="w-4 h-4 text-[#ec5e7b]" />
+                <span>Explore All Categories</span>
+              </button>
+            </div>
+
+            {/* BREADCRUMB PATH */}
+            <div className="py-3 text-xs text-neutral-500 font-medium border-t border-neutral-200/70">
+              <Link href="/" className="hover:underline">Home</Link>
+              <span className="mx-1.5 text-neutral-400">→</span>
+              <span className="text-neutral-800 font-semibold">Movies</span>
+            </div>
+
+            {/* KNOW MORE ABOUT MOVIES ACCORDION */}
+            <div className="border-t border-neutral-200 bg-neutral-50/60 rounded-xl my-4 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+              >
+                <span>Know more about Movies</span>
+                <span className="text-base font-light text-neutral-500">
+                  {isKnowMoreOpen ? '−' : '+'}
+                </span>
+              </button>
+              {isKnowMoreOpen && (
+                <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+                  <p>
+                    Catch the latest blockbusters and upcoming movie releases across multiplexes and single-screen theatres in {currentCity}. From high-octane action and romantic dramas to family animations and IMAX 3D experiences, BookKaro provides seamless advance booking and real-time seat selection.
+                  </p>
+                  <p>
+                    Check showtimes, theatre locations, movie trailers, certifications, and exclusive concession discounts for PVR, INOX, Cinepolis, and top local cinemas.
+                  </p>
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       </main>
@@ -886,7 +933,7 @@ export default function MoviesPage() {
       {/* ============================================================ */}
       {/* 5. MOBILE FLOATING ACTION PILLS: Cinemas & Filters           */}
       {/* ============================================================ */}
-      <div className="lg:hidden fixed bottom-18 inset-x-0 z-40 flex justify-center items-center gap-2 pointer-events-none px-4">
+      <div className="hidden">
         <button
           type="button"
           onClick={() => setIsCinemaModalOpen(true)}

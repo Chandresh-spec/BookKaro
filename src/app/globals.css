@@ -5,10 +5,6 @@
 :root {
   --background: #fbf9f8;
   --foreground: #18181b;
-  --primary-burgundy: #85142f;
-  --primary-burgundy-hover: #6e1026;
-  --primary-burgundy-subtle: #fdf2f4;
-  --accent-rose: #ec5e7b;
 }
 
 body {
@@ -17,7 +13,6 @@ body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
 }
 
 /* Custom scrollbar */
@@ -32,49 +27,22 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #d8cec4;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #85142f;
+  background: #9c1d3a;
 }
 
-/* Scrollbar hide utility */
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-.-webkit-overflow-scrolling-touch {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Gradients */
 .wine-gradient {
-  background: linear-gradient(135deg, #85142f 0%, #4a0b1a 100%);
+  background: linear-gradient(135deg, #881337 0%, #4c0519 100%);
 }
 
-.hero-vignette {
-  background: radial-gradient(circle at 75% 25%, rgba(133, 20, 47, 0.25) 0%, transparent 60%);
-}
-
-/* Premium card hover */
 .card-hover {
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px -4px rgba(133, 20, 47, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
-}
-
-/* Button micro-interaction */
-.btn-press {
-  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-}
-.btn-press:active {
-  transform: scale(0.98);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -6px rgba(130, 24, 50, 0.12), 0 6px 12px -3px rgba(0, 0, 0, 0.04);
 }

@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft, Sparkles, RotateCcw } from 'lucide-react';
+import { ChevronLeft, Sparkles, RotateCcw, Share2, Check } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -19,12 +19,30 @@ export default function EventDetailPage() {
 
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>({
     id: 'usr_c1',
     name: 'Chandresh',
     email: 'chandresh@example.com',
   });
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleShare = () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({
+        title: `${event?.title || 'Event'} — BookKaro`,
+        url: window.location.href,
+      }).catch(() => {});
+    } else if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      showToast('Link copied to clipboard!');
+    }
+  };
 
   // Find the event by ID
   const event: LiveEvent | undefined = useMemo(() => {
@@ -53,8 +71,8 @@ export default function EventDetailPage() {
         />
 
         <main className="max-w-xl mx-auto px-4 py-20 text-center">
-          <div className="bg-white rounded-xl border border-neutral-200/80 p-8 sm:p-12 shadow-xs flex flex-col items-center">
-            <div className="w-16 h-16 rounded-xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
+          <div className="bg-white rounded-3xl border border-neutral-200/80 p-8 sm:p-12 shadow-xs flex flex-col items-center">
+            <div className="w-16 h-16 rounded-2xl bg-rose-50 text-[#85142f] flex items-center justify-center mb-4">
               <Sparkles className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-black text-neutral-900 mb-2">
@@ -65,7 +83,7 @@ export default function EventDetailPage() {
             </p>
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6c0f25] active:scale-95 transition-all btn-press"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#85142f] text-white text-xs sm:text-sm font-extrabold shadow-md hover:bg-[#6c0f25] active:scale-95 transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Browse All Live Events</span>
@@ -97,7 +115,40 @@ export default function EventDetailPage() {
         />
       </div>
 
-      {/* 2. EVENT DETAILS COMPONENT */}
+      {/* 2. MOBILE HEADER */}
+      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.push('/events')}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors cursor-pointer"
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
+          </button>
+          <h1 className="text-sm font-extrabold text-neutral-900 truncate max-w-[220px]">
+            {event.title}
+          </h1>
+        </div>
+        <button
+          type="button"
+          onClick={handleShare}
+          className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+          aria-label="Share"
+        >
+          <Share2 className="w-4 h-4" />
+        </button>
+      </header>
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-16 right-4 z-50 bg-[#85142f] text-white text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 animate-in slide-in-from-top-2">
+          <Check className="w-4 h-4 stroke-[2.5px]" />
+          <span className="font-bold">{toastMessage}</span>
+        </div>
+      )}
+
+      {/* 3. EVENT DETAILS COMPONENT */}
       <main className="flex-1">
         <EventDetails
           event={event}
@@ -111,12 +162,6 @@ export default function EventDetailPage() {
 
       {/* 3. FOOTER */}
       <Footer />
-
-      {/* 4. MOBILE BOTTOM NAV */}
-      <MobileBottomNav
-        user={currentUser}
-        onProfileClick={() => setIsAuthModalOpen(true)}
-      />
 
       {/* AUTH MODAL */}
       <AuthModal

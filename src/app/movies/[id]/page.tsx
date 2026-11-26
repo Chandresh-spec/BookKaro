@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Share2,
   ThumbsUp,
+  ThumbsDown,
   Play,
   Heart,
   Star,
@@ -28,6 +29,8 @@ import {
   Accessibility,
   SlidersHorizontal,
   RotateCcw,
+  TrendingUp,
+  User as UserIcon,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -39,6 +42,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { TrailerModal } from '@/components/common/TrailerModal';
 import { MOVIES, CINEMAS_LIST, DEFAULT_CINEMA_SHOWTIMES } from '@/data/mockData';
 import { Movie, CinemaShowtime, User } from '@/types';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -56,12 +60,15 @@ export default function MovieDetailPage() {
   }, [movieId]);
 
   // View state: 'details' (movie hero) -> 'showtimes' (theatres list) -> 'seating' (exact cinema seat layout) -> 'trailers' (exact videos view)
+  const account = useOptionalAccount();
   const [activeView, setActiveView] = useState<'details' | 'showtimes' | 'seating' | 'trailers'>('details');
   const [selectedDateIndex, setSelectedDateIndex] = useState(0);
-  const [isInterested, setIsInterested] = useState(false);
+  const [localInterested, setLocalInterested] = useState(false);
+  const isInterested = account ? account.isWishlisted(movie.id) : localInterested;
   const [interestedCount, setInterestedCount] = useState(650);
   const [favoriteCinemas, setFavoriteCinemas] = useState<string[]>(['pvr-nexus-koramangala']);
   const [showFavouriteBanner, setShowFavouriteBanner] = useState(true);
+  const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false);
 
   // Advanced Showtimes Filters
   const [cinemaSearchQuery, setCinemaSearchQuery] = useState('');
@@ -94,12 +101,29 @@ export default function MovieDetailPage() {
   };
 
   const handleToggleInterested = () => {
-    if (isInterested) {
-      setIsInterested(false);
+    if (account) {
+      const added = account.toggleWishlist({
+        id: movie.id,
+        itemType: 'movie',
+        title: movie.title,
+        subtitle: `${movie.genre} • ${movie.languages.join(', ')}`,
+        meta: `${movie.duration || '2h 15m'}${movie.certificate ? ` • ${movie.certificate}` : ''}`,
+        image: movie.posterImage,
+        href: `/movies/${movie.id}`,
+        rating: movie.rating,
+        priceLabel: 'In Cinemas',
+      });
+      setInterestedCount((prev) => (added ? prev + 1 : Math.max(0, prev - 1)));
+      showToast(added ? 'Added to your Wishlist!' : 'Removed from your Wishlist');
+      return;
+    }
+
+    if (localInterested) {
+      setLocalInterested(false);
       setInterestedCount((prev) => prev - 1);
       showToast('Removed from your Wishlist');
     } else {
-      setIsInterested(true);
+      setLocalInterested(true);
       setInterestedCount((prev) => prev + 1);
       showToast('Added to your Wishlist!');
     }
@@ -249,6 +273,117 @@ export default function MovieDetailPage() {
     return MOVIES.filter((m) => m.id !== movie.id).slice(0, 5);
   }, [movie.id]);
 
+  // Cast members matching exact user reference
+  const movieCast = useMemo(() => {
+    return movie.cast?.length
+      ? movie.cast
+      : [
+          {
+            name: 'Suriya',
+            role: 'Inbaraj',
+            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop',
+          },
+          {
+            name: 'Nazriya Nazim',
+            role: 'Keerthi',
+            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop',
+          },
+          {
+            name: 'Naslen',
+            role: 'Vicky',
+            image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop',
+          },
+          {
+            name: 'Anandan',
+            role: 'SI Kumar',
+            image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=300&auto=format&fit=crop',
+          },
+        ];
+  }, [movie.cast]);
+
+  // Crew members matching exact user reference
+  const movieCrew = useMemo(() => {
+    return movie.crew?.length
+      ? movie.crew
+      : [
+          {
+            name: 'Jithu Madhavan',
+            role: 'Director',
+            image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop',
+          },
+          {
+            name: 'Jyotika Sadanah',
+            role: 'Producer',
+            image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300&auto=format&fit=crop',
+          },
+          {
+            name: 'Suriya Sivakumar',
+            role: 'Producer',
+            image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=300&auto=format&fit=crop',
+          },
+          {
+            name: 'Sushin Shyam',
+            role: 'Musician',
+            image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=300&auto=format&fit=crop',
+          },
+        ];
+  }, [movie.crew]);
+
+  const topOffers = [
+    {
+      id: 'off-1',
+      title: 'YES Private Debit Card Offer',
+      subtitle: 'Tap to view details',
+    },
+    {
+      id: 'off-2',
+      title: 'Buy 1 get 1 movie ticket',
+      subtitle: 'Tap to view details',
+    },
+    {
+      id: 'off-3',
+      title: 'Flat ₹100 Off with ICICI Netbanking',
+      subtitle: 'Tap to view details',
+    },
+  ];
+
+  const reviewTags = [
+    { tag: '#SuperDirection', count: '55249' },
+    { tag: '#GreatActing', count: '52811' },
+    { tag: '#Blockbuster', count: '41200' },
+    { tag: '#MustWatch', count: '38500' },
+  ];
+
+  const movieReviews = [
+    {
+      id: 'rev-1',
+      user: 'User',
+      rating: 10,
+      tags: ['#SuperDirection', '#GreatActing', '#WonderfulMusic'],
+      text: 'The movie was phenomenal from start to finish! High-octane screenplay and sensational background score. Absolute theatre watch!',
+      likes: 932,
+      date: '19 Days ago',
+    },
+    {
+      id: 'rev-2',
+      user: 'Karthik R.',
+      rating: 9,
+      tags: ['#Blockbuster', '#PaisaVasool', '#MustWatch'],
+      text: 'Gripping investigative thriller with exceptional performances. Don’t miss the climax twist in theatres!',
+      likes: 598,
+      date: '15 Days ago',
+    },
+    {
+      id: 'rev-3',
+      user: 'Deepa S.',
+      rating: 10,
+      tags: ['#TerrificScreenplay', '#EdgeOfSeat'],
+      text: 'One of the best cinematic experiences this year. Sound design in Dolby Atmos was mind-blowing!',
+      likes: 412,
+      date: '12 Days ago',
+    },
+  ];
+
   // Seating layout view matching the exact BookMyShow seat booking screen
   if (activeView === 'seating') {
     return (
@@ -334,8 +469,395 @@ export default function MovieDetailPage() {
       {/* ============================================================ */}
       {activeView === 'details' && (
         <main className="flex-1 bg-white">
-          {/* Hero Section with Immersive Wide Backdrop */}
-          <section className="relative w-full bg-[#121214] text-white overflow-hidden">
+          {/* ========================================================= */}
+          {/* MOBILE VIEW (BookMyShow Single Movie Layout: lg:hidden)   */}
+          {/* ========================================================= */}
+          <div className="lg:hidden pb-24 bg-white">
+            {/* 1. Hero Poster Card with Trailers (3) and In cinemas */}
+            <div className="p-3">
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg bg-neutral-900 border border-neutral-100">
+                <Image
+                  src={movie.bannerImage || movie.posterImage}
+                  alt={movie.title}
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 100vw, 640px"
+                  className="object-cover object-center"
+                />
+
+                {/* Trailers (3) Pill Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('trailers');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="absolute inset-0 m-auto w-fit h-fit px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 active:scale-95 transition-all shadow-md cursor-pointer"
+                >
+                  <Play className="w-3.5 h-3.5 fill-white text-white" />
+                  <span>Trailers ({(movie as any).trailersCount || 3})</span>
+                </button>
+
+                {/* In cinemas bottom strip */}
+                <div className="absolute bottom-0 inset-x-0 py-1.5 bg-black/95 text-center text-xs font-bold text-white tracking-wide">
+                  In cinemas
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Rating Row: ★ 9/10 (193K+ Votes) > */}
+            <div className="px-4 pt-1 pb-1">
+              <div
+                onClick={() => {
+                  setActiveView('showtimes');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="flex items-center gap-2 cursor-pointer group"
+              >
+                <Star className="w-5 h-5 fill-[#ec5e7b] text-[#ec5e7b]" />
+                <span className="text-lg font-black text-neutral-900">
+                  {movie.rating ? movie.rating.toFixed(1) : '9.0'}/10
+                </span>
+                <span className="text-xs text-neutral-500 font-semibold">
+                  ({movie.votesCount || '193K+'} Votes)
+                </span>
+                <ChevronRight className="w-4 h-4 text-neutral-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </div>
+
+            {/* 3. Movie Metadata: 2h 29m • Action, Comedy, Drama • UA16+ • 6 Nov, 2026 */}
+            <div className="px-4 py-1.5 text-xs text-neutral-600 font-medium flex items-center gap-1.5 flex-wrap">
+              <span>{movie.duration || '2h 29m'}</span>
+              <span>•</span>
+              <span>{movie.genre}</span>
+              <span>•</span>
+              <span className="px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700 text-[11px] font-bold">
+                {movie.certificate || 'UA16+'}
+              </span>
+              <span>•</span>
+              <span>{movie.releaseDate || '6 Nov, 2026'}</span>
+            </div>
+
+            {/* 4. Format & Language Badges */}
+            <div className="px-4 py-2 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                {(movie.formats || ['2D', 'EPIQ', 'HDR BY BARCO', 'DOLBY CINEMA 2D']).map((fmt) => (
+                  <span
+                    key={fmt}
+                    className="px-2.5 py-1 rounded bg-neutral-100 text-neutral-800 text-[10px] font-bold tracking-wider uppercase border border-neutral-200/60"
+                  >
+                    {fmt}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {(movie.languages?.length ? movie.languages : ['TAMIL', 'TELUGU']).map((lang) => (
+                  <span
+                    key={lang}
+                    className="px-2.5 py-1 rounded bg-neutral-100 text-neutral-800 text-[10px] font-bold tracking-wider uppercase border border-neutral-200/60"
+                  >
+                    {lang}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 5. Synopsis with Expandable "...Read more" */}
+            <div className="px-4 py-2 text-xs text-neutral-600 leading-relaxed font-normal">
+              <p>
+                {isSynopsisExpanded
+                  ? (movie.synopsis ||
+                      'Inbaraj, a police officer, is forced to reopen a case he left unfinished years ago. This time, he must navigate deceit, political pressure, and dark conspiracies to deliver justice before time runs out.')
+                  : (movie.synopsis
+                      ? movie.synopsis.slice(0, 115)
+                      : 'Inbaraj, a police officer, is forced to reopen a case he left unfinished years ago. This time, he must navigate deceit, political pressure, and dark conspiracies to deliver justice.')}
+                <button
+                  type="button"
+                  onClick={() => setIsSynopsisExpanded(!isSynopsisExpanded)}
+                  className="font-bold text-[#ec5e7b] ml-1 hover:underline cursor-pointer"
+                >
+                  {isSynopsisExpanded ? ' Show less' : '...Read more'}
+                </button>
+              </p>
+            </div>
+
+            {/* 6. Trending Booking Strip */}
+            <div className="px-4 py-2">
+              <div className="p-2.5 rounded-xl border border-neutral-200/80 bg-white flex items-center gap-2.5 shadow-2xs">
+                <span className="px-2 py-1 rounded-md bg-[#387bf8] text-white text-[10px] font-black tracking-wide flex items-center gap-1 shrink-0">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  <span>Trending</span>
+                </span>
+                <span className="text-xs font-bold text-emerald-600 truncate">
+                  {(movie as any).trendingTickets || '10.09K tickets booked in last 24 hours'}
+                </span>
+              </div>
+            </div>
+
+            {/* 7. Top offers for you */}
+            <div className="pt-3 pb-2">
+              <div className="px-4 mb-2">
+                <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                  Top offers for you
+                </h3>
+              </div>
+              <div className="flex items-center gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+                {topOffers.map((offer) => (
+                  <div
+                    key={offer.id}
+                    className="shrink-0 w-64 p-3 rounded-xl border border-neutral-200/80 bg-white flex items-center gap-3 shadow-2xs"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center shrink-0">
+                      <Check className="w-5 h-5 text-[#ec5e7b] stroke-[2.5px]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-neutral-900 truncate">
+                        {offer.title}
+                      </p>
+                      <p className="text-[11px] text-neutral-500 font-medium">
+                        {offer.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 8. Top reviews & Hashtags */}
+            <div className="pt-3 pb-2 border-t border-neutral-100">
+              <div className="px-4 flex items-center justify-between mb-1">
+                <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                  Top reviews
+                </h3>
+                <span className="text-xs font-bold text-[#ec5e7b] flex items-center cursor-pointer">
+                  85.5K reviews
+                  <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                </span>
+              </div>
+              <p className="px-4 text-[11px] text-neutral-500 mb-2.5">
+                Summary of 85.5K reviews.
+              </p>
+
+              {/* Hashtag Badges */}
+              <div className="flex items-center gap-2 overflow-x-auto px-4 pb-3 scrollbar-none">
+                {reviewTags.map((rt, idx) => (
+                  <div
+                    key={idx}
+                    className="shrink-0 px-3 py-1.5 rounded-full border border-neutral-200 bg-white text-xs font-bold text-neutral-800 flex items-center gap-1.5 shadow-2xs"
+                  >
+                    <span>{rt.tag}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-600 text-[10px] font-semibold">
+                      {rt.count}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* 9. Reviews Carousel Cards */}
+              <div className="flex items-center gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+                {movieReviews.map((rev) => (
+                  <div
+                    key={rev.id}
+                    className="shrink-0 w-72 p-3.5 rounded-2xl border border-neutral-200/80 bg-white shadow-2xs space-y-2.5"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600">
+                          <UserIcon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-neutral-900 leading-none">
+                            {rev.user}
+                          </p>
+                          <p className="text-[10px] text-neutral-500 font-medium flex items-center gap-1 mt-0.5">
+                            <span className="text-[#ec5e7b] font-bold">✓</span> Booked on BookKaro
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-[#ec5e7b] text-xs font-black">
+                        <Star className="w-3.5 h-3.5 fill-[#ec5e7b]" />
+                        <span>{rev.rating}/10</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-neutral-700 leading-relaxed font-normal line-clamp-3">
+                      {rev.text}
+                    </p>
+
+                    <div className="flex items-center justify-between text-neutral-500 text-[11px] pt-1 border-t border-neutral-100 font-medium">
+                      <div className="flex items-center gap-3">
+                        <button type="button" className="flex items-center gap-1 hover:text-neutral-900 cursor-pointer">
+                          <ThumbsUp className="w-3.5 h-3.5" />
+                          <span>{rev.likes}</span>
+                        </button>
+                        <button type="button" className="hover:text-neutral-900 cursor-pointer">
+                          <ThumbsDown className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span>{rev.date}</span>
+                        <Share2 className="w-3.5 h-3.5 cursor-pointer hover:text-neutral-900" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 10. Cast Section */}
+            <div className="pt-4 pb-2 border-t border-neutral-100">
+              <div className="px-4 mb-3">
+                <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                  Cast
+                </h3>
+              </div>
+              <div className="flex items-center gap-4 overflow-x-auto px-4 pb-2 scrollbar-none">
+                {movieCast.map((actor, idx) => (
+                  <div key={idx} className="flex flex-col items-center shrink-0 w-20 text-center">
+                    <div className="relative w-18 h-18 rounded-full overflow-hidden mb-1.5 shadow-xs bg-neutral-200 border border-neutral-100">
+                      <Image
+                        src={actor.image}
+                        alt={actor.name}
+                        fill
+                        sizes="72px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-neutral-900 truncate w-full leading-tight">
+                      {actor.name}
+                    </span>
+                    <span className="text-[10px] text-neutral-500 font-medium truncate w-full mt-0.5">
+                      {actor.role}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 11. Promo Banner (Snacks / Perks) */}
+            <div className="mx-4 my-3 p-4 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-900 to-violet-900 text-white shadow-md relative overflow-hidden">
+              <div className="relative z-10 max-w-[80%]">
+                <span className="px-2 py-0.5 rounded bg-white/20 text-white text-[9px] font-black uppercase tracking-wider">
+                  Snack Delight
+                </span>
+                <h4 className="text-xs sm:text-sm font-black mt-1 leading-snug">
+                  Grab yummy snacks at exciting prices!
+                </h4>
+                <p className="text-[10px] text-neutral-300 mt-0.5 font-medium">
+                  Pre-order popcorn & combos for a seamless movie experience.
+                </p>
+              </div>
+              <div className="absolute right-3 bottom-2 text-3xl opacity-80">
+                🍿
+              </div>
+            </div>
+
+            {/* 12. Crew Section */}
+            <div className="pt-3 pb-2 border-t border-neutral-100">
+              <div className="px-4 mb-3">
+                <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                  Crew
+                </h3>
+              </div>
+              <div className="flex items-center gap-4 overflow-x-auto px-4 pb-2 scrollbar-none">
+                {movieCrew.map((crew, idx) => (
+                  <div key={idx} className="flex flex-col items-center shrink-0 w-20 text-center">
+                    <div className="relative w-18 h-18 rounded-full overflow-hidden mb-1.5 shadow-xs bg-neutral-200 border border-neutral-100">
+                      <Image
+                        src={crew.image}
+                        alt={crew.name}
+                        fill
+                        sizes="72px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-neutral-900 truncate w-full leading-tight">
+                      {crew.name}
+                    </span>
+                    <span className="text-[10px] text-neutral-500 font-medium truncate w-full mt-0.5">
+                      {crew.role}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 13. Audio Description & CC Card */}
+            <div className="mx-4 my-3 p-3 rounded-xl bg-neutral-100/80 border border-neutral-200/60 flex items-center gap-2.5">
+              <Accessibility className="w-5 h-5 text-neutral-700 shrink-0" />
+              <p className="text-xs font-semibold text-neutral-700 leading-snug">
+                Audio Description (AD) & Closed Captions (CC) available.
+              </p>
+            </div>
+
+            {/* 14. You might also like */}
+            <div className="pt-3 pb-2 border-t border-neutral-100">
+              <div className="px-4 flex items-center justify-between mb-3">
+                <h3 className="text-sm font-black text-neutral-900 tracking-tight">
+                  You might also like
+                </h3>
+                <Link
+                  href="/movies"
+                  className="text-xs font-bold text-[#ec5e7b] flex items-center cursor-pointer"
+                >
+                  View All
+                  <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                </Link>
+              </div>
+              <div className="flex items-center gap-3 overflow-x-auto px-4 pb-3 scrollbar-none">
+                {relatedMovies.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/movies/${item.id}`}
+                    className="flex flex-col shrink-0 w-32 group cursor-pointer"
+                  >
+                    <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-neutral-900 mb-1.5 shadow-xs">
+                      <Image
+                        src={item.posterImage}
+                        alt={item.title}
+                        fill
+                        sizes="130px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute top-1.5 right-1.5">
+                        <span className="px-1.5 py-0.5 rounded bg-black/75 text-white text-[9px] font-bold flex items-center gap-0.5">
+                          <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                          <span>{item.rating.toFixed(1)}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <h4 className="font-bold text-xs text-neutral-900 group-hover:text-[#ec5e7b] transition-colors truncate">
+                      {item.title}
+                    </h4>
+                    <p className="text-[10px] text-neutral-500 font-medium truncate">
+                      {item.likes || `${item.votesCount || '10K+'} votes`}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* 15. Fixed Bottom Action Bar for Mobile */}
+            <div className="fixed bottom-0 inset-x-0 bg-white border-t border-neutral-200/90 p-3 z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveView('showtimes');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-3.5 rounded-xl bg-[#ec5e7b] hover:bg-[#d94b68] active:scale-[0.99] text-white font-black text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center"
+              >
+                Book tickets
+              </button>
+            </div>
+          </div>
+
+          {/* ========================================================= */}
+          {/* DESKTOP VIEW (Preserved 100% as-is: hidden lg:block)       */}
+          {/* ========================================================= */}
+          <div className="hidden lg:block">
+            {/* Hero Section with Immersive Wide Backdrop */}
+            <section className="relative w-full bg-[#121214] text-white overflow-hidden">
             {/* Background Backdrop with Gradient Overlays */}
             <div className="absolute inset-0 z-0">
               <Image
@@ -663,6 +1185,7 @@ export default function MovieDetailPage() {
               <span className="text-neutral-600 font-bold">{movie.title}</span>
             </div>
           </section>
+          </div>
         </main>
       )}
 
@@ -1372,13 +1895,6 @@ export default function MovieDetailPage() {
           setIsAuthModalOpen(false);
           showToast(`Welcome back, ${u.name}!`);
         }}
-      />
-
-      {/* Mobile Bottom Dock */}
-      <MobileBottomNav
-        activeTab="movies"
-        user={currentUser}
-        onProfileClick={() => setIsAuthModalOpen(true)}
       />
     </div>
   );

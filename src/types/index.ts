@@ -67,6 +67,7 @@ export * from './event';
 export * from './venue';
 export * from './booking';
 export * from './sports';
+export * from './account';
 
 export interface FeaturedHero {
   tag: string;

@@ -18,13 +18,13 @@ export const TrailerModal: React.FC<TrailerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-3xl bg-neutral-950 rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+      <div className="relative w-full max-w-3xl bg-neutral-950 rounded-3xl overflow-hidden border border-neutral-800 shadow-2xl">
         {/* Header */}
         <div className="p-4 flex items-center justify-between border-b border-neutral-800 text-white">
           <h3 className="font-bold text-sm sm:text-base">{title} — Official Trailer</h3>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-white transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-white transition-colors cursor-pointer"
             aria-label="Close trailer"
           >
             <X className="w-4 h-4" />

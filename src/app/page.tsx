@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Layers } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Hero } from '@/components/home/Hero';
 import { CategoryBar } from '@/components/home/CategoryBar';
@@ -12,13 +13,14 @@ import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { BookingModal } from '@/components/booking/BookingModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { TrailerModal } from '@/components/common/TrailerModal';
-import { MOVIES, TRENDING_EXPERIENCES, FEATURED_HERO, FEATURED_HEROES } from '@/data/mockData';
+import { MOVIES, TRENDING_EXPERIENCES, FEATURED_HERO } from '@/data/mockData';
 import { Movie, LiveEvent, CategoryType, User } from '@/types';
 
 export default function Home() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('movies');
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState('home');
   const [selectedItemForBooking, setSelectedItemForBooking] = useState<Movie | LiveEvent | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -63,19 +65,18 @@ export default function Home() {
     setIsBookingModalOpen(true);
   };
 
-  const handleHeroBooking = (heroIndex: number = 0) => {
-    const hero = FEATURED_HEROES?.[heroIndex] || FEATURED_HERO;
+  const handleHeroBooking = () => {
     setSelectedItemForBooking({
-      id: 'featured-hero-' + heroIndex,
-      title: hero.badgeName + ' — ' + hero.title.replace('\n', ' '),
-      category: hero.tag.includes('SPORT') ? 'SPORTS' : 'CONCERT',
-      date: hero.date,
-      time: hero.time,
-      venue: hero.venue,
+      id: 'after-hours-hero',
+      title: FEATURED_HERO.badgeName + ' — ' + FEATURED_HERO.title.replace('\n', ' '),
+      category: 'CONCERT',
+      date: FEATURED_HERO.date,
+      time: FEATURED_HERO.time,
+      venue: FEATURED_HERO.venue,
       city: currentCity,
       startingPrice: 1499,
       currency: '₹',
-      image: hero.bgImage,
+      image: FEATURED_HERO.bgImage,
     });
     setIsBookingModalOpen(true);
   };
@@ -108,7 +109,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white pb-16 lg:pb-0">
+    <div className="min-h-screen flex flex-col justify-between bg-[#fbf9f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* Top Navigation */}
       <Navbar
         currentCity={currentCity}
@@ -150,6 +151,46 @@ export default function Home() {
           events={filteredEvents}
           onSelectEvent={handleOpenEventBooking}
         />
+
+        {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+        <div className="lg:hidden py-6 flex justify-center">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('trending');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else router.push('/events');
+            }}
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#ec5e7b] hover:text-[#85142f] active:scale-95 transition-all cursor-pointer"
+          >
+            <Layers className="w-4 h-4 text-[#ec5e7b]" />
+            <span>Explore All Categories</span>
+          </button>
+        </div>
+
+        {/* KNOW MORE ABOUT ONLINE TICKET BOOKING ACCORDION */}
+        <div className="lg:hidden border-t border-neutral-200 bg-neutral-50/60 rounded-xl mx-4 my-4 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+            className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+          >
+            <span>Know more about Online Ticket Booking</span>
+            <span className="text-base font-light text-neutral-500">
+              {isKnowMoreOpen ? '−' : '+'}
+            </span>
+          </button>
+          {isKnowMoreOpen && (
+            <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+              <p>
+                BookKaro is your one-stop entertainment destination in {currentCity} for movies, live concerts, stand-up comedy, sports marathons, theatre plays, and family experiences.
+              </p>
+              <p>
+                Enjoy seamless instant seat reservations, M-Tickets on WhatsApp, verified event organizers, and exclusive bank offers with 24/7 dedicated customer assistance.
+              </p>
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Footer */}

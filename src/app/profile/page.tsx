@@ -1,534 +1,541 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ChevronLeft,
   ChevronRight,
-  Gift,
-  Percent,
-  CreditCard,
-  Utensils,
-  Store,
-  Settings,
-  FileText,
-  ClipboardList,
+  Bell,
   Ticket,
   Heart,
   Tv,
+  CreditCard,
   HelpCircle,
+  Settings,
+  Gift,
   LogOut,
   Info,
-  Check,
+  CheckCircle2,
   User as UserIcon,
   Sparkles,
+  Coins,
+  ArrowRight,
 } from 'lucide-react';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { User } from '@/types';
+import { AccountShell } from '@/components/profile/AccountShell';
+import { ToastAlert } from '@/components/profile/AccountUi';
+import { LEGACY_TAB_TO_ROUTE } from '@/config/accountNav';
+import { useAccount } from '@/context/AccountContext';
 
-export default function ProfilePage() {
+function ProfileHubContent() {
   const router = useRouter();
-  const [currentCity, setCurrentCity] = useState('Bengaluru');
-  const [searchQuery, setSearchQuery] = useState('');
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+
+  const {
+    profile,
+    orders,
+    wishlist,
+    streamLibrary,
+    karoCoins,
+    notifications,
+    unreadNotificationsCount,
+    signIn,
+    signOut,
+  } = useAccount();
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-  const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
-  const [currentUser, setCurrentUser] = useState<User | null>({
-    id: 'usr_c1',
-    name: 'Chandresh',
-    email: 'chandresh@example.com',
-    mobile: '+91 98765 43210',
-  });
-
-  const [editName, setEditName] = useState(currentUser?.name || '');
-  const [editEmail, setEditEmail] = useState(currentUser?.email || '');
-  const [editMobile, setEditMobile] = useState(currentUser?.mobile || '');
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  useEffect(() => {
+    if (tabParam && LEGACY_TAB_TO_ROUTE[tabParam]) {
+      router.replace(LEGACY_TAB_TO_ROUTE[tabParam]);
+    }
+  }, [tabParam, router]);
 
   const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
   };
 
-  const handleUpdateProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (currentUser) {
-      setCurrentUser({
-        ...currentUser,
-        name: editName,
-        email: editEmail,
-        mobile: editMobile,
-      });
-      setIsEditProfileOpen(false);
-      showToast('Profile updated successfully!');
-    }
-  };
-
-  const handleSignOut = () => {
-    setCurrentUser(null);
-    showToast('Signed out successfully');
-  };
+  const upcomingOrders = orders.filter((o) => o.isUpcoming && o.status === 'CONFIRMED');
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-neutral-900 pb-24 lg:pb-12 selection:bg-[#85142f] selection:text-white">
-      {/* 1. DESKTOP NAVBAR */}
+    <>
+      <ToastAlert message={toast} />
+
+      {/* ============================================================ */}
+      {/* 1. DESKTOP ACCOUNT OVERVIEW (lg and up)                      */}
+      {/* ============================================================ */}
       <div className="hidden lg:block">
-        <Navbar
-          currentCity={currentCity}
-          user={currentUser}
-          onSelectCity={(c) => setCurrentCity(c)}
-          onSignInClick={() => setIsAuthModalOpen(true)}
-          onSignOut={handleSignOut}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-        />
+        <AccountShell activeSection="overview" pageTitle="My Account">
+          <div className="space-y-4">
+            {/* Profile Summary Card */}
+            <div className="bg-white rounded-xl border border-neutral-200/80 p-5 flex items-center justify-between gap-4 shadow-2xs">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-[#85142f] text-white flex items-center justify-center font-black text-xl overflow-hidden shrink-0">
+                  {profile?.avatar ? (
+                    <img
+                      src={profile.avatar}
+                      alt={profile.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : profile ? (
+                    profile.name.charAt(0).toUpperCase()
+                  ) : (
+                    <UserIcon className="w-6 h-6" />
+                  )}
+                </div>
+                <div>
+                  <h2 className="text-lg font-extrabold text-neutral-900">
+                    Welcome back, {profile ? profile.firstName || profile.name : 'Guest'}
+                  </h2>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    {profile?.email || 'Sign in to sync bookings'} •{' '}
+                    {profile?.city || 'Bengaluru'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                {!profile?.isMobileVerified && (
+                  <Link
+                    href="/profile/verify-mobile"
+                    className="px-3.5 py-2 rounded-lg bg-[#fff8e6] border border-amber-300 text-xs font-bold text-amber-900 hover:bg-[#fff2cf]"
+                  >
+                    Verify Mobile
+                  </Link>
+                )}
+                <Link
+                  href="/profile/edit"
+                  className="px-4 py-2 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs font-bold transition-colors"
+                >
+                  Edit Profile
+                </Link>
+              </div>
+            </div>
+
+            {/* 4 Quick Stat Tiles */}
+            <div className="grid grid-cols-4 gap-3.5">
+              <Link
+                href="/profile/orders"
+                className="bg-white rounded-xl border border-neutral-200/80 p-4 hover:border-[#85142f] transition-colors"
+              >
+                <Ticket className="w-4 h-4 text-[#85142f] mb-2" />
+                <p className="text-xl font-black text-neutral-900">{upcomingOrders.length}</p>
+                <p className="text-xs text-neutral-500 font-semibold">Upcoming Bookings</p>
+              </Link>
+              <Link
+                href="/profile/wishlist"
+                className="bg-white rounded-xl border border-neutral-200/80 p-4 hover:border-[#85142f] transition-colors"
+              >
+                <Heart className="w-4 h-4 text-[#85142f] mb-2" />
+                <p className="text-xl font-black text-neutral-900">{wishlist.length}</p>
+                <p className="text-xs text-neutral-500 font-semibold">Saved Wishlist</p>
+              </Link>
+              <Link
+                href="/profile/stream-library"
+                className="bg-white rounded-xl border border-neutral-200/80 p-4 hover:border-[#85142f] transition-colors"
+              >
+                <Tv className="w-4 h-4 text-[#85142f] mb-2" />
+                <p className="text-xl font-black text-neutral-900">{streamLibrary.length}</p>
+                <p className="text-xs text-neutral-500 font-semibold">Stream Library</p>
+              </Link>
+              <Link
+                href="/profile/rewards"
+                className="bg-white rounded-xl border border-neutral-200/80 p-4 hover:border-[#85142f] transition-colors"
+              >
+                <Coins className="w-4 h-4 text-[#85142f] mb-2" />
+                <p className="text-xl font-black text-neutral-900">{karoCoins}</p>
+                <p className="text-xs text-neutral-500 font-semibold">KaroCoins</p>
+              </Link>
+            </div>
+
+            {/* Upcoming Orders Preview */}
+            <div className="bg-white rounded-xl border border-neutral-200/80 overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-neutral-100 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-neutral-900">Recent &amp; Upcoming Bookings</h3>
+                <Link
+                  href="/profile/orders"
+                  className="text-xs font-bold text-[#85142f] hover:underline inline-flex items-center gap-1"
+                >
+                  <span>View All</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+              <div className="divide-y divide-neutral-100">
+                {orders.slice(0, 3).map((order) => (
+                  <Link
+                    key={order.id}
+                    href="/profile/orders"
+                    className="p-4 flex items-center justify-between gap-4 hover:bg-neutral-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={order.posterImage}
+                        alt={order.title}
+                        className="w-11 h-14 rounded-md object-cover border border-neutral-200 shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-neutral-900 truncate">{order.title}</p>
+                        <p className="text-[11px] text-neutral-500 truncate">
+                          {order.date} • {order.time} • {order.venue}
+                        </p>
+                        <p className="text-[11px] font-mono text-neutral-400 mt-0.5">
+                          {order.bookingId}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-extrabold text-neutral-900 shrink-0">
+                      ₹{order.totalPaid.toLocaleString('en-IN')}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Latest Notifications Preview */}
+            <div className="bg-white rounded-xl border border-neutral-200/80 overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-neutral-100 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-neutral-900">Recent Notifications</h3>
+                <Link
+                  href="/profile/notifications"
+                  className="text-xs font-bold text-[#85142f] hover:underline inline-flex items-center gap-1"
+                >
+                  <span>See All ({notifications.length})</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+              <div className="divide-y divide-neutral-100">
+                {notifications.slice(0, 2).map((n) => (
+                  <Link
+                    key={n.id}
+                    href="/profile/notifications"
+                    className="px-5 py-3 flex items-center justify-between gap-3 hover:bg-neutral-50"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-neutral-900 truncate">{n.title}</p>
+                      <p className="text-[11px] text-neutral-500 truncate mt-0.5">{n.message}</p>
+                    </div>
+                    <span className="text-[11px] text-neutral-400 shrink-0">{n.timestamp}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </AccountShell>
       </div>
 
-      {/* 2. MOBILE HEADER */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors"
-            aria-label="Back to home"
-          >
-            <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
-          </Link>
-          <h1 className="text-base font-extrabold text-neutral-900">
-            Profile
-          </h1>
-        </div>
-      </header>
+      {/* ============================================================ */}
+      {/* 2. MOBILE PROFILE MENU HUB (below lg)                        */}
+      {/* ============================================================ */}
+      <div className="lg:hidden min-h-screen flex flex-col bg-[#f5f6f8] text-neutral-900 pb-20">
+        {/* Mobile Header */}
+        <header className="sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-3 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100"
+              aria-label="Back to home"
+            >
+              <ChevronLeft className="w-5 h-5 stroke-[2.2px]" />
+            </Link>
+            <h1 className="text-base font-extrabold text-neutral-900">Profile</h1>
+          </div>
+        </header>
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-16 right-4 z-50 bg-[#85142f] text-white text-xs px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-in slide-in-from-top-2">
-          <Check className="w-4 h-4 stroke-[2.5px]" />
-          <span className="font-bold">{toastMessage}</span>
-        </div>
-      )}
-
-      {/* MAIN CONTAINER */}
-      <main className="max-w-2xl mx-auto px-4 pt-4 sm:pt-8 space-y-4">
-        
-        {/* User Card & Greeting */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-neutral-200/80 shadow-xs flex items-center justify-between">
-          <div className="flex items-center gap-3.5">
-            <div className="w-14 h-14 rounded-full bg-[#85142f] text-white flex items-center justify-center font-black text-xl shadow-sm">
-              {currentUser ? currentUser.name.charAt(0).toUpperCase() : 'C'}
+        <main className="px-3.5 pt-4 space-y-3.5 flex-1">
+          {/* User Identity Card */}
+          <div className="bg-white rounded-xl p-4 border border-neutral-200/80 shadow-2xs flex items-center justify-between">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-12 h-12 rounded-full bg-[#85142f] text-white flex items-center justify-center font-black text-lg overflow-hidden shrink-0">
+                {profile?.avatar ? (
+                  <img
+                    src={profile.avatar}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : profile ? (
+                  profile.name.charAt(0).toUpperCase()
+                ) : (
+                  <UserIcon className="w-5 h-5" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-base font-extrabold text-neutral-900 leading-snug truncate">
+                  Hey, {profile ? profile.firstName || profile.name : 'Guest'}!
+                </h2>
+                {profile ? (
+                  <Link
+                    href="/profile/edit"
+                    className="text-xs font-semibold text-[#85142f] hover:underline inline-flex items-center gap-0.5 mt-0.5"
+                  >
+                    <span>Edit Profile</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="text-xs font-semibold text-[#85142f] hover:underline inline-flex items-center gap-0.5 mt-0.5 cursor-pointer"
+                  >
+                    <span>Sign in to your account</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-black text-neutral-900 leading-snug">
-                Hey, {currentUser ? currentUser.name : 'Guest'}!
-              </h2>
+
+            {!profile && (
+              <button
+                type="button"
+                onClick={() => setIsAuthModalOpen(true)}
+                className="px-3.5 py-1.5 rounded-lg bg-[#85142f] text-white text-xs font-bold shrink-0 cursor-pointer"
+              >
+                Sign In
+              </button>
+            )}
+          </div>
+
+          {/* Highlight Banner: Mobile Verification */}
+          <Link
+            href="/profile/verify-mobile"
+            className="bg-[#fff8e6] border border-amber-300/80 rounded-xl p-3.5 flex items-center justify-between hover:bg-[#fff4d6] transition-colors group"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-amber-400/25 text-amber-900 flex items-center justify-center shrink-0">
+                {profile?.isMobileVerified ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                ) : (
+                  <Info className="w-4 h-4" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-neutral-900 group-hover:text-[#85142f]">
+                  Get tickets on Whatsapp/SMS!
+                </h3>
+                <p className="text-[11px] text-neutral-600 font-medium truncate">
+                  {profile?.isMobileVerified
+                    ? `Verified: ${profile.mobile}`
+                    : profile?.mobile
+                    ? `Verify ${profile.mobile}`
+                    : 'Add your Mobile Number'}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-neutral-400 shrink-0" />
+          </Link>
+
+          {/* Group 1: Notifications, Orders, Wishlist, Stream */}
+          <div className="bg-white rounded-xl border border-neutral-200/80 divide-y divide-neutral-100 overflow-hidden">
+            <Link
+              href="/profile/notifications"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <Bell className="w-4 h-4 text-neutral-600" />
+                <span className="text-[13px] font-bold text-neutral-900">Notifications</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {unreadNotificationsCount > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-[#85142f] text-white text-[10px] font-bold">
+                    {unreadNotificationsCount}
+                  </span>
+                )}
+                <ChevronRight className="w-4 h-4 text-neutral-400" />
+              </div>
+            </Link>
+
+            <Link
+              href="/profile/orders"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <Ticket className="w-4 h-4 text-neutral-600" />
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">Your Orders</p>
+                  <p className="text-[11px] text-neutral-500">View all your bookings &amp; purchases</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </Link>
+
+            <Link
+              href="/profile/wishlist"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <Heart className="w-4 h-4 text-neutral-600" />
+                <span className="text-[13px] font-bold text-neutral-900">Your Wishlist</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {wishlist.length > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-neutral-100 text-neutral-600 text-[10px] font-bold">
+                    {wishlist.length}
+                  </span>
+                )}
+                <ChevronRight className="w-4 h-4 text-neutral-400" />
+              </div>
+            </Link>
+
+            <Link
+              href="/profile/stream-library"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <Tv className="w-4 h-4 text-neutral-600" />
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">Stream Library</p>
+                  <p className="text-[11px] text-neutral-500">Rented &amp; Purchased Movies</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </Link>
+          </div>
+
+          {/* Group 2: Play Credit Card, Help, Settings, Rewards */}
+          <div className="bg-white rounded-xl border border-neutral-200/80 divide-y divide-neutral-100 overflow-hidden">
+            <Link
+              href="/profile/play-credit-card"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <CreditCard className="w-4 h-4 text-neutral-600" />
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">Play Credit Card</p>
+                  <p className="text-[11px] text-neutral-500">
+                    View your Play Credit Card details and offers
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </Link>
+
+            <Link
+              href="/profile/help"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-4 h-4 text-neutral-600" />
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">Help &amp; Support</p>
+                  <p className="text-[11px] text-neutral-500">
+                    View commonly asked queries and Chat
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </Link>
+
+            <Link
+              href="/profile/settings"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <Settings className="w-4 h-4 text-neutral-600" />
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">Accounts &amp; Settings</p>
+                  <p className="text-[11px] text-neutral-500">
+                    Location, Payments, Permissions &amp; More
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </Link>
+
+            <Link
+              href="/profile/rewards"
+              className="flex items-center justify-between p-3.5 hover:bg-neutral-50"
+            >
+              <div className="flex items-center gap-3">
+                <Gift className="w-4 h-4 text-neutral-600" />
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">Rewards</p>
+                  <p className="text-[11px] text-neutral-500">
+                    View your rewards &amp; unlock new ones
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400" />
+            </Link>
+          </div>
+
+          {/* BookAChange Banner Card */}
+          <Link
+            href="/profile/bookachange"
+            className="block rounded-xl p-4 bg-gradient-to-r from-rose-50 via-white to-pink-50 border border-rose-100 shadow-2xs"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-purple-600 via-rose-500 to-amber-400 p-0.5 shrink-0">
+                  <div className="w-full h-full bg-white rounded-[6px] flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-[#85142f]" />
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-[13px] font-extrabold text-neutral-900">BookAChange</h4>
+                  <p className="text-[11px] text-neutral-600 font-medium">
+                    Powering Dreams Amplifying Change
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400 shrink-0" />
+            </div>
+          </Link>
+
+          {/* Brand Watermark */}
+          <div className="pt-4 pb-1 text-center">
+            <span className="text-base font-black tracking-widest uppercase text-neutral-300 font-mono select-none">
+              BookKaro
+            </span>
+          </div>
+
+          {/* Sign Out Button */}
+          {profile && (
+            <div className="pb-4">
               <button
                 type="button"
                 onClick={() => {
-                  if (currentUser) {
-                    setIsEditProfileOpen(true);
-                  } else {
-                    setIsAuthModalOpen(true);
-                  }
+                  signOut();
+                  showToast('Signed out successfully');
                 }}
-                className="text-xs font-semibold text-[#85142f] hover:underline flex items-center gap-0.5 mt-0.5"
+                className="w-full py-3 rounded-xl border border-[#85142f] text-[#85142f] hover:bg-rose-50 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>{currentUser ? 'Edit Profile' : 'Sign in to your account'}</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <LogOut className="w-4 h-4" />
+                <span>Sign out</span>
               </button>
             </div>
-          </div>
-
-          {!currentUser && (
-            <button
-              type="button"
-              onClick={() => setIsAuthModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-[#85142f] text-white text-xs font-bold shadow-xs active:scale-95"
-            >
-              Sign In
-            </button>
           )}
-        </div>
+        </main>
 
-        {/* Highlight Banner: "Get tickets on Whatsapp/SMS!" */}
-        <div
-          onClick={() => setIsMobileModalOpen(true)}
-          className="bg-[#fff8e6] border border-amber-300/80 rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-[#fff4d6] transition-colors shadow-2xs group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-400/30 text-amber-900 flex items-center justify-center shrink-0">
-              <Info className="w-4 h-4 stroke-[2.2px]" />
-            </div>
-            <div>
-              <h3 className="text-xs sm:text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Get tickets on Whatsapp/SMS!
-              </h3>
-              <p className="text-[11px] sm:text-xs text-neutral-600 font-medium">
-                {currentUser?.mobile ? `Linked: ${currentUser.mobile}` : 'Add your Mobile Number'}
-              </p>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-        </div>
+        <MobileBottomNav activeTab="profile" user={profile} onProfileClick={() => {}} />
+      </div>
 
-        {/* Group 1: Bookings & Experiences */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 divide-y divide-neutral-100 shadow-xs overflow-hidden">
-          <Link
-            href="/profile?tab=orders"
-            onClick={() => showToast('Displaying recent ticket bookings')}
-            className="flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group"
-          >
-            <div className="flex items-center gap-3.5">
-              <Ticket className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <div>
-                <p className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                  Your Orders
-                </p>
-                <p className="text-[11px] text-neutral-500">View all your bookings & purchases</p>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-
-          <Link
-            href="/profile?tab=wishlist"
-            onClick={() => showToast('Wishlist items')}
-            className="flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group"
-          >
-            <div className="flex items-center gap-3.5">
-              <Heart className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <p className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Your Wishlist
-              </p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-
-          <Link
-            href="/movies"
-            className="flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group"
-          >
-            <div className="flex items-center gap-3.5">
-              <Tv className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <div>
-                <p className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                  Stream Library
-                </p>
-                <p className="text-[11px] text-neutral-500">Rented & Purchased Movies</p>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
-
-        {/* Group 2: Rewards, Offers, Gift Cards, Food & Beverages (Matches Mockup 1) */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 divide-y divide-neutral-100 shadow-xs overflow-hidden">
-          <button
-            type="button"
-            onClick={() => showToast('Rewards unlocked: 250 KaroCoins!')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <Gift className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Rewards
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => showToast('Available Offers: ₹100 off on Axis Bank & ICICI credit cards')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <Percent className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Offers
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => showToast('Gift Cards: Send movie & concert vouchers to friends')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <CreditCard className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Gift Cards
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => showToast('Food & Beverages: Pre-order popcorn, combos & snacks')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <Utensils className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Food & Beverages
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </div>
-
-        {/* Group 3: Partner & Account Settings (Matches Mockup 1) */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 divide-y divide-neutral-100 shadow-xs overflow-hidden">
-          <button
-            type="button"
-            onClick={() => showToast('List Your Show: Partner with BookKaro to sell tickets')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <Store className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                List your Show
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsEditProfileOpen(true)}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <Settings className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Account & Settings
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => showToast('24x7 Help & Support: support@bookkaro.com')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <HelpCircle className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Help & Support
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </div>
-
-        {/* Group 4: Legal & Policy (Matches Mockup 1) */}
-        <div className="bg-white rounded-2xl border border-neutral-200/80 divide-y divide-neutral-100 shadow-xs overflow-hidden">
-          <button
-            type="button"
-            onClick={() => showToast('Terms & Conditions — BookKaro Ticketing Platform')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <FileText className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Terms & Conditions
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => showToast('Privacy Policy — Your data is encrypted and secure')}
-            className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors group text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <ClipboardList className="w-5 h-5 text-neutral-600 group-hover:text-[#85142f] transition-colors" />
-              <span className="text-sm font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                Privacy Policy
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </div>
-
-        {/* Card 5: BookAChange Social Impact Banner (Exact Match to Mockup) */}
-        <div className="relative overflow-hidden rounded-2xl p-4 bg-gradient-to-r from-rose-50 via-white to-pink-50 border border-rose-100 shadow-2xs">
-          <div className="flex items-center gap-3.5">
-            {/* Geometric Multi-Color Badge */}
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-rose-500 to-amber-400 p-0.5 shrink-0 shadow-xs">
-              <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-[#85142f]" />
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-black text-neutral-900">
-                BookAChange
-              </h4>
-              <p className="text-xs text-neutral-600 font-medium">
-                Powering Dreams Amplifying Change
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Brand Watermark (Matches Mockup bottom) */}
-        <div className="pt-6 pb-2 text-center">
-          <span className="text-lg font-black tracking-widest uppercase text-neutral-300 font-mono select-none">
-            BookKaro
-          </span>
-        </div>
-
-        {/* Sign Out Button */}
-        {currentUser && (
-          <div className="pt-2 pb-6">
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="w-full py-3.5 rounded-xl border-2 border-[#85142f] text-[#85142f] hover:bg-rose-50 text-sm font-bold tracking-tight transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
-            >
-              <LogOut className="w-4 h-4 stroke-[2.2px]" />
-              <span>Sign out</span>
-            </button>
-          </div>
-        )}
-
-      </main>
-
-      {/* Edit Profile Modal */}
-      {isEditProfileOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl animate-in zoom-in-95">
-            <div className="flex items-center justify-between pb-4 border-b border-neutral-100">
-              <h3 className="text-lg font-black text-neutral-900">Edit Profile</h3>
-              <button
-                type="button"
-                onClick={() => setIsEditProfileOpen(false)}
-                className="text-neutral-400 hover:text-neutral-700"
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleUpdateProfile} className="space-y-4 pt-4">
-              <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#85142f]"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Email Address</label>
-                <input
-                  type="email"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#85142f]"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold text-neutral-700 block mb-1">Mobile Number (WhatsApp/SMS)</label>
-                <input
-                  type="tel"
-                  value={editMobile}
-                  onChange={(e) => setEditMobile(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#85142f]"
-                />
-              </div>
-              <div className="pt-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsEditProfileOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-neutral-200 text-sm font-bold text-neutral-700 hover:bg-neutral-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#85142f] text-white text-sm font-bold shadow-md hover:bg-[#6e1026]"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* WhatsApp/SMS Mobile Modal */}
-      {isMobileModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl">
-            <h3 className="text-base font-black text-neutral-900 mb-2">WhatsApp / SMS Tickets</h3>
-            <p className="text-xs text-neutral-600 mb-4">
-              Enter your mobile number to receive ticket confirmations, barcodes, and live gate updates directly on WhatsApp and SMS.
-            </p>
-            <input
-              type="tel"
-              value={editMobile}
-              onChange={(e) => setEditMobile(e.target.value)}
-              placeholder="+91 98765 43210"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-[#85142f]"
-              autoFocus
-            />
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setIsMobileModalOpen(false)}
-                className="flex-1 py-2.5 rounded-xl border border-neutral-200 text-xs font-bold text-neutral-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (currentUser) {
-                    setCurrentUser({ ...currentUser, mobile: editMobile });
-                  }
-                  setIsMobileModalOpen(false);
-                  showToast('Mobile number linked for WhatsApp/SMS tickets!');
-                }}
-                className="flex-1 py-2.5 rounded-xl bg-[#85142f] text-white text-xs font-bold shadow-sm"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Auth Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={(u) => {
-          setCurrentUser(u);
+          signIn(u);
           setIsAuthModalOpen(false);
           showToast(`Welcome back, ${u.name}!`);
         }}
       />
+    </>
+  );
+}
 
-      {/* Master BMS Footer */}
-      <Footer currentCity={currentCity} />
-
-      {/* Mobile Bottom Dock (Profile Active) */}
-      <MobileBottomNav
-        activeTab="profile"
-        user={currentUser}
-        onProfileClick={() => {}}
-      />
-    </div>
+export default function ProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f5f6f8] flex items-center justify-center text-xs text-neutral-500">
+          Loading profile...
+        </div>
+      }
+    >
+      <ProfileHubContent />
+    </Suspense>
   );
 }

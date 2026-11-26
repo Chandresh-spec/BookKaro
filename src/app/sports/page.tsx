@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   ChevronLeft,
+  ChevronDown,
   Search,
   Filter,
   X,
@@ -11,6 +12,7 @@ import {
   Trophy,
   MapPin,
   Calendar,
+  Layers,
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -29,6 +31,7 @@ export default function SportsPage() {
   const [currentCity, setCurrentCity] = useState('Bengaluru');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isKnowMoreOpen, setIsKnowMoreOpen] = useState(false);
 
   // Unified Filter State
   const [filters, setFilters] = useState<SportFilterState>({
@@ -182,7 +185,7 @@ export default function SportsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-neutral-900 pb-28 lg:pb-16 selection:bg-[#85142f] selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between bg-[#f5f6f8] text-neutral-900 selection:bg-[#85142f] selection:text-white">
       {/* 1. DESKTOP NAVBAR */}
       <div className="hidden lg:block">
         <Navbar
@@ -196,30 +199,27 @@ export default function SportsPage() {
         />
       </div>
 
-      {/* 2. MOBILE HEADER */}
-      <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-4 h-16 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
+      {/* 2. MOBILE HEADER (Matching BookMyShow Mobile Reference) */}
+      <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-neutral-200/80 px-4 h-14 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors"
+            className="p-1 -ml-1 text-neutral-800 hover:text-[#85142f] transition-colors"
             aria-label="Back to home"
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.2px]" />
           </Link>
           <div>
-            <h1 className="text-base font-extrabold text-neutral-900 leading-tight">
+            <h1 className="text-sm font-black text-neutral-950 leading-tight">
               Sports
             </h1>
             <button
               type="button"
               onClick={() => setIsCityModalOpen(true)}
-              className="text-xs text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
+              className="text-[11px] text-neutral-500 font-medium hover:text-neutral-800 flex items-center gap-1 transition-colors"
             >
               <span>{currentCity}</span>
-              <span>•</span>
-              <span className="font-semibold text-neutral-700">
-                {filteredSports.length} Events
-              </span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
             </button>
           </div>
         </div>
@@ -227,10 +227,10 @@ export default function SportsPage() {
         <button
           type="button"
           onClick={() => setIsSearchActive((p) => !p)}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+          className={`p-2 rounded-full transition-colors ${
             isSearchActive || searchQuery
               ? 'bg-[#85142f] text-white'
-              : 'text-neutral-700 hover:bg-neutral-100'
+              : 'text-neutral-700 hover:text-neutral-900'
           }`}
           aria-label="Search sports"
         >
@@ -240,7 +240,7 @@ export default function SportsPage() {
 
       {/* Mobile Search Dropdown */}
       {isSearchActive && (
-        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-16 z-35 shadow-sm">
+        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 py-2.5 sticky top-14 z-30 shadow-sm">
           <div className="relative flex items-center bg-neutral-100 rounded-xl px-3.5 py-2">
             <Search className="w-4 h-4 text-neutral-400 mr-2 shrink-0" />
             <input
@@ -265,7 +265,7 @@ export default function SportsPage() {
       )}
 
       {/* Mobile Sticky Quick Category Bar */}
-      <section className="lg:hidden sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 px-3 py-2 shadow-xs">
+      <section className="lg:hidden sticky top-14 z-30 bg-white border-b border-neutral-200/80 px-3 py-2 shadow-xs">
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-0.5">
           {/* Filters Button with active count */}
           <button
@@ -496,6 +496,52 @@ export default function SportsPage() {
                 </div>
               )}
             </section>
+
+            {/* EXPLORE ALL CATEGORIES (Matching BookMyShow Mobile Reference) */}
+            <div className="py-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setIsMobileFilterOpen(true);
+                }}
+                className="inline-flex items-center gap-2 text-xs font-bold text-[#ec5e7b] hover:text-[#85142f] active:scale-95 transition-all cursor-pointer"
+              >
+                <Layers className="w-4 h-4 text-[#ec5e7b]" />
+                <span>Explore All Categories</span>
+              </button>
+            </div>
+
+            {/* BREADCRUMB PATH */}
+            <div className="py-3 text-xs text-neutral-500 font-medium border-t border-neutral-200/70">
+              <Link href="/" className="hover:underline">Home</Link>
+              <span className="mx-1.5 text-neutral-400">→</span>
+              <span className="text-neutral-800 font-semibold">Sports</span>
+            </div>
+
+            {/* KNOW MORE ABOUT SPORTS ACCORDION */}
+            <div className="border-t border-neutral-200 bg-neutral-50/60 rounded-xl my-4 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setIsKnowMoreOpen(!isKnowMoreOpen)}
+                className="w-full px-4 py-3.5 flex items-center justify-between text-left text-xs font-bold text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+              >
+                <span>Know more about Sports</span>
+                <span className="text-base font-light text-neutral-500">
+                  {isKnowMoreOpen ? '−' : '+'}
+                </span>
+              </button>
+              {isKnowMoreOpen && (
+                <div className="px-4 pb-4 text-[11px] text-neutral-500 leading-relaxed space-y-2 animate-in fade-in duration-200">
+                  <p>
+                    Experience thrilling athletic competitions, grassroots marathons, and championship stadium matches in {currentCity}. BookKaro offers seamless online registrations for running marathons, football leagues, chess opens, motorsport track days, and more.
+                  </p>
+                  <p>
+                    Whether you are an aspiring athlete looking to participate or a passionate supporter cheering from the grandstands, secure verified passes with instant confirmation and contactless entry.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
@@ -599,8 +645,8 @@ export default function SportsPage() {
         </div>
       )}
 
-      {/* Floating Mobile Filter Pill Button */}
-      <div className="lg:hidden fixed bottom-18 left-1/2 -translate-x-1/2 z-40">
+      {/* Mobile Filter Drawer (Modal) */}
+      <div className="hidden">
         <button
           type="button"
           onClick={() => setIsMobileFilterOpen(true)}
@@ -620,18 +666,7 @@ export default function SportsPage() {
       {selectedEventForBooking && (
         <BookingModal
           isOpen={isBookingModalOpen}
-          item={{
-            id: selectedEventForBooking.id,
-            title: selectedEventForBooking.title,
-            category: selectedEventForBooking.sportType,
-            date: selectedEventForBooking.date,
-            time: selectedEventForBooking.time || '06:00 AM',
-            venue: selectedEventForBooking.venue,
-            city: currentCity,
-            startingPrice: selectedEventForBooking.startingPrice,
-            currency: selectedEventForBooking.currency,
-            image: selectedEventForBooking.image,
-          }}
+          item={selectedEventForBooking}
           currentCity={currentCity}
           onClose={() => {
             setIsBookingModalOpen(false);

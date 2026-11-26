@@ -1,29 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import {
   X,
   ChevronRight,
-  Bell,
-  Ticket,
-  Heart,
-  Tv,
-  CreditCard,
-  HelpCircle,
-  Settings,
-  Gift,
-  Compass,
   LogOut,
   Info,
-  Phone,
+  CheckCircle2,
   User as UserIcon,
-  Check,
-  Percent,
-  Utensils,
-  Share2,
 } from 'lucide-react';
 import { User } from '@/types';
+import { ACCOUNT_MENU_ITEMS } from '@/config/accountNav';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -40,88 +29,15 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   onSignOut,
   onSignInClick,
 }) => {
-  const [mobileNumber, setMobileNumber] = useState(user?.mobile || '');
-  const [isAddingMobile, setIsAddingMobile] = useState(false);
-  const [mobileSaved, setMobileSaved] = useState(Boolean(user?.mobile));
-  const [activeNotification, setActiveNotification] = useState<string | null>(null);
+  const account = useOptionalAccount();
+  const activeProfile = account ? account.profile : user;
 
   if (!isOpen) return null;
 
-  const handleSaveMobile = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mobileNumber.length >= 10) {
-      setMobileSaved(true);
-      setIsAddingMobile(false);
-      setActiveNotification('Mobile number saved for WhatsApp/SMS ticket updates!');
-      setTimeout(() => setActiveNotification(null), 3000);
-    }
-  };
-
-  const menuItems = [
-    {
-      id: 'notifications',
-      icon: Bell,
-      title: 'Notifications',
-      subtitle: null,
-      href: '/profile?tab=notifications',
-    },
-    {
-      id: 'orders',
-      icon: Ticket,
-      title: 'Your Orders',
-      subtitle: 'View all your bookings & purchases',
-      href: '/profile?tab=orders',
-    },
-    {
-      id: 'wishlist',
-      icon: Heart,
-      title: 'Your Wishlist',
-      subtitle: null,
-      href: '/profile?tab=wishlist',
-    },
-    {
-      id: 'stream',
-      icon: Tv,
-      title: 'Stream Library',
-      subtitle: 'Rented & Purchased Movies',
-      href: '/movies',
-    },
-    {
-      id: 'play-card',
-      icon: CreditCard,
-      title: 'Play Credit Card',
-      subtitle: 'View your Play Credit Card details and offers',
-      href: '/profile?tab=cards',
-    },
-    {
-      id: 'help',
-      icon: HelpCircle,
-      title: 'Help & Support',
-      subtitle: 'View commonly asked queries and Chat',
-      href: '/profile?tab=help',
-    },
-    {
-      id: 'accounts',
-      icon: Settings,
-      title: 'Accounts & Settings',
-      subtitle: 'Location, Payments, Permissions & More',
-      href: '/profile?tab=settings',
-    },
-    {
-      id: 'rewards',
-      icon: Gift,
-      title: 'Rewards',
-      subtitle: 'View your rewards & unlock new ones',
-      href: '/profile?tab=rewards',
-    },
-    {
-      id: 'bookachange',
-      icon: Compass,
-      title: 'BookAChange',
-      subtitle: null,
-      href: '/profile?tab=bookachange',
-    },
-  ];
+  const unreadCount = account?.unreadNotificationsCount ?? 0;
+  const upcomingOrdersCount =
+    account?.orders.filter((o) => o.isUpcoming && o.status === 'CONFIRMED').length ?? 0;
+  const wishlistCount = account?.wishlist.length ?? 0;
 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-200">
@@ -132,44 +48,68 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         aria-hidden="true"
       />
 
-      {/* Drawer Container (Matches Desktop Mockup media_1795070874134_453fa4f0.jpg) */}
+      {/* Drawer Container */}
       <aside
-        className="relative w-full max-w-sm sm:max-w-md bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-300 overflow-hidden"
+        className="relative w-full max-w-sm sm:max-w-[380px] bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-300 overflow-hidden"
         role="dialog"
         aria-label="User Profile Menu"
       >
         {/* Header / User Profile Banner */}
-        <div className="p-5 border-b border-neutral-100 flex items-center justify-between bg-white shrink-0">
-          <div>
-            <h2 className="text-xl font-black text-neutral-900 tracking-tight flex items-center gap-2">
-              <span>Hey{user ? `, ${user.name.split(' ')[0]}` : '!'}</span>
+        <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between bg-white shrink-0">
+          <div className="min-w-0">
+            <h2 className="text-lg font-black text-neutral-900 tracking-tight truncate">
+              Hey{activeProfile ? `, ${activeProfile.name.split(' ')[0]}` : '!'}
             </h2>
-            <Link
-              href="/profile?tab=edit"
-              onClick={onClose}
-              className="text-xs text-neutral-500 font-semibold hover:text-[#85142f] transition-colors flex items-center gap-0.5 mt-0.5"
-            >
-              <span>Edit Profile</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
+            {activeProfile ? (
+              <Link
+                href="/profile/edit"
+                onClick={onClose}
+                className="text-xs text-neutral-500 font-semibold hover:text-[#85142f] transition-colors inline-flex items-center gap-0.5 mt-0.5"
+              >
+                <span>Edit Profile</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onSignInClick?.();
+                }}
+                className="text-xs text-[#85142f] font-semibold hover:underline inline-flex items-center gap-0.5 mt-0.5 cursor-pointer"
+              >
+                <span>Sign in / Register</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* User Avatar */}
-            <div className="w-11 h-11 rounded-xl bg-neutral-200 border border-neutral-200 shadow-2xs flex items-center justify-center text-neutral-700 font-bold text-base overflow-hidden">
-              {user ? (
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Link
+              href="/profile/edit"
+              onClick={onClose}
+              className="w-11 h-11 rounded-full bg-neutral-200 border border-neutral-200 flex items-center justify-center text-neutral-700 font-bold text-base overflow-hidden"
+              aria-label="Edit Profile"
+            >
+              {activeProfile?.avatar ? (
+                <img
+                  src={activeProfile.avatar}
+                  alt={activeProfile.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : activeProfile ? (
                 <span className="bg-[#85142f] text-white w-full h-full flex items-center justify-center text-base font-black">
-                  {user.name.charAt(0).toUpperCase()}
+                  {activeProfile.name.charAt(0).toUpperCase()}
                 </span>
               ) : (
                 <UserIcon className="w-5 h-5 text-neutral-400" />
               )}
-            </div>
+            </Link>
 
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
               aria-label="Close menu"
             >
               <X className="w-5 h-5 stroke-[2px]" />
@@ -177,75 +117,53 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
         </div>
 
-        {/* Notification Toast if any */}
-        {activeNotification && (
-          <div className="bg-emerald-50 text-emerald-800 text-xs px-4 py-2 border-b border-emerald-200 flex items-center gap-1.5 animate-in fade-in">
-            <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span className="font-medium">{activeNotification}</span>
-          </div>
-        )}
-
         {/* Scrollable Menu Items */}
         <div className="flex-1 overflow-y-auto divide-y divide-neutral-100/80">
-          
-          {/* Highlight Banner: "Get tickets on Whatsapp/SMS!" (Matching BMS Mockup) */}
-          <div className="p-3 bg-[#fff8e6] border-b border-amber-200/80">
-            {isAddingMobile ? (
-              <form onSubmit={handleSaveMobile} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-900">Enter WhatsApp / SMS Mobile</span>
-                  <button
-                    type="button"
-                    onClick={() => setIsAddingMobile(false)}
-                    className="text-[11px] text-amber-700 hover:underline"
-                  >
-                    Cancel
-                  </button>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                    placeholder="+91 9876543210"
-                    className="flex-1 px-3 py-1.5 rounded-lg border border-amber-300 bg-white text-xs text-neutral-900 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                    autoFocus
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-1.5 rounded-lg bg-[#85142f] text-white text-xs font-bold shadow-xs active:scale-95 transition-all"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div
-                onClick={() => setIsAddingMobile(true)}
-                className="flex items-center justify-between cursor-pointer group"
-              >
-                <div className="flex items-start gap-2.5">
-                  <div className="w-5 h-5 rounded-full bg-amber-400/20 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
+          {/* Highlight Banner: "Get tickets on Whatsapp/SMS!" -> /profile/verify-mobile */}
+          <Link
+            href="/profile/verify-mobile"
+            onClick={onClose}
+            className="block px-4 py-3 bg-[#fff8e6] hover:bg-[#fff3d1] border-b border-amber-200/80 transition-colors group"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-start gap-2.5 min-w-0">
+                <div className="w-5 h-5 rounded-full bg-amber-400/25 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
+                  {account?.profile?.isMobileVerified ? (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.2px]" />
+                  ) : (
                     <Info className="w-3.5 h-3.5 stroke-[2.2px]" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
-                      Get tickets on Whatsapp/SMS!
-                    </h4>
-                    <p className="text-[11px] text-neutral-600 font-medium">
-                      {mobileSaved && mobileNumber ? `Mobile: ${mobileNumber}` : 'Add your Mobile Number'}
-                    </p>
-                  </div>
+                  )}
                 </div>
-                <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
+                <div className="min-w-0">
+                  <h4 className="text-xs font-bold text-neutral-900 group-hover:text-[#85142f] transition-colors">
+                    Get tickets on Whatsapp/SMS!
+                  </h4>
+                  <p className="text-[11px] text-neutral-600 font-medium truncate">
+                    {account?.profile?.isMobileVerified
+                      ? `Verified: ${account.profile.mobile}`
+                      : activeProfile?.mobile
+                      ? `Verify ${activeProfile.mobile}`
+                      : 'Add your Mobile Number'}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+              <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </div>
+          </Link>
 
           {/* Menu Items List */}
           <div className="py-1">
-            {menuItems.map((item) => {
+            {ACCOUNT_MENU_ITEMS.map((item) => {
               const Icon = item.icon;
+              const badge =
+                item.id === 'notifications' && unreadCount > 0
+                  ? unreadCount
+                  : item.id === 'orders' && upcomingOrdersCount > 0
+                  ? upcomingOrdersCount
+                  : item.id === 'wishlist' && wishlistCount > 0
+                  ? wishlistCount
+                  : null;
+
               return (
                 <Link
                   key={item.id}
@@ -256,7 +174,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                   <div className="flex items-center gap-3.5 min-w-0 pr-2">
                     <Icon className="w-4 h-4 text-neutral-600 group-hover:text-[#85142f] transition-colors shrink-0 stroke-[1.8px]" />
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-neutral-900 group-hover:text-[#85142f] transition-colors truncate">
+                      <p className="text-[13px] font-semibold text-neutral-900 group-hover:text-[#85142f] transition-colors truncate">
                         {item.title}
                       </p>
                       {item.subtitle && (
@@ -266,24 +184,37 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                       )}
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {badge !== null && (
+                      <span
+                        className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none ${
+                          item.id === 'notifications'
+                            ? 'bg-[#85142f] text-white'
+                            : 'bg-neutral-100 text-neutral-600'
+                        }`}
+                      >
+                        {badge}
+                      </span>
+                    )}
+                    <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </Link>
               );
             })}
           </div>
-
         </div>
 
-        {/* Footer: Sign Out Button (Matching Mockup with red outline) */}
+        {/* Footer: Sign Out Button */}
         <div className="p-4 border-t border-neutral-100 bg-white shrink-0">
-          {user ? (
+          {activeProfile ? (
             <button
               type="button"
               onClick={() => {
+                account?.signOut();
                 onSignOut();
                 onClose();
               }}
-              className="w-full py-2.5 rounded-lg border border-[#85142f] text-[#85142f] hover:bg-rose-50 text-xs sm:text-sm font-bold tracking-tight transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2 btn-press"
+              className="w-full py-2.5 rounded-xl border border-[#85142f] text-[#85142f] hover:bg-rose-50 text-sm font-bold tracking-tight transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4 stroke-[2.2px]" />
               <span>Sign out</span>
@@ -295,7 +226,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClose();
                 onSignInClick?.();
               }}
-              className="w-full py-2.5 rounded-lg bg-[#85142f] hover:bg-[#6e1026] text-white text-xs sm:text-sm font-bold tracking-tight shadow-md transition-all active:scale-98 cursor-pointer text-center btn-press"
+              className="w-full py-2.5 rounded-xl bg-[#85142f] hover:bg-[#6e1026] text-white text-sm font-bold tracking-tight shadow-md transition-all active:scale-98 cursor-pointer text-center"
             >
               Sign In / Register
             </button>
