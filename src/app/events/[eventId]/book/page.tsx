@@ -43,6 +43,7 @@ import { SeatMap } from '@/components/booking/reserved-seating/SeatMap';
 import { DeliverySelector } from '@/components/booking/checkout/DeliverySelector';
 import { MockPayment } from '@/components/booking/checkout/MockPayment';
 import { BookingConfirmation } from '@/components/booking/checkout/BookingConfirmation';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 export default function EventBookingPage() {
   const params = useParams();
@@ -65,6 +66,7 @@ export default function EventBookingPage() {
   }, [eventId]);
 
   // Stepper state: 'tickets' -> 'delivery' -> 'payment' -> 'confirmation'
+  const account = useOptionalAccount();
   const [currentStep, setCurrentStep] = useState<BookingStep>('tickets');
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [confirmationData, setConfirmationData] = useState<BookingConfirmationResult | null>(null);
@@ -212,6 +214,39 @@ export default function EventBookingPage() {
     };
 
     setConfirmationData(confirmation);
+    if (account) {
+      account.addOrder({
+        id: 'ord-' + Date.now(),
+        bookingId: mockBookingId,
+        type: 'event',
+        title: event.title,
+        subtitle: `${event.category} • ${event.language || 'Live'}`,
+        posterImage: event.image,
+        venue: event.venue,
+        city: event.city || currentCity,
+        date: event.date,
+        time: event.time || '7:00 PM',
+        seatsOrTier: selectedItems.map((i) => `${i.name} × ${i.quantity}`).join(', '),
+        quantity: totalTickets,
+        ticketPrice: itemsSubtotal,
+        convenienceFee: totalConvenienceFee + gstOnFee,
+        donationAmount: account.preferences.autoRoundupCharity ? 1 : 0,
+        discountAmount: 0,
+        totalPaid,
+        paymentMethod: 'BookKaro Checkout (Simulated)',
+        status: 'CONFIRMED',
+        isUpcoming: true,
+        deliveryType:
+          deliveryType === 'home_delivery'
+            ? 'Home Delivery'
+            : deliveryType === 'venue_pickup'
+            ? 'Box Office Pickup'
+            : 'M-Ticket',
+        bookedAt: 'Just now',
+        canCancel: true,
+        itemHref: `/events/${event.id}`,
+      });
+    }
     setIsConfirmed(true);
     setIsMobileSummaryOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });

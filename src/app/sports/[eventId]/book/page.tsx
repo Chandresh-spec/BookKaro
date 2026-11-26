@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { MOCK_SPORTS_EVENTS } from '@/data/mockSportsEvents';
 import { SportEvent, ParticipantInfo, ParticipationCategory } from '@/types/sports';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 type SportsBookingStep = 'ticket' | 'registration' | 'review';
 
@@ -41,6 +42,7 @@ export default function SportsBookingPage() {
     );
   }, [eventId]);
 
+  const account = useOptionalAccount();
   const [currentStep, setCurrentStep] = useState<SportsBookingStep>('ticket');
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [bookingRefId, setBookingRefId] = useState('');
@@ -211,6 +213,37 @@ export default function SportsBookingPage() {
   const handleCompletePayment = () => {
     const mockId = `BK-SP-${Math.floor(100000 + Math.random() * 900000)}`;
     setBookingRefId(mockId);
+    if (account && event) {
+      account.addOrder({
+        id: 'ord-' + Date.now(),
+        bookingId: mockId,
+        type: 'sport',
+        title: event.title,
+        subtitle: `${event.sportType} • ${event.distanceOrCategory || 'Entry Pass'}`,
+        posterImage: event.image,
+        venue: event.venue,
+        city: event.city || 'Bengaluru',
+        date: event.date,
+        time: event.time || '06:00 AM',
+        seatsOrTier:
+          participants.length > 0
+            ? participants.map((p) => p.categoryName).join(', ')
+            : `${totalTickets} Pass(es)`,
+        quantity: totalTickets || 1,
+        ticketPrice: itemsSubtotal,
+        convenienceFee: convenienceFee + gst,
+        donationAmount: account.preferences.autoRoundupCharity ? 1 : 0,
+        discountAmount: 0,
+        totalPaid: grandTotal,
+        paymentMethod: 'BookKaro Sports Checkout (Simulated)',
+        status: 'CONFIRMED',
+        isUpcoming: true,
+        deliveryType: deliveryType === 'courier' ? 'Home Delivery' : 'M-Ticket',
+        bookedAt: 'Just now',
+        canCancel: false,
+        itemHref: `/sports/${event.id}`,
+      });
+    }
     setIsConfirmed(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

@@ -42,6 +42,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { TrailerModal } from '@/components/common/TrailerModal';
 import { MOVIES, CINEMAS_LIST, DEFAULT_CINEMA_SHOWTIMES } from '@/data/mockData';
 import { Movie, CinemaShowtime, User } from '@/types';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -59,9 +60,11 @@ export default function MovieDetailPage() {
   }, [movieId]);
 
   // View state: 'details' (movie hero) -> 'showtimes' (theatres list) -> 'seating' (exact cinema seat layout) -> 'trailers' (exact videos view)
+  const account = useOptionalAccount();
   const [activeView, setActiveView] = useState<'details' | 'showtimes' | 'seating' | 'trailers'>('details');
   const [selectedDateIndex, setSelectedDateIndex] = useState(0);
-  const [isInterested, setIsInterested] = useState(false);
+  const [localInterested, setLocalInterested] = useState(false);
+  const isInterested = account ? account.isWishlisted(movie.id) : localInterested;
   const [interestedCount, setInterestedCount] = useState(650);
   const [favoriteCinemas, setFavoriteCinemas] = useState<string[]>(['pvr-nexus-koramangala']);
   const [showFavouriteBanner, setShowFavouriteBanner] = useState(true);
@@ -98,12 +101,29 @@ export default function MovieDetailPage() {
   };
 
   const handleToggleInterested = () => {
-    if (isInterested) {
-      setIsInterested(false);
+    if (account) {
+      const added = account.toggleWishlist({
+        id: movie.id,
+        itemType: 'movie',
+        title: movie.title,
+        subtitle: `${movie.genre} • ${movie.languages.join(', ')}`,
+        meta: `${movie.duration || '2h 15m'}${movie.certificate ? ` • ${movie.certificate}` : ''}`,
+        image: movie.posterImage,
+        href: `/movies/${movie.id}`,
+        rating: movie.rating,
+        priceLabel: 'In Cinemas',
+      });
+      setInterestedCount((prev) => (added ? prev + 1 : Math.max(0, prev - 1)));
+      showToast(added ? 'Added to your Wishlist!' : 'Removed from your Wishlist');
+      return;
+    }
+
+    if (localInterested) {
+      setLocalInterested(false);
       setInterestedCount((prev) => prev - 1);
       showToast('Removed from your Wishlist');
     } else {
-      setIsInterested(true);
+      setLocalInterested(true);
       setInterestedCount((prev) => prev + 1);
       showToast('Added to your Wishlist!');
     }

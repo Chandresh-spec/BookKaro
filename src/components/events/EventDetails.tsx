@@ -26,6 +26,7 @@ import {
   Check,
 } from 'lucide-react';
 import { LiveEvent } from '@/types/event';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 interface EventDetailsProps {
   event: LiveEvent;
@@ -57,10 +58,30 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
   onBookClick,
 }) => {
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState(false);
+  const account = useOptionalAccount();
+  const [localLiked, setLocalLiked] = useState(false);
+  const isLiked = account ? account.isWishlisted(event.id) : localLiked;
   const [copiedToast, setCopiedToast] = useState(false);
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [isTermsExpanded, setIsTermsExpanded] = useState(false);
+
+  const handleToggleWishlist = () => {
+    if (account) {
+      account.toggleWishlist({
+        id: event.id,
+        itemType: 'event',
+        title: event.title,
+        subtitle: `${event.category} • ${event.venue}`,
+        meta: `${event.date}${event.time ? ` • ${event.time}` : ''}`,
+        image: event.image,
+        href: `/events/${event.id}`,
+        city: event.city,
+        priceLabel: `${event.currency || '₹'}${event.startingPrice.toLocaleString('en-IN')} onwards`,
+      });
+    } else {
+      setLocalLiked((prev) => !prev);
+    }
+  };
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -525,7 +546,7 @@ export const EventDetails: React.FC<EventDetailsProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={handleToggleWishlist}
               className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors flex items-center justify-center active:scale-90 ${
                 isLiked ? 'text-[#85142f] bg-rose-50' : 'text-neutral-700'
               }`}
