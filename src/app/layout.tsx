@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { AccountProvider } from "@/context/AccountContext";
 
 export const metadata: Metadata = {
   title: "BookKaro — Your Next Experience Starts Here",
@@ -29,7 +30,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[#fafafc] text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
-        {children}
+        <AccountProvider>{children}</AccountProvider>
       </body>
     </html>
   );

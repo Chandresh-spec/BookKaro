@@ -7,6 +7,7 @@ import { MapPin, Search, X, ChevronDown, Check, Ticket, LogOut } from 'lucide-re
 import { ProfileDrawer } from '@/components/profile/ProfileDrawer';
 import { CITIES } from '@/data/mockData';
 import { User } from '@/types';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 interface NavbarProps {
   currentCity: string;
@@ -31,6 +32,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const account = useOptionalAccount();
+  const effectiveUser = account ? account.profile : user;
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -168,10 +171,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsProfileDrawerOpen(true)}
-                  className="w-9 h-9 rounded-full bg-[#85142f] text-white flex items-center justify-center font-bold text-xs shadow-sm hover:opacity-90 transition-all hover:scale-105 active:scale-95 cursor-pointer ring-2 ring-rose-100"
+                  className="w-9 h-9 rounded-full bg-[#85142f] text-white flex items-center justify-center font-bold text-xs shadow-sm hover:opacity-90 transition-all hover:scale-105 active:scale-95 cursor-pointer ring-2 ring-rose-100 overflow-hidden"
                   aria-label="User Profile"
                 >
-                  {user ? user.name.charAt(0).toUpperCase() : 'C'}
+                  {effectiveUser?.avatar ? (
+                    <img
+                      src={effectiveUser.avatar}
+                      alt={effectiveUser.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : effectiveUser ? (
+                    effectiveUser.name.charAt(0).toUpperCase()
+                  ) : (
+                    'C'
+                  )}
                 </button>
               </div>
 
@@ -280,7 +293,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <ProfileDrawer
         isOpen={isProfileDrawerOpen}
         onClose={() => setIsProfileDrawerOpen(false)}
-        user={user || null}
+        user={effectiveUser || null}
         onSignOut={() => {
           onSignOut?.();
           setIsProfileDrawerOpen(false);

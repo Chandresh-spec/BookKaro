@@ -17,6 +17,8 @@ import {
   Share2,
 } from 'lucide-react';
 import { Movie, CinemaShowtime } from '@/types';
+import { useOptionalAccount } from '@/context/AccountContext';
+import Link from 'next/link';
 
 interface SeatItem {
   id: string; // e.g. "L-18"
@@ -61,7 +63,9 @@ export const CinemaSeatLayout: React.FC<CinemaSeatLayoutProps> = ({
   const [isCountModalOpen, setIsCountModalOpen] = useState(false);
   const [zoomScale, setZoomScale] = useState(1);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [generatedBookingId, setGeneratedBookingId] = useState('');
   const [activeOfferIndex, setActiveOfferIndex] = useState(0);
+  const account = useOptionalAccount();
 
   // Initial selected seats matching screenshot (L18, L19)
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>(['L-18', 'L-19']);
@@ -677,7 +681,42 @@ export const CinemaSeatLayout: React.FC<CinemaSeatLayoutProps> = ({
         {/* Primary Checkout CTA */}
         <div className="max-w-md mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-center">
           <button
-            onClick={() => setIsSuccessModalOpen(true)}
+            onClick={() => {
+              const bId = `BK-MOV-${Math.floor(10000 + Math.random() * 89999)}`;
+              setGeneratedBookingId(bId);
+              if (account) {
+                account.addOrder({
+                  id: 'ord-' + Date.now(),
+                  bookingId: bId,
+                  type: 'movie',
+                  title: movie.title,
+                  subtitle: `${language} • ${format}${movie.certificate ? ` • ${movie.certificate}` : ''}`,
+                  posterImage: movie.posterImage,
+                  venue: cinemaName,
+                  city: account.selectedCity || 'Bengaluru',
+                  date: selectedDate,
+                  time: currentShowtime,
+                  seatsOrTier: selectedSeatIds.map((id) => id.replace('-', '')).join(', '),
+                  quantity: selectedSeatIds.length,
+                  ticketPrice: totalPrice,
+                  convenienceFee: Math.round(totalPrice * 0.09),
+                  donationAmount: account.preferences.autoRoundupCharity ? 1 : 0,
+                  discountAmount: 0,
+                  totalPaid:
+                    totalPrice +
+                    Math.round(totalPrice * 0.09) +
+                    (account.preferences.autoRoundupCharity ? 1 : 0),
+                  paymentMethod: 'BookKaro QuickPay (Simulated)',
+                  status: 'CONFIRMED',
+                  isUpcoming: true,
+                  deliveryType: 'M-Ticket',
+                  bookedAt: 'Just now',
+                  canCancel: true,
+                  itemHref: `/movies/${movie.id}`,
+                });
+              }
+              setIsSuccessModalOpen(true);
+            }}
             disabled={selectedSeatIds.length === 0}
             className={`w-full py-2.5 sm:py-3 px-6 rounded-lg font-bold text-sm sm:text-base text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 ${
               selectedSeatIds.length > 0
@@ -819,14 +858,20 @@ export const CinemaSeatLayout: React.FC<CinemaSeatLayoutProps> = ({
                 </span>
               </div>
               <div className="flex justify-between items-center text-[10px] text-neutral-400 pt-1">
-                <span>FastAPI Booking ID:</span>
+                <span>Booking ID:</span>
                 <span className="font-mono text-neutral-600 font-semibold">
-                  BK-{Math.floor(100000 + Math.random() * 900000)}
+                  {generatedBookingId || 'BK-MOV-19402'}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/profile/orders"
+                className="flex-1 py-2.5 sm:py-3 border border-[#f84464] text-[#f84464] font-bold rounded-xl hover:bg-rose-50 transition-colors text-center text-xs sm:text-sm"
+              >
+                Your Orders
+              </Link>
               <button
                 onClick={() => {
                   setIsSuccessModalOpen(false);

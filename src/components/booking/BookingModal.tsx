@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { X, Star, MapPin, Calendar, Clock, CheckCircle2, Ticket, ChevronRight, Layers } from 'lucide-react';
 import { Movie, LiveEvent } from '@/types';
 import { SportEvent } from '@/types/sports';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 interface ModalCategoryItem {
   id: string;
@@ -33,6 +34,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isBooked, setIsBooked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+  const [generatedBookingId, setGeneratedBookingId] = useState<string>('');
+  const account = useOptionalAccount();
 
   const isMovie = item ? 'genre' in item : false;
   const isSport = item ? 'sportType' in item || 'bookingMode' in item : false;
@@ -90,6 +93,45 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const handleBooking = async () => {
     setIsSubmitting(true);
     await new Promise((r) => setTimeout(r, 600));
+    const newBookingId = `BK-${Math.floor(100000 + Math.random() * 900000)}`;
+    setGeneratedBookingId(newBookingId);
+    if (account && item) {
+      account.addOrder({
+        id: 'ord-' + Date.now(),
+        bookingId: newBookingId,
+        type: isMovie ? 'movie' : isSport ? 'sport' : 'event',
+        title: item.title,
+        subtitle: isMovie
+          ? (item as Movie).genre || 'Movie'
+          : item.category || item.sportType || 'Live Experience',
+        posterImage: item.posterImage || item.image,
+        venue: venueLabel,
+        city: currentCity,
+        date: isMovie ? 'Today' : item.date || 'Upcoming',
+        time: isMovie ? selectedShowtime : item.time || '06:00 PM',
+        seatsOrTier: activeCategory ? activeCategory.name : `${ticketCount} Standard Seats`,
+        quantity: ticketCount,
+        ticketPrice: totalAmount,
+        convenienceFee: Math.round(totalAmount * 0.08),
+        donationAmount: account.preferences.autoRoundupCharity ? 1 : 0,
+        discountAmount: 0,
+        totalPaid:
+          totalAmount +
+          Math.round(totalAmount * 0.08) +
+          (account.preferences.autoRoundupCharity ? 1 : 0),
+        paymentMethod: 'Simulated Checkout',
+        status: 'CONFIRMED',
+        isUpcoming: true,
+        deliveryType: 'M-Ticket',
+        bookedAt: 'Just now',
+        canCancel: true,
+        itemHref: isMovie
+          ? `/movies/${item.id}`
+          : isSport
+          ? `/sports/${item.id}`
+          : `/events/${item.id}`,
+      });
+    }
     setIsSubmitting(false);
     setIsBooked(true);
   };
@@ -147,19 +189,28 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </span>
               </div>
               <div className="flex justify-between text-neutral-400 text-[11px] pt-1.5 border-t border-neutral-200">
-                <span>FastAPI Booking ID:</span>
+                <span>Booking ID:</span>
                 <span className="font-mono text-neutral-700">
-                  BK-{Math.floor(100000 + Math.random() * 900000)}
+                  {generatedBookingId || 'BK-928401'}
                 </span>
               </div>
             </div>
 
-            <button
-              onClick={handleReset}
-              className="w-full py-3 bg-[#85142f] text-white font-bold rounded-xl hover:bg-[#701027] transition-colors cursor-pointer"
-            >
-              Done
-            </button>
+            <div className="w-full flex flex-col sm:flex-row gap-2.5">
+              <Link
+                href="/profile/orders"
+                onClick={handleReset}
+                className="flex-1 py-3 border border-[#85142f] text-[#85142f] font-bold rounded-xl hover:bg-rose-50 transition-colors text-center text-sm"
+              >
+                View in Your Orders
+              </Link>
+              <button
+                onClick={handleReset}
+                className="flex-1 py-3 bg-[#85142f] text-white font-bold rounded-xl hover:bg-[#701027] transition-colors cursor-pointer text-sm"
+              >
+                Done
+              </button>
+            </div>
           </div>
         ) : (
           <>

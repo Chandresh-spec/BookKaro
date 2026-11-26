@@ -33,6 +33,7 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { SportsEventCard } from '@/components/sports/SportsEventCard';
 import { MOCK_SPORTS_EVENTS } from '@/data/mockSportsEvents';
 import { User, SportEvent } from '@/types';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 const sportsOffers = [
   {
@@ -65,9 +66,10 @@ export default function SportEventDetailPage() {
     email: 'chandresh@example.com',
   });
 
+  const account = useOptionalAccount();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
-  const [isInterested, setIsInterested] = useState(false);
+  const [localInterested, setLocalInterested] = useState(false);
   const [isReadMoreOpen, setIsReadMoreOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
@@ -78,6 +80,27 @@ export default function SportEventDetailPage() {
       (e) => e.id === eventId || e.slug === eventId
     );
   }, [eventId]);
+
+  const isInterested = event && account ? account.isWishlisted(event.id) : localInterested;
+
+  const handleToggleSportsWishlist = () => {
+    if (!event) return;
+    if (account) {
+      account.toggleWishlist({
+        id: event.id,
+        itemType: 'sport',
+        title: event.title,
+        subtitle: `${event.sportType} • ${event.venue}`,
+        meta: `${event.date} • ${event.time}`,
+        image: event.image,
+        href: `/sports/${event.id}`,
+        city: event.city,
+        priceLabel: `${event.currency || '₹'}${event.startingPrice.toLocaleString('en-IN')} onwards`,
+      });
+    } else {
+      setLocalInterested((prev) => !prev);
+    }
+  };
 
   // Related events
   const relatedEvents = useMemo(() => {
@@ -554,7 +577,7 @@ export default function SportEventDetailPage() {
 
                 <button
                   type="button"
-                  onClick={() => setIsInterested(!isInterested)}
+                  onClick={handleToggleSportsWishlist}
                   className={`px-3 py-1 rounded-lg text-xs font-extrabold border transition-all active:scale-95 ${
                     isInterested
                       ? 'border-[#85142f] bg-rose-50 text-[#85142f]'

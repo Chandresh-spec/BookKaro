@@ -235,4 +235,42 @@ export const api = {
       token: 'jwt_mock_token_' + Date.now(),
     };
   },
+
+  /**
+   * Update user profile (Ready for FastAPI PATCH /api/v1/account/profile)
+   */
+  async updateProfile(patch: Record<string, unknown>): Promise<{ success: boolean }> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/account/profile`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch),
+        });
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('Backend unavailable, simulating profile update:', err);
+      }
+    }
+    await new Promise((r) => setTimeout(r, 350));
+    return { success: true };
+  },
+
+  /**
+   * Cancel booking (Ready for FastAPI POST /api/v1/bookings/{id}/cancel)
+   */
+  async cancelBooking(bookingId: string): Promise<{ success: boolean; status: string }> {
+    if (API_BASE_URL) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/bookings/${bookingId}/cancel`, {
+          method: 'POST',
+        });
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('Backend unavailable, simulating booking cancellation:', err);
+      }
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    return { success: true, status: 'CANCELLED' };
+  },
 };

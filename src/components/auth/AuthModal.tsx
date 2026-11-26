@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { X, Mail, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { User } from '@/types';
+import { useOptionalAccount } from '@/context/AccountContext';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [otp, setOtp] = useState(['', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const account = useOptionalAccount();
 
   if (!isOpen) return null;
 
@@ -38,6 +40,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     onClose();
   };
 
+  const completeAuth = (u: User) => {
+    account?.signIn(u);
+    onSuccess(u);
+    handleReset();
+  };
+
   // Google Sign In
   const handleGoogleLogin = async () => {
     setIsLoading(true);
@@ -45,8 +53,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       const res = await api.loginWithOAuth('google');
       if (res.success && res.user) {
-        onSuccess(res.user);
-        handleReset();
+        completeAuth(res.user);
       }
     } catch {
       setError('Google Sign In failed. Please try again.');
@@ -62,8 +69,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       const res = await api.loginWithOAuth('apple');
       if (res.success && res.user) {
-        onSuccess(res.user);
-        handleReset();
+        completeAuth(res.user);
       }
     } catch {
       setError('Apple Sign In failed. Please try again.');
@@ -111,8 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       const res = await api.verifyOtp(`${countryCode} ${mobile}`, fullOtp);
       if (res.success && res.user) {
-        onSuccess(res.user);
-        handleReset();
+        completeAuth(res.user);
       } else {
         setError('Invalid OTP code. Please try again.');
       }
@@ -136,8 +141,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       const res = await api.loginWithEmail(email);
       if (res.success && res.user) {
-        onSuccess(res.user);
-        handleReset();
+        completeAuth(res.user);
       }
     } catch {
       setError('Email authentication failed. Try again.');
